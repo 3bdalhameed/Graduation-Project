@@ -1,14 +1,25 @@
-// src/components/NavBar.js
 import React, { useState } from 'react';
-import { FaCog, FaBell, FaFlag, FaUser, FaUsers, FaTachometerAlt, FaChartBar, FaGavel } from 'react-icons/fa';
+import { FaCog, FaBell, FaFlag, FaUser, FaUsers, FaGavel, FaChartBar } from 'react-icons/fa';
 import './navbar.css';
-import logo from "../../pages/img/logo.png"
+import logo from "../../pages/img/logo.png";
+import { checkAuthentication } from './auth';
+import { useNavigate } from 'react-router-dom';
 
 const NavBar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
+  };
+
+  const handleAuthRedirect = async (path) => {
+    const isAuthenticated = await checkAuthentication();
+    if (isAuthenticated) {
+        navigate(path);
+    } else {
+        navigate("/login");
+    }
   };
 
   return (
@@ -21,10 +32,6 @@ const NavBar = () => {
       </div>
 
       <ul className={`nav-items ${isMenuOpen ? 'show' : ''}`}>
-        <li className="nav-item">
-          <FaTachometerAlt className="nav-icon" />
-          <span>Dashboard</span>
-        </li>
         <li className="nav-item">
           <FaGavel className="nav-icon" />
           <span>Rules</span>
@@ -43,11 +50,11 @@ const NavBar = () => {
         </li>
         <li className="nav-item dropdown">
           <FaUser className="nav-icon" />
-          <span>Users</span>
+          <span><a onClick={() => handleAuthRedirect("/users")}>Users</a></span>
         </li>
         <li className="nav-item dropdown">
           <FaUsers className="nav-icon" />
-          <span>Teams</span>
+          <span><a onClick={() => handleAuthRedirect("/teams")}>Teams</a></span>
         </li>
         <li className="nav-item">
           <FaCog className="nav-icon" />

@@ -1,50 +1,57 @@
 import React, { useState } from "react";
 import "./signup.css";
+import Navbar from "../components/Navbar/navbar"
 
 function SignUp() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [gmail, setGmail] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleSignup = async () => {
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    
     try {
       const response = await fetch("http://localhost:8000/api/signup/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password, gmail }),
+        body: JSON.stringify({ username, password, email: gmail }),
       });
 
       if (response.ok) {
         const data = await response.json();
+        setSuccess("SignUp successful");
         alert("SignUp successful");
-        // Optionally, redirect the user or save token to localStorage, etc.
+        // Optionally, save token to localStorage or redirect to login page
+        // localStorage.setItem("token", data.token);
       } else {
-        alert("SignUp failed");
+        const errorData = await response.json();
+        setError(errorData.error || "SignUp failed");
       }
     } catch (error) {
       console.error("Error:", error);
+      setError("An error occurred. Please try again.");
     }
   };
 
   return (
     <>
       <header>
-        <a href="App.jsx" className="logo">
-          <img src="" alt="logo" />
-        </a>
-        <nav className="navigation">
-          <a href="#">Log In</a>
-          <a href="#">Our Team</a>
-          <a href="#">Contact</a>
-          <a href="#">About Us</a>
-        </nav>
+        <Navbar />
       </header>
       <div className="vid-container">
         <div className="inner-container">
           <div className="box">
             <h1>Sign Up</h1>
+            {error && <p className="error">{error}</p>}
+            {success && <p className="success">{success}</p>}
             <input
               type="text"
               placeholder="Username"
@@ -65,13 +72,13 @@ function SignUp() {
             />
             <input
               type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
             />
             <button onClick={handleSignup}>Sign Up</button>
             <p>
-              Already a member? <a href="./login">LogIn</a>
+              Already a member? <a href="./login">Log In</a>
             </p>
           </div>
         </div>

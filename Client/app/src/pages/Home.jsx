@@ -6,20 +6,11 @@ import hacker from "./img/hacker.png";
 import Navbar from '../components/Navbar/navbar';
 
 
-
 function Home() {
     return (
         <>
     <header>
-        <a href="HomePage.html" className="logo">
-            <img src={logo} alt="logo" />
-        </a>
-        <nav className="navigation">
-          <a href="GetStart">Get Started</a>
-          <a href="our-team">Our Team</a>
-          <a href="contact_us">Contact</a>
-          <a href="about-us">About Us</a>
-        </nav>
+        <Navbar />
     </header>
       {/* Web beginning */}
       <section className="main">
