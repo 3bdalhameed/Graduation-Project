@@ -1,0 +1,77 @@
+/* src/components/navbar.css */
+
+.navbar {
+    background-color: #1a2236;
+    padding: 1rem 2rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Add space between logo and nav items */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.navbar img{
+    width: 5vw;
+
+}
+
+.nav-items {
+    display: flex;
+    list-style-type: none;
+    gap: 2rem;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    color: #b0b3b8;
+    font-size: 1em;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.nav-item:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+}
+
+.nav-icon {
+    font-size: 1.2em;
+    margin-right: 0.5rem;
+}
+
+/* Burger menu icon */
+.burger-menu {
+    display: none; /* Hidden by default */
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #ffffff;
+}
+
+/* Responsive styling for smaller screens */
+@media (max-width: 1108px) {
+    .nav-items {
+        display: none; /* Hide the nav items on small screens */
+        flex-direction: column;
+        gap: 1rem;
+        position: absolute;
+        top: 70%; /* Position under the navbar */
+        left: 0;
+        right: 0;
+        background-color: #1a2236;
+        padding: 1rem 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .burger-menu {
+        display: block; /* Show burger icon on small screens */
+    }
+
+    .nav-items.show {
+        display: flex; /* Show nav items when burger is clicked */
+    }
+}
