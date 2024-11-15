@@ -24,7 +24,7 @@ const NavBar = () => {
 
   return (
     <nav className="navbar">
-      <a href="#">
+      <a href="/">
         <img src={logo} alt="logo" />
       </a>
       <div className="burger-menu" onClick={toggleMenu}>

@@ -8,6 +8,8 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth.hashers import make_password
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from .models import Users
 
 User = get_user_model()
 
@@ -24,7 +26,6 @@ def login_view(request):
     return Response({"error": "Invalid credentials"}, status=400)
 
 
-
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def signUp_view(request):
@@ -32,19 +33,22 @@ def signUp_view(request):
     email = request.data.get('email')
     password = request.data.get('password')
     
+    # Check if required fields are present
     if not username or not email or not password:
         return Response({"error": "Username, email, and password are required"}, status=400)
     
+    # Check if username or email already exists
     if User.objects.filter(username=username).exists():
         return Response({"error": "Username already taken"}, status=400)
     
     if User.objects.filter(email=email).exists():
         return Response({"error": "Email already registered"}, status=400)
     
-    user = User.objects.create(
+    # Create the user using create_user to hash the password automatically
+    user = User.objects.create_user(
         username=username,
         email=email,
-        password=make_password(password)  # Hash the password before saving
+        password=password  # create_user will hash this automatically
     )
     
     # Generate or get the token for the new user
@@ -53,6 +57,15 @@ def signUp_view(request):
     return Response({"token": token.key, "message": "Sign up successful"}, status=201)
 
 
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def CreateChallenge(request):
+    Cname = request.data.get('Cname')
+    Ccatagory = request.data.get('Ccatagory')
+    Csubcatagory = request.data.get('Csubcatagory')
+    Cdifficulty = request.data.get('Cdifficulty')
+    Ccreater = request.data.get('Creater')
+    
 
 @login_required
 def check_authentication(request):
@@ -60,3 +73,8 @@ def check_authentication(request):
 
 def not_authenticated(request):
     return JsonResponse({"authenticated": False})
+
+
+
+
+
