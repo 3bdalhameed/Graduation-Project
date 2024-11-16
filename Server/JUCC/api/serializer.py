@@ -15,3 +15,6 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password']) # Hash password
         user.save()
         return user
+
+#class ChallengeSerializer(serializers.ModelSerializer):
+#    class Meta

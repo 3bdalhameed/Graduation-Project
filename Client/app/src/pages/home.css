@@ -266,13 +266,6 @@ section {
 }
 
 @media (max-width:1023px){
-  header{
-      padding: 12px 20px;
-  }
-
-  .navigation a{
-      padding-left: 10px;
-  }
 
   .title{
       font-size: 1.8em;

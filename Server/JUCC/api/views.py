@@ -9,9 +9,11 @@ from django.contrib.auth.hashers import make_password
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from .serializers import ChallengeSerializer
+from .models import Challenge
 from .models import Users
 
-User = get_user_model()
+Users = get_user_model()
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -25,7 +27,7 @@ def login_view(request):
         return Response({"token": token.key, "message": "Login successful"}, status=200)
     return Response({"error": "Invalid credentials"}, status=400)
 
-
+###########################################################################
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def signUp_view(request):
@@ -57,16 +59,48 @@ def signUp_view(request):
     return Response({"token": token.key, "message": "Sign up successful"}, status=201)
 
 
+##########################################################################
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def CreateChallenge(request):
+def CreateChallenge_view(request):
+    # Extract data from the request
     Cname = request.data.get('Cname')
     Ccatagory = request.data.get('Ccatagory')
     Csubcatagory = request.data.get('Csubcatagory')
     Cdifficulty = request.data.get('Cdifficulty')
-    Ccreater = request.data.get('Creater')
+    Ccreator = request.data.get('Creator')
     
+    # Validate required fields
+    if not Cname or not Ccatagory or not Csubcatagory or not Cdifficulty or not Ccreator:
+        return Response({"error": "Challenge Name, Category, Subcategory, Difficulty, and Creator are required."}, status=400)
+    
+    # Additional validation can be added here (e.g., difficulty range, category options, etc.)
+    if Cdifficulty not in ["Easy", "Medium", "Hard"]:
+        return Response({"error": "Difficulty must be one of: Easy, Medium, Hard."}, status=400)
+    
+    # Create the challenge instance
+    try:
+        challenge_data = {
+            'name': Cname,
+            'category': Ccatagory,
+            'subcategory': Csubcatagory,
+            'difficulty': Cdifficulty,
+            'creator': Ccreator
+        }
+        
+        # Serialize and save the data
+        serializer = ChallengeSerializer(data=challenge_data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"success": "Challenge created successfully", "data": serializer.data}, status=201)
+        else:
+            return Response({"error": "Invalid data", "details": serializer.errors}, status=400)
+    except Exception as e:
+        return Response({"error": "An error occurred while creating the challenge", "details": str(e)}, status=500)
 
+
+    
+###########################################################################
 @login_required
 def check_authentication(request):
     return JsonResponse({"authenticated": True})

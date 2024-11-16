@@ -3,11 +3,14 @@
 .navbar {
     background-color: #1a2236;
     padding: 1rem 2rem;
-    width: 97%;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between; /* Add space between logo and nav items */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    z-index: 1000;
+    
 }
 .navbar img{
     width: 5vw;
@@ -19,7 +22,7 @@
     list-style-type: none;
     gap: 2rem;
     padding: 0;
-    margin: 0;
+    margin: 0 2.5vw 0 0;
 }
 
 .nav-item {
@@ -53,13 +56,13 @@
 }
 
 /* Responsive styling for smaller screens */
-@media (max-width: 1108px) {
+@media (max-width: 1023px) {
+   
     .nav-items {
         display: none; /* Hide the nav items on small screens */
         flex-direction: column;
-        gap: 1rem;
         position: absolute;
-        top: 70%; /* Position under the navbar */
+        top: 8%; /* Position under the navbar */
         left: 0;
         right: 0;
         background-color: #1a2236;
@@ -68,10 +71,21 @@
     }
 
     .burger-menu {
-        display: block; /* Show burger icon on small screens */
+        display: flex; /* Show burger icon on small screens */
     }
 
     .nav-items.show {
         display: flex; /* Show nav items when burger is clicked */
+    }
+}
+@media (mad-width: 768px) {
+    .navbar {
+        background-color: #1a2236;
+        padding: 1rem 2rem;
+        width: 100%;
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
     }
 }
