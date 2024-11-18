@@ -1,100 +1,89 @@
-// src/components/Home.js
-import React, { useEffect } from 'react';
-import "./home.css";
-import logo from "./img/logo.png";
-import hacker from "./img/hacker.png";
-import Navbar from '../components/Navbar/navbar';
+import React, { useState } from "react";
+import "./test.css"; // Add the CSS below for styling.
+import "../components/Navbar/navbar"
+import NavBar from "../components/Navbar/navbar";
 
+const App = () => {
+  const [isModalOpen, setModalOpen] = useState(false);
 
-function Home() {
-    return (
-        <>
+  const toggleModal = () => {
+    setModalOpen(!isModalOpen);
+  };
+
+  return (
+    <>
     <header>
-        <Navbar />
+      <NavBar />
     </header>
-      {/* Web beginning */}
-      <section className="main">
-        <div>
-          <p><span>JuCC</span></p>
-          <a href="#projects" className="main-btn">Improving Your Development Experience</a>
+    <div className="app">
+      {/* Sidebar */}
+      <aside className="sidebar">
+        <div className="filters">
+          <label>
+            <input type="checkbox" />
+            Hide Solved
+          </label>
+          <label>
+            <input type="checkbox" />
+            Show Bookmarked
+          </label>
+          <label>
+            <input type="checkbox" />
+            Show Assigned
+          </label>
+          <input type="text" placeholder="Search by Name" className="search-bar" />
         </div>
-        <div>
-          <img src={hacker} alt="main" />
+        <div className="difficulty-filter">
+          <h4>Difficulty</h4>
+          <button>All</button>
+          <button>Easy</button>
+          <button>Medium</button>
+          <button>Hard</button>
         </div>
-      </section>
+      </aside>
 
-      {/* Genres */}
-      <section className="projects" id="projects">
-        <div className="button-container">
-          <h3 className="main-btn-proj">Sample Projects</h3>
+      {/* Main Content */}
+      <main className="main-content">
+        {/* Card Component */}
+        <div className="card" onClick={toggleModal}>
+          <h3>Verify</h3>
+          <p>Difficulty: Easy</p>
+          <p>Category: Forensics</p>
         </div>
-        
-        <div className="content">
-          {[
-            { src:{logo}, title: 'Fly Through The Sky' },
-            { src:{logo}, title: 'Online Book Store' },
-            { src:{logo}, title: 'Liquid Transition' },
-            { src:{logo}, title: 'Downtown Tech' },
-            { src:{logo}, title: 'Dashboard UI' }
-          ].map((project, index) => (
-            <div className="project-card" key={index}>
-              <div className="project-image">
-                <img src={logo} alt="project" />
-              </div>
-              <div className="project-info">
-                <strong className="project-title">
-                  <span>{project.title}</span>
-                  <a href="login.html" className="more-details">More Info</a>
-                </strong>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div>
-          <a href="#ending">
-            <img src={logo} alt="arrow" style={{ position: 'relative', width: '7%', top: '-5vw', right: '-75vw' }} />
-          </a>
-        </div>
-      </section>
 
-      {/* Ending Section */}
-      <section className="cards-contact contact" id="ending">
-        <div className="button-container2">
-          <h3 className="main-btn-work">Let's Work Together!</h3>
-        </div>
-        <div className="content">
-          <div className="card">
-            <div className="icon">
-              <i className="fas fa-phone"></i>
-            </div>
-            <div className="info">
-              <h3>Phone</h3>
-              <p>0799999999</p>
+        {/* Modal */}
+        {isModalOpen && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <button className="close-button" onClick={toggleModal}>
+                &times;
+              </button>
+              <div className="modal-header">
+                <h2>Verify</h2>
+                <div className="badges">
+                  <span className="badge easy">Easy</span>
+                  <span className="badge forensics">Forensics</span>
+                  <span className="badge pico">JUCC 2024</span>
+                </div>
+              </div>
+              <p className="author">AUTHOR: Jeffery John</p>
+              <p className="description">
+                People keep trying to trick my players with imitation flags. I want to make sure they
+                get the real thing! I'm going to provide the SHA-256 hash and a decrypt script to
+                help you know that my flags are legitimate.
+              </p>
+              <button className="launch-button">Launch Instance</button>
+              <div className="submit-section">
+                <input type="text" placeholder="picoCTF(FLAG)" className="flag-input" />
+                <button className="submit-button">Submit Flag</button>
+              </div>
             </div>
           </div>
-          <div className="card">
-            <div className="icon">
-              <i className="fas fa-envelope"></i>
-            </div>
-            <div className="info">
-              <h3>Email</h3>
-              <p>WebPen@gmail.com</p>
-            </div>
-          </div>
-        </div>
-      </section>
+        )}
+      </main>
+    </div>
+    </>
+  );
+};
 
-      {/* Footer */}
-      <footer className="footer">
-        <p className="footer-title">Copyrights <span>WebPen</span></p>
-        <div className="social-icons">
-          <a href="#"><img src={logo} alt="facebook" /></a>
-          <a href="#"><img src={logo} alt="twitter" /></a>
-          <a href="#"><img src={logo} alt="pinterest" /></a>
-        </div>
-      </footer>
-        </>
-    );
-}
-
-export default Home;
+export default App;

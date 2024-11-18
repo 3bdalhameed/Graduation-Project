@@ -4,6 +4,7 @@ import './navbar.css';
 import logo from "../../pages/img/logo.png";
 import { checkAuthentication } from './auth';
 import { useNavigate } from 'react-router-dom';
+import challenge from "../../pages/Challenge"
 
 const NavBar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
@@ -34,19 +35,27 @@ const NavBar = () => {
       <ul className={`nav-items ${isMenuOpen ? 'show' : ''}`}>
         <li className="nav-item">
           <FaGavel className="nav-icon" />
+          <a href="Rules">
           <span>Rules</span>
+          </a>
         </li>
         <li className="nav-item">
           <FaChartBar className="nav-icon" />
-          <span>Scoreboard</span>
+          <a href="Scorevoard">
+            <span>Scoreboard</span>
+          </a>
         </li>
         <li className="nav-item">
           <FaFlag className="nav-icon" />
-          <span>Challenges</span>
+          <a href="challenge">
+            <span>Challenges</span>
+          </a>
         </li>
         <li className="nav-item">
           <FaBell className="nav-icon" />
-          <span>Notifications</span>
+          <a href="Notifications">
+            <span>Notifications</span>
+          </a>
         </li>
         <li className="nav-item dropdown">
           <FaUser className="nav-icon" />
@@ -58,7 +67,9 @@ const NavBar = () => {
         </li>
         <li className="nav-item">
           <FaCog className="nav-icon" />
-          <span>Settings</span>
+          <a href="Settings">
+            <span>Settings</span>
+          </a>
         </li>
       </ul>
     </nav>

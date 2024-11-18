@@ -1,7 +1,7 @@
 /* src/components/navbar.css */
 
 .navbar {
-    background-color: #1a2236;
+    background-color: #001939;
     padding: 1rem 2rem;
     width: 100%;
     display: flex;
@@ -33,6 +33,11 @@
     cursor: pointer;
     position: relative;
     transition: color 0.3s ease;
+}
+
+.nav-item a {
+    text-decoration: none;
+    color: #ffffff;
 }
 
 .nav-item:hover {

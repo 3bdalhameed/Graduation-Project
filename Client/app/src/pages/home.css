@@ -3,11 +3,11 @@ section {
 }
 
 .main {
-  width: 70%;
+  width: 100%;
   min-height: 90vh;
   display: flex;
   align-items: center;
-  background: url(img/anime.jpg) no-repeat;
+  background: url(img/4.png) no-repeat;
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -23,10 +23,9 @@ section {
 .main p span {
   display: inline-block;
   margin-top: 10px;
-  color: #052347;
   font-weight: 100%;
   font-family:Georgia, 'Times New Roman', Times, serif;
-  color:#052347
+  color:#0e52d2
 }
 .main div img {
   padding: 0;
@@ -41,7 +40,7 @@ section {
 
 .main-btn {
   color: #ffffff;
-  background-color: #052347;
+  background-color: #00214b;
   text-decoration: none;
   font-size: 10px;
   font-size: 1.5vw; 
@@ -49,7 +48,7 @@ section {
   display: inline-block;
   padding: 1em 2em; /* Adjust padding */
   letter-spacing: 1px;
-  border: 0.2vw solid #052347; /* Adjust border size and color */
+  border: 0.2vw solid #000000; /* Adjust border size and color */
   border-radius: 15px;
   margin-bottom: 40px;
   transition: 0.7s ease;
@@ -87,14 +86,14 @@ section {
 
 .main-btn-work {
   color: #fff;
-  background-color: #052347;
+  background-color: #00214b;
   text-decoration: none;
   font-size: 1.7vw; /* Adjust font size */
   font-weight: 700; /* Adjust font weight */
   display: inline-block;
   padding: 1em 2em; /* Adjust padding */
   letter-spacing: 1px;
-  border: 10px solid #052347; /* Adjust border size and color */
+  border: 10px solid #00214b; /* Adjust border size and color */
   border-radius: 15px;
   margin-bottom: 40px;
   transition: 0.7s ease;
@@ -164,7 +163,7 @@ section {
 
 .projects {
   background-color: #02023e;
-  padding-top: 150px;
+  padding-top: 100px;
 }
 
 .projects .content{
@@ -174,8 +173,7 @@ section {
 .project-card {
   background-color: #fff;
   border: 1px solid #fff;
-  min-height: 14em;
-  width: 23vw;
+  width: 18vw;
   overflow: hidden;
   border-radius: 10px;
   margin: 20px;
@@ -238,6 +236,13 @@ section {
   margin-top: 10%;
   justify-content: center;
   width: 10vw;
+}
+
+.arrow img{
+  position: relative;
+  width: 7%;
+  top: -5vw;
+  right: -75vw;
 }
 
 .footer {

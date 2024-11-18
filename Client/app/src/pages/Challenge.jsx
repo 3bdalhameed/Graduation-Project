@@ -1,107 +1,88 @@
 import React, { useState } from "react";
-import "./Challenge.css";
-import Navbar from '../components/Navbar/navbar';
+import "./challenge.css"; // Add the CSS below for styling.
+import NavBar from "../components/Navbar/navbar";
 
-function App() {
-  const [showPopup, setShowPopup] = useState(false);
-  const [formData, setFormData] = useState({
-    field1: "Default Value 1",
-    field2: "Default Value 2",
-    field3: "Default Value 3",
-    field4: "Default Value 4",
-    field5: "Default Value 5",
-  });
-  const [editableFields, setEditableFields] = useState({
-    field1: false,
-    field2: false,
-    field3: false,
-    field4: false,
-    field5: false,
-  });
+const App = () => {
+  const [isModalOpen, setModalOpen] = useState(false);
 
-  const handleCardClick = () => {
-    setShowPopup(true);
-  };
-
-  const handleClosePopup = () => {
-    setShowPopup(false);
-  };
-
-  const handleEditClick = (field) => {
-    setEditableFields((prev) => ({ ...prev, [field]: true }));
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert("Form Submitted with Data: " + JSON.stringify(formData, null, 2));
-    setShowPopup(false);
+  const toggleModal = () => {
+    setModalOpen(!isModalOpen);
   };
 
   return (
     <>
     <header>
-      <Navbar />
+      <NavBar />
     </header>
-    <div className="App">
-      {/* Card */}
-      <div className="card" onClick={handleCardClick}>
-        <div className="card-header">
-          <span className="category">Forensics</span>
-          <span className="difficulty">Easy</span>
+    <div className="app">
+      {/* Sidebar */}
+      <aside className="sidebar">
+        <div className="filters">
+          <label>
+            <input type="checkbox" />
+            Hide Solved
+          </label>
+          <label>
+            <input type="checkbox" />
+            Show Bookmarked
+          </label>
+          <label>
+            <input type="checkbox" />
+            Show Assigned
+          </label>
+          <input type="text" placeholder="Search by Name" className="search-bar" />
         </div>
-        <h2 className="title">Verify</h2>
-        <div className="card-footer">
-          <span className="solves">26,857 solves</span>
-          <span className="rating">80% 👍</span>
+        <div className="difficulty-filter">
+          <h4>Difficulty</h4>
+          <button>All</button>
+          <button>Easy</button>
+          <button>Medium</button>
+          <button>Hard</button>
         </div>
-      </div>
+      </aside>
 
-      {/* Popup */}
-      {showPopup && (
-        <div className="popup">
-          <div className="popup-content">
-            <h3>Fill the Details</h3>
-            <form onSubmit={handleSubmit}>
-              {Object.keys(formData).map((field, index) => (
-                <div key={index} className="form-field">
-                  <button
-                    type="button"
-                    className="edit-button"
-                    onClick={() => handleEditClick(field)}
-                  >
-                    Edit
-                  </button>
-                  <label>
-                    {`Field ${index + 1}: `}
-                    <input
-                      type="text"
-                      name={field}
-                      value={formData[field]}
-                      onChange={handleChange}
-                      disabled={!editableFields[field]}
-                    />
-                  </label>
-                  
-                </div>
-              ))}
-              <div className="popup-buttons">
-                <button type="submit">Submit</button>
-                <button type="button" onClick={handleClosePopup}>
-                  Close
-                </button>
-              </div>
-            </form>
-          </div>
+      {/* Main Content */}
+      <main className="main-content">
+        {/* Card Component */}
+        <div className="Ccard" onClick={toggleModal}>
+          <h3>Verify</h3>
+          <p>Difficulty: Easy</p>
+          <p>Category: Forensics</p>
         </div>
-      )}
+
+        {/* Modal */}
+        {isModalOpen && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <button className="close-button" onClick={toggleModal}>
+                &times;
+              </button>
+              <div className="modal-header">
+                <h2>Verify</h2>
+                <div className="badges">
+                  <span className="badge easy">Easy</span>
+                  <span className="badge forensics">Forensics</span>
+                  <span className="badge pico">JUCC 2024</span>
+                </div>
+              </div>
+              <p className="author">AUTHOR: Jeffery John</p>
+              <p className="description">
+                People keep trying to trick my players with imitation flags. I want to make sure they
+                get the real thing! I'm going to provide the SHA-256 hash and a decrypt script to
+                help you know that my flags are legitimate.
+              </p>
+              <button className="launch-button">Launch Instance</button>
+              <div className="submit-section">
+                <input type="text" placeholder="picoCTF(FLAG)" className="flag-input" />
+                <button className="submit-button">Submit Flag</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
     </>
   );
-}
+};
 
 export default App;

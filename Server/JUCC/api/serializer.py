@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from .models import Challenge
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,5 +17,12 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-#class ChallengeSerializer(serializers.ModelSerializer):
-#    class Meta
+class ChallengeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Challenge
+        fields = ['name', 'category', 'subcategory', 'difficulty', 'creator']        
+    def create(self, validated_data):
+        """
+        Overriding the create method to create a new Challenge instance.
+        """
+        return Challenge.objects.create(**validated_data)

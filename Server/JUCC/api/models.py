@@ -21,30 +21,31 @@ class Users(models.Model):
     def __str__(self):
         return self.name
 
-class AddChallenge(models.Model):
+class Challenge(models.Model):
     CATEGORY_CHOICES = [
         ('Web', 'web exploitation'),
-        ('Rev', 'Reverse Eng'),
+        ('Reverse', 'Reverse Engineering'),
         ('Crypto', 'Cryptography'),
         ('Forensics', 'Digital Forensics'),
         ('PWN', 'Binary Exploitation'),
         ('OSINT', 'OSINT'),
     ]
-    SUBCATAGORY_CHOICES = [
+    SUBCATEGORY_CHOICES = [
         ('RSA', 'rsa'),
         ('XSS', 'xss'),
+        ('Dynamic', 'dynamic')
     ]
     DIFFICULTY_CHOICES = [
-        ('easy', 'Easy'),
-        ('medium', 'Medium'),
-        ('hard', 'Hard'),
+        ('Easy', 'Easy'),
+        ('Medium', 'Medium'),
+        ('Hard', 'Hard'),
     ]
 
-    Cname = models.CharField(max_length=255)
-    Ccategory = models.CharField(max_length=255, choices=CATEGORY_CHOICES)  # Using choices
-    Csubcategory = models.CharField(max_length=255, choices=CATEGORY_CHOICES)
-    Cdifficulty = models.CharField(max_length=255, choices=DIFFICULTY_CHOICES)  # Using choices
-    Ccreater = models.CharField(max_length=50)
+    name = models.CharField(max_length=255)
+    category = models.CharField(max_length=255, choices=CATEGORY_CHOICES)  # Using choices
+    subcategory = models.CharField(max_length=255, choices=SUBCATEGORY_CHOICES)
+    difficulty = models.CharField(max_length=255, choices=DIFFICULTY_CHOICES)  # Using choices
+    creator = models.CharField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)  # Track creation time
 
     def __str__(self):

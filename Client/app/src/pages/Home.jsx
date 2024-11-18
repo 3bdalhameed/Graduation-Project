@@ -51,8 +51,8 @@ function Home() {
           ))}
         </div>
         <div>
-          <a href="#ending">
-            <img src={logo} alt="arrow" style={{ position: 'relative', width: '7%', top: '-5vw', right: '-75vw' }} />
+          <a href="#ending" className='arrow' >
+            <img src={logo} alt="arrow"/>
           </a>
         </div>
       </section>
@@ -63,24 +63,7 @@ function Home() {
           <h3 className="main-btn-work">Let's Work Together!</h3>
         </div>
         <div className="content">
-          <div className="card">
-            <div className="icon">
-              <i className="fas fa-phone"></i>
-            </div>
-            <div className="info">
-              <h3>Phone</h3>
-              <p>0799999999</p>
-            </div>
-          </div>
-          <div className="card">
-            <div className="icon">
-              <i className="fas fa-envelope"></i>
-            </div>
-            <div className="info">
-              <h3>Email</h3>
-              <p>WebPen@gmail.com</p>
-            </div>
-          </div>
+          
         </div>
       </section>
 

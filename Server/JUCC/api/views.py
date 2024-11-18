@@ -9,7 +9,7 @@ from django.contrib.auth.hashers import make_password
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .serializers import ChallengeSerializer
+from .serializer import ChallengeSerializer
 from .models import Challenge
 from .models import Users
 
@@ -62,13 +62,13 @@ def signUp_view(request):
 ##########################################################################
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def CreateChallenge_view(request):
+def Challenge_view(request):
     # Extract data from the request
-    Cname = request.data.get('Cname')
-    Ccatagory = request.data.get('Ccatagory')
-    Csubcatagory = request.data.get('Csubcatagory')
-    Cdifficulty = request.data.get('Cdifficulty')
-    Ccreator = request.data.get('Creator')
+    Cname = request.data.get('name')
+    Ccatagory = request.data.get('category')
+    Csubcatagory = request.data.get('subcategory')
+    Cdifficulty = request.data.get('difficulty')
+    Ccreator = request.data.get('creator')
     
     # Validate required fields
     if not Cname or not Ccatagory or not Csubcatagory or not Cdifficulty or not Ccreator:
@@ -76,7 +76,7 @@ def CreateChallenge_view(request):
     
     # Additional validation can be added here (e.g., difficulty range, category options, etc.)
     if Cdifficulty not in ["Easy", "Medium", "Hard"]:
-        return Response({"error": "Difficulty must be one of: Easy, Medium, Hard."}, status=400)
+        return Response({"error": "Difficulty must be one of: Easy, Medium, or Hard."}, status=400)
     
     # Create the challenge instance
     try:
