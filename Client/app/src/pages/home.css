@@ -122,22 +122,23 @@ section {
 }
 
 .content {
-  display: flex;
-  justify-content: center;
-  flex-direction: row;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);  /* 2 columns of equal width */
+  grid-template-rows: repeat(2, 1fr);     /* 2 rows of equal height */                            
+  justify-items: center;                 /* Center logos horizontally */
+  align-items: center;                   /* Center logos vertically */
+  width: 3vw;                          /* Adjust the container width */
+  right: -19vw;
+  position: relative;
 }
 /*ending cards*/
 
 .card {
-  background-color: #ffffff;
   width: 29.25vw;
   box-shadow: 0 5px 25px rgba(1 1 1 / 15%);
   border-radius: 10px;
   padding: 1.5vw;
   margin: 15px;
-  transition: 0.7s ease;
-
 }
 
 .card:hover {
@@ -176,7 +177,7 @@ section {
   width: 18vw;
   overflow: hidden;
   border-radius: 10px;
-  margin: 20px;
+  margin: 1vw;
   transition: 0.7s ease;
 }
 
