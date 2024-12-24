@@ -1,0 +1,104 @@
+
+.main {
+    width: 100%;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    background: url(../../pages/img/4.png) no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+  
+  .main p {
+    font-size: 70px;
+    font-size: 5.5vw;
+    font-weight: 700;
+    
+  }
+  
+  .main p span {
+    display: inline-block;
+    margin-top: 10px;
+    font-weight: 100%;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    color:#0e52d2
+  }
+  .main div img {
+    padding: 0;
+    position:relative;
+    justify-content: space-between;
+    right: -30%;
+    top: 30%;
+    width: 38vw;
+    height: 35vw;
+  }
+  
+  
+  .main-btn {
+    color: #ffffff;
+    background-color: #00214b;
+    text-decoration: none;
+    font-size: 10px;
+    font-size: 1.5vw; 
+    font-weight: 700; /* Adjust font weight */
+    display: inline-block;
+    padding: 1em 2em; /* Adjust padding */
+    letter-spacing: 1px;
+    border: 0.2vw solid #000000; /* Adjust border size and color */
+    border-radius: 15px;
+    margin-bottom: 40px;
+    transition: 0.7s ease;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10vh; /* Adjust the height as needed */
+  }
+  
+  .main-btn-proj {
+    color: #fff;
+    background-color: #c465a7;
+    text-decoration: none;
+    font-size: 1.5em; /* Adjust font size */
+    font-weight: 700; /* Adjust font weight */
+    display: inline-block;
+    padding: 1em 2em; /* Adjust padding */
+    letter-spacing: 1px;
+    border: 3px solid #c465a7; /* Adjust border size and color */
+    border-radius: 15px;
+    margin-bottom: 40px;
+    transition: 0.7s ease;
+  }
+  
+  
+  .button-container2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40vh; /* Adjust the height as needed */
+  }
+  
+  .main-btn-work {
+    color: #fff;
+    background-color: #00214b;
+    text-decoration: none;
+    font-size: 1.7vw; /* Adjust font size */
+    font-weight: 700; /* Adjust font weight */
+    display: inline-block;
+    padding: 1em 2em; /* Adjust padding */
+    letter-spacing: 1px;
+    border: 10px solid #00214b; /* Adjust border size and color */
+    border-radius: 15px;
+    margin-bottom: 40px;
+    transition: 0.7s ease;
+  }
+  
+  
+  
+  .main-btn:hover {
+    background-color: #00214b;
+    transform: scale(1.1);
+  }

@@ -4,7 +4,7 @@ import './navbar.css';
 import logo from "../../pages/img/logo.png";
 import { checkAuthentication } from './auth';
 import { useNavigate } from 'react-router-dom';
-import challenge from "../../pages/Challenge"
+import challenge from "../../pages/challenge/Challenge"
 
 const NavBar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);

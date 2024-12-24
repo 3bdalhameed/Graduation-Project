@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./challenge.css"; // Add the CSS below for styling.
-import NavBar from "../components/Navbar/navbar";
+import NavBar from "../../components/Navbar/navbar";
 
 const App = () => {
   // State for managing challenges

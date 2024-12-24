@@ -1,0 +1,20 @@
+
+.contact .icon{
+    font-size: 4.5em;
+  }
+  
+  .contact .info h3 {
+    color: #000;
+  }
+  
+  .contact .info p {
+    font-size: 1.8vw;
+  }
+  
+  .cards-contact div img {
+    position: relative; 
+    margin-left: 25%;
+    margin-top: 10%;
+    justify-content: center;
+    width: 10vw;
+  }

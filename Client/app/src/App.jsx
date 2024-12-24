@@ -1,11 +1,11 @@
 // src/App.js
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import SignUp from "./pages/signup";  // Adjust path if necessary
-import Home from "./pages/Home";      // Adjust path if necessary
-import Login from "./pages/login";    // Import Login component if it exists
+import SignUp from "./pages/registration/signup";  // Adjust path if necessary
+import Home from "./pages/home/Home";      // Adjust path if necessary
+import Login from "./pages/registration/login";    // Import Login component if it exists
 import Test from "./pages/test";
-import Createchallenge from "./pages/Challenge";
+import Createchallenge from "./pages/challenge/Challenge";
 
 
 function App() {
