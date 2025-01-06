@@ -14,7 +14,7 @@ class Teams(models.Model):
 class Users(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     team = models.ForeignKey(Teams, on_delete=models.CASCADE, related_name='members')
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50) # your real name
     email = models.EmailField(max_length=50)  # Unique already managed by User model
     created_at = models.DateTimeField(auto_now_add=True)  # Track creation time
 

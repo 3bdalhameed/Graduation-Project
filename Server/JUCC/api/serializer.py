@@ -20,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Challenge
-        fields = ['name', 'category', 'subcategory', 'difficulty', 'creator']        
+        fields = ['name', 'category', 'subcategory', 'difficulty', 'creator']
     def create(self, validated_data):
         """
         Overriding the create method to create a new Challenge instance.

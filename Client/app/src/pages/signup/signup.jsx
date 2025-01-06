@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Navbar from "../components/Navbar/navbar";
+import Navbar from "../../components/Navbar/navbar";
 
 function SignUp() {
   const [username, setUsername] = useState("");

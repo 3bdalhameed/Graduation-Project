@@ -1,150 +1,161 @@
 import React, { useState } from "react";
-import "./challenge.css"; // Add the CSS below for styling.
 import NavBar from "../../components/Navbar/navbar";
 
 const App = () => {
-  // State for managing challenges
-  const [challenges, setChallenges] = useState([
-    { title: "Verify", difficulty: "Easy", category: "Forensics", author: "Jeffery John", description: "People keep trying to trick my players with imitation flags. I want to make sure they get the real thing! I'm going to provide the SHA-256 hash and a decrypt script to help you know that my flags are legitimate." },
-  ]);
-
-  // State for modal visibility
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedChallenge, setSelectedChallenge] = useState(null);
 
-  // State for new challenge input
-  const [newChallenge, setNewChallenge] = useState({
-    title: "",
-    difficulty: "",
-    category: "",
-    author: "",
-    description: "",
-  });
+  const challenges = [
+    {
+      id: 1,
+      title: "Crypto Challenge",
+      difficulty: "Medium",
+      category: "Cryptography",
+      author: "Alice",
+      description: "Decrypt the given ciphertext to retrieve the flag.",
+    },
+    {
+      id: 2,
+      title: "Forensics Task",
+      difficulty: "Easy",
+      category: "Forensics",
+      author: "Bob",
+      description:
+        "Analyze the provided image file to find hidden information.",
+    },
+    {
+      id: 3,
+      title: "Web Exploit",
+      difficulty: "Hard",
+      category: "Web",
+      author: "Eve",
+      description: "Find and exploit the vulnerabilities in the given website.",
+    },
+  ];
 
-  // Toggle modal visibility and set selected challenge
-  const toggleModal = (challenge) => {
+  const toggleModal = (challenge = null) => {
     setSelectedChallenge(challenge);
     setModalOpen(!isModalOpen);
   };
 
-  // Function to add a new challenge
-  const addChallenge = () => {
-    if (newChallenge.title && newChallenge.difficulty && newChallenge.category) {
-      setChallenges([...challenges, newChallenge]);
-      setNewChallenge({ title: "", difficulty: "", category: "", author: "", description: "" });
-    } else {
-      alert("Please fill out all required fields!");
-    }
-  };
-
   return (
     <>
-      <header>
+      <header className="bg-gray-900 text-white shadow-md">
         <NavBar />
       </header>
-      <div className="app">
+      <div className="flex flex-col md:flex-row min-h-screen">
         {/* Sidebar */}
-        <aside className="sidebar">
-          <div className="filters">
-            <label>
-              <input type="checkbox" />
-              Hide Solved
-            </label>
-            <label>
-              <input type="checkbox" />
-              Show Bookmarked
-            </label>
-            <label>
-              <input type="checkbox" />
-              Show Assigned
-            </label>
-            <input type="text" placeholder="Search by Name" className="search-bar" />
-          </div>
-          <div className="difficulty-filter">
-            <h4>Difficulty</h4>
-            <button>All</button>
-            <button>Easy</button>
-            <button>Medium</button>
-            <button>Hard</button>
+        <aside className="w-full md:w-64 bg-gray-800 text-white p-6">
+          <h2 className="text-2xl font-bold mb-4">Filters</h2>
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Difficulty</h3>
+              <div className="space-y-2">
+                <button className="w-full py-2 px-4 bg-gray-700 rounded hover:bg-gray-600">
+                  All
+                </button>
+                <button className="w-full py-2 px-4 bg-green-500 rounded hover:bg-green-400">
+                  Easy
+                </button>
+                <button className="w-full py-2 px-4 bg-yellow-500 rounded hover:bg-yellow-400">
+                  Medium
+                </button>
+                <button className="w-full py-2 px-4 bg-red-500 rounded hover:bg-red-400">
+                  Hard
+                </button>
+              </div>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Categories</h3>
+              <div className="space-y-2">
+                <button className="w-full py-2 px-4 bg-blue-500 rounded hover:bg-blue-400">
+                  Cryptography
+                </button>
+                <button className="w-full py-2 px-4 bg-purple-500 rounded hover:bg-purple-400">
+                  Forensics
+                </button>
+                <button className="w-full py-2 px-4 bg-teal-500 rounded hover:bg-teal-400">
+                  Web
+                </button>
+              </div>
+            </div>
           </div>
         </aside>
 
         {/* Main Content */}
-        <main className="main-content">
-          {/* Existing Challenges */}
-          {challenges.map((challenge, index) => (
-            <div className="Ccard" key={index} onClick={() => toggleModal(challenge)}>
-              <h3>{challenge.title}</h3>
-              <p>Difficulty: {challenge.difficulty}</p>
-              <p>Category: {challenge.category}</p>
-            </div>
-          ))}
+        <main className="flex-1 p-6 bg-gray-100">
+          <h1 className="text-3xl font-bold mb-6">Challenges</h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {challenges.map((challenge) => (
+              <div
+                key={challenge.id}
+                className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition cursor-pointer"
+                onClick={() => toggleModal(challenge)}
+              >
+                <h3 className="text-xl font-bold mb-2">{challenge.title}</h3>
+                <div className="flex items-center space-x-2 mb-2">
+                  <span
+                    className={`text-xs font-semibold py-1 px-2 rounded ${
+                      challenge.difficulty === "Easy"
+                        ? "bg-green-500 text-white"
+                        : challenge.difficulty === "Medium"
+                        ? "bg-yellow-500 text-white"
+                        : "bg-red-500 text-white"
+                    }`}
+                  >
+                    {challenge.difficulty}
+                  </span>
+                  <span className="bg-blue-500 text-white text-xs font-semibold py-1 px-2 rounded">
+                    {challenge.category}
+                  </span>
+                </div>
+                <p className="text-gray-600 text-sm">Author: {challenge.author}</p>
+              </div>
+            ))}
+          </div>
 
           {/* Modal */}
           {isModalOpen && selectedChallenge && (
-            <div className="modal-overlay">
-              <div className="modal">
-                <button className="close-button" onClick={() => setModalOpen(false)}>
+            <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full relative">
+                <button
+                  className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-2xl"
+                  onClick={() => toggleModal()}
+                  aria-label="Close"
+                >
                   &times;
                 </button>
-                <div className="modal-header">
-                  <h2>{selectedChallenge.title}</h2>
-                  <div className="badges">
-                    <span className={`badge ${selectedChallenge.difficulty.toLowerCase()}`}>
-                      {selectedChallenge.difficulty}
-                    </span>
-                    <span className={`badge ${selectedChallenge.category.toLowerCase()}`}>
-                      {selectedChallenge.category}
-                    </span>
-                  </div>
+                <h2 className="text-2xl font-bold mb-4">
+                  {selectedChallenge.title}
+                </h2>
+                <div className="flex items-center space-x-2 mb-4">
+                  <span
+                    className={`text-xs font-semibold py-1 px-2 rounded ${
+                      selectedChallenge.difficulty === "Easy"
+                        ? "bg-green-500 text-white"
+                        : selectedChallenge.difficulty === "Medium"
+                        ? "bg-yellow-500 text-white"
+                        : "bg-red-500 text-white"
+                    }`}
+                  >
+                    {selectedChallenge.difficulty}
+                  </span>
+                  <span className="bg-blue-500 text-white text-xs font-semibold py-1 px-2 rounded">
+                    {selectedChallenge.category}
+                  </span>
                 </div>
-                <p className="author">AUTHOR: {selectedChallenge.author || "Unknown"}</p>
-                <p className="description">{selectedChallenge.description}</p>
-                <button className="launch-button">Launch Instance</button>
-                <div className="submit-section">
-                  <input type="text" placeholder="JUccCTF(FLAG)" className="flag-input" />
-                  <button className="submit-button">Submit Flag</button>
-                </div>
+                <p className="text-gray-700 mb-4">{selectedChallenge.description}</p>
+                <input
+                  type="text"
+                  placeholder="Enter your flag"
+                  className="w-full p-3 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button className="w-full py-2 bg-green-500 text-white rounded hover:bg-green-400">
+                  Submit Flag
+                </button>
               </div>
             </div>
           )}
-
-          {/* Add New Challenge Form */}
-          <div className="add-challenge-form">
-            <h3>Add a New Challenge</h3>
-            <input
-              type="text"
-              placeholder="Title"
-              value={newChallenge.title}
-              onChange={(e) => setNewChallenge({ ...newChallenge, title: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Difficulty (Easy, Medium, Hard)"
-              value={newChallenge.difficulty}
-              onChange={(e) => setNewChallenge({ ...newChallenge, difficulty: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Category"
-              value={newChallenge.category}
-              onChange={(e) => setNewChallenge({ ...newChallenge, category: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Author"
-              value={newChallenge.author}
-              onChange={(e) => setNewChallenge({ ...newChallenge, author: e.target.value })}
-            />
-            <textarea
-              placeholder="Description"
-              value={newChallenge.description}
-              onChange={(e) => setNewChallenge({ ...newChallenge, description: e.target.value })}
-            />
-            <button className="add-button" onClick={addChallenge}>
-              Add Challenge
-            </button>
-          </div>
         </main>
       </div>
     </>

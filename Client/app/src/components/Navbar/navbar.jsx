@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
-import { FaCog, FaBell, FaFlag, FaUser, FaUsers, FaGavel, FaChartBar } from 'react-icons/fa';
-import './navbar.css';
+import React, { useState } from "react";
+import {
+  FaCog,
+  FaBell,
+  FaFlag,
+  FaUser,
+  FaUsers,
+  FaGavel,
+  FaChartBar,
+} from "react-icons/fa";
+import { checkAuthentication } from "./auth";
+import { useNavigate } from "react-router-dom";
 import logo from "../../pages/img/logo.png";
-import { checkAuthentication } from './auth';
-import { useNavigate } from 'react-router-dom';
-import challenge from "../../pages/challenge/Challenge"
 
 const NavBar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
@@ -17,61 +23,84 @@ const NavBar = () => {
   const handleAuthRedirect = async (path) => {
     const isAuthenticated = await checkAuthentication();
     if (isAuthenticated) {
-        navigate(path);
+      navigate(path);
     } else {
-        navigate("/login");
+      navigate("/login");
     }
   };
 
   return (
-    <nav className="navbar">
-      <a href="/">
-        <img src={logo} alt="logo" />
-      </a>
-      <div className="burger-menu" onClick={toggleMenu}>
-        ☰
-      </div>
+    <nav className="bg-gray-900 text-white shadow-md">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        {/* Logo */}
+        <a href="/" className="flex items-center">
+          <img src={logo} alt="Logo" className="h-10 w-auto" />
+        </a>
 
-      <ul className={`nav-items ${isMenuOpen ? 'show' : ''}`}>
-        <li className="nav-item">
-          <FaGavel className="nav-icon" />
-          <a href="Rules">
-          <span>Rules</span>
-          </a>
-        </li>
-        <li className="nav-item">
-          <FaChartBar className="nav-icon" />
-          <a href="Scorevoard">
-            <span>Scoreboard</span>
-          </a>
-        </li>
-        <li className="nav-item">
-          <FaFlag className="nav-icon" />
-          <a href="challenge">
-            <span>Challenges</span>
-          </a>
-        </li>
-        <li className="nav-item">
-          <FaBell className="nav-icon" />
-          <a href="Notifications">
-            <span>Notifications</span>
-          </a>
-        </li>
-        <li className="nav-item dropdown">
-          <FaUser className="nav-icon" />
-          <span><a onClick={() => handleAuthRedirect("/users")}>Users</a></span>
-        </li>
-        <li className="nav-item dropdown">
-          <FaUsers className="nav-icon" />
-          <span><a onClick={() => handleAuthRedirect("/teams")}>Teams</a></span>
-        </li>
-        <li className="nav-item">
-          <FaCog className="nav-icon" />
-          <a href="Settings">
-            <span>Settings</span>
-          </a>
-        </li>
-      </ul>
+        {/* Burger Menu for Mobile */}
+        <div
+          className="text-xl md:hidden cursor-pointer"
+          onClick={toggleMenu}
+        >
+          ☰
+        </div>
+
+        {/* Navigation Links */}
+        <ul
+          className={`flex-col md:flex-row md:flex items-center space-y-4 md:space-y-0 md:space-x-8 ${
+            isMenuOpen ? "flex" : "hidden"
+          } md:static absolute top-16 left-0 w-full md:w-auto bg-gray-900 md:bg-transparent md:py-0 py-6 md:shadow-none shadow-lg z-50`}
+        >
+          <li className="flex items-center">
+            <FaGavel className="mr-2" />
+            <a href="/rules" className="hover:text-blue-400">
+              Rules
+            </a>
+          </li>
+          <li className="flex items-center">
+            <FaChartBar className="mr-2" />
+            <a href="/scoreboard" className="hover:text-blue-400">
+              Scoreboard
+            </a>
+          </li>
+          <li className="flex items-center">
+            <FaFlag className="mr-2" />
+            <a href="/challenge" className="hover:text-blue-400">
+              Challenges
+            </a>
+          </li>
+          <li className="flex items-center">
+            <FaBell className="mr-2" />
+            <a href="/notifications" className="hover:text-blue-400">
+              Notifications
+            </a>
+          </li>
+          <li className="flex items-center">
+            <FaUser className="mr-2" />
+            <a
+              onClick={() => handleAuthRedirect("/users")}
+              className="hover:text-blue-400 cursor-pointer"
+            >
+              Users
+            </a>
+          </li>
+          <li className="flex items-center">
+            <FaUsers className="mr-2" />
+            <a
+              onClick={() => handleAuthRedirect("/teams")}
+              className="hover:text-blue-400 cursor-pointer"
+            >
+              Teams
+            </a>
+          </li>
+          <li className="flex items-center">
+            <FaCog className="mr-2" />
+            <a href="/settings" className="hover:text-blue-400">
+              Settings
+            </a>
+          </li>
+        </ul>
+      </div>
     </nav>
   );
 };

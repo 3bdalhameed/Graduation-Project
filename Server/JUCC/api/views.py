@@ -34,7 +34,7 @@ def signUp_view(request):
     username = request.data.get('username')
     email = request.data.get('email')
     password = request.data.get('password')
-    
+
     # Check if required fields are present
     if not username or not email or not password:
         return Response({"error": "Username, email, and password are required"}, status=400)

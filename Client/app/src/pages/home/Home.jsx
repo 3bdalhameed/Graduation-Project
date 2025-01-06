@@ -1,6 +1,5 @@
 // src/components/Home.js
 import React from "react";
-import "./home.css";
 import Main from "../../components/main/main";
 import Project from "../../components/project/project";
 import Contact from "../../components/contact/contact";
@@ -18,7 +17,6 @@ function Home() {
         <Contact />
         <Footer />
       </header>
-
   );
 }
 
