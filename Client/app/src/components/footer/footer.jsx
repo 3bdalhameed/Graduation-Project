@@ -1,12 +1,13 @@
 import React from "react";
 import logo from "../../pages/img/logo.png";
 
-function Footer() {
+function FooterSection() {
   return (
-    <footer className="bg-gray-900 text-white py-6">
+    <footer className="bg-gray-800 dark:bg-gray-700 text-white py-6">
       <div className="container mx-auto text-center">
         <p className="text-lg font-semibold mb-4">
-          Copyright &copy; <span className="text-blue-500">JUCC</span> 2023
+          Copyright &copy;{" "}
+          <span className="text-blue-500">JUCC</span> 2025
         </p>
         <div className="flex justify-center space-x-6">
           {/* Social Media Icons */}
@@ -15,7 +16,7 @@ function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Facebook"
-            className="hover:text-blue-400"
+            className="hover:text-blue-500"
           >
             <img
               src={logo}
@@ -28,7 +29,7 @@ function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Twitter"
-            className="hover:text-blue-400"
+            className="hover:text-blue-500"
           >
             <img
               src={logo}
@@ -41,7 +42,7 @@ function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Pinterest"
-            className="hover:text-blue-400"
+            className="hover:text-blue-500"
           >
             <img
               src={logo}
@@ -55,4 +56,4 @@ function Footer() {
   );
 }
 
-export default Footer;
+export default FooterSection;

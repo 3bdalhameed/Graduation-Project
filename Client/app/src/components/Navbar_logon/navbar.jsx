@@ -82,9 +82,21 @@ const NavBar = () => {
             </a>
           </li>
           <li className="flex items-center">
+            <FaChartBar className="mr-2" />
+            <a href="/scoreboard" className="hover:text-blue-400">
+              Scoreboard
+            </a>
+          </li>
+          <li className="flex items-center">
             <FaFlag className="mr-2" />
             <a href="/challenge" className="hover:text-blue-400">
               Challenges
+            </a>
+          </li>
+          <li className="flex items-center">
+            <FaBell className="mr-2" />
+            <a href="/notifications" className="hover:text-blue-400">
+              Notifications
             </a>
           </li>
           <li className="flex items-center">
@@ -106,12 +118,9 @@ const NavBar = () => {
             </a>
           </li>
           <li className="flex items-center">
-            <FaUsers className="mr-2" />
-            <a
-              onClick={() => handleAuthRedirect("/login")}
-              className="hover:text-blue-400 cursor-pointer"
-            >
-              Login
+            <FaCog className="mr-2" />
+            <a href="/settings" className="hover:text-blue-400">
+              Settings
             </a>
           </li>
         </ul>

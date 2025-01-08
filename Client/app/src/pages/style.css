@@ -1,3 +1,55 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+    @apply transition-colors duration-200;
+}
+
+/* Tailwind CSS utility for moving background animation */
+@keyframes background {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  .animate-background {
+    background-size: 400% 400%;
+    animation: background 15s ease infinite;
+    opacity: 0.15; /* Subtle effect */
+  }
+
+  @keyframes move-background {
+    0% {
+      transform: translate(0, 0);
+    }
+    100% {
+      transform: translate(-50%, -50%);
+    }
+  }
+  
+  .bg-grid-pattern {
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 255, 0, 0.1) 0px,
+        rgba(0, 255, 0, 0.1) 1px,
+        transparent 1px,
+        transparent 100%
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(0, 255, 0, 0.1) 0px,
+        rgba(0, 255, 0, 0.1) 1px,
+        transparent 1px,
+        transparent 100%
+      );
+    background-size: 50px 50px;
+    animation: move-background 10s linear infinite;
+  }
+  
