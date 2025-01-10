@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SignUp from "./pages/signup.jsx";
 import Home from "./pages/Home.jsx";
+import HomeLogon from "./pages/HomeLogon.jsx";
 import Login from "./pages/login.jsx";
 import Test from "./pages/test";
 import Createchallenge from "./pages/challenge.jsx";
@@ -15,6 +16,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/home" element={<HomeLogon />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/test" element={<Test />} />

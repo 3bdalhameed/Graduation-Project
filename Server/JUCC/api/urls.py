@@ -1,8 +1,10 @@
 from django.urls import path
-from .views import login_view, signUp_view, Challenge_view
+from .views import LoginView, SignUpView, ChallengeView, VerifySignUpOTPView
 
 urlpatterns = [
-    path("login/", login_view, name="login"),
-    path("signup/", signUp_view, name="signup"),
-    path("challenge/", Challenge_view, name="challege")
+    path("login/", LoginView.as_view(), name="login"),
+    path("signup/", SignUpView.as_view(), name="signup"),
+    path("challenge/", ChallengeView.as_view(), name="challege"),
+    path("verify/", VerifySignUpOTPView.as_view(), name="verify"),
+    
 ]

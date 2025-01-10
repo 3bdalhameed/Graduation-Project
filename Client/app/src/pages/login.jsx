@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar_logon/navbar";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [username, setUsername] = useState(""); // Controlled input
   const [password, setPassword] = useState(""); // Controlled input
   const [loading, setLoading] = useState(false); // Loading state for the login button
+  const navigate = useNavigate();
 
   const handleLogin = async (event) => {
     event.preventDefault(); // Prevent page reload
@@ -21,6 +23,7 @@ function Login() {
       if (response.ok) {
         const data = await response.json();
         alert("Login successful");
+        navigate("/home");
         // Save token to localStorage or other state management
         localStorage.setItem("token", data.token);
       } else {
