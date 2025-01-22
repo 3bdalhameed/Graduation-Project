@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Chart as ChartJS,
   LineElement,
@@ -15,6 +16,40 @@ import NavBar from "../components/Navbar_logon/navbar";
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Legend, Tooltip);
 
 function Scoreboard() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const validateToken = async () => {
+      const token = localStorage.getItem("access_token");
+      console.log("Token sent for validation:", token);
+      if (!token) {
+        console.error("No token found");
+        navigate("/login");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:8000/api/validate-token/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Token is valid:", data.payload);
+        } else {
+          console.error("Invalid token");
+          navigate("/login");
+        }
+      } catch (error) {
+        console.error("Error validating token:", error);
+        navigate("/login");
+      }
+    };
+    validateToken();
+  }, [navigate]);
+  
   const players = [
     { rank: 1, name: "3bdalhameed", points: 3759 },
     { rank: 2, name: "Omar", points: 3710 },
@@ -23,6 +58,7 @@ function Scoreboard() {
     { rank: 5, name: "wiss", points: 3097 },
   ];
 
+  
   // Chart data
   const chartData = {
     labels: ["01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00"],

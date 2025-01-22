@@ -27,7 +27,6 @@ function UserDashboard() {
   // User State
   const [user, setUser] = useState({
     name: "3bdalhameed",
-    email: "3bdalhameed@example.com",
     rank: "1st place",
     points: 3759,
     profilePicture: null,
@@ -143,13 +142,6 @@ function UserDashboard() {
                 type="text"
                 name="name"
                 value={user.name}
-                onChange={handleInputChange}
-                className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white rounded-lg px-4 py-2 w-60"
-              />
-              <input
-                type="email"
-                name="email"
-                value={user.email}
                 onChange={handleInputChange}
                 className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white rounded-lg px-4 py-2 w-60"
               />

@@ -9,6 +9,9 @@ import Createchallenge from "./pages/challenge.jsx";
 import Scoreboard from "./pages/scoreboard.jsx";
 import Rules from "./pages/rules.jsx";
 import Setting from "./pages/setting.jsx";
+import Users from "./pages/users.jsx";
+import Createteam from "./pages/createjointeam.jsx";
+import Teamprof from "./pages/teamprof.jsx";
 import "./pages/style.css";
 
 function App() {
@@ -23,6 +26,9 @@ function App() {
           <Route path="/challenge" element={<Createchallenge />} />
           <Route path="/scoreboard" element={<Scoreboard />} />
           <Route path="/rules" element={<Rules />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/createteam" element={<Createteam />} />
+          <Route path="/teamprofile" element={<Teamprof />} />
           <Route path="/settings" element={<Setting />} />
         </Routes>
       </Router>

@@ -7,6 +7,7 @@ import {
   FaUsers,
   FaGavel,
   FaChartBar,
+  FaDoorOpen,
 } from "react-icons/fa";
 import { checkAuthentication } from "./auth";
 import { useNavigate } from "react-router-dom";
@@ -22,14 +23,41 @@ const NavBar = () => {
     setMenuOpen(!isMenuOpen);
   };
 
-  const handleAuthRedirect = async (path) => {
-    const isAuthenticated = await checkAuthentication();
-    if (isAuthenticated) {
-      navigate(path);
-    } else {
-      navigate("/login");
+
+
+  const logout = async () => {
+    // Remove the access token from localStorage
+    localStorage.removeItem("access_token");
+  
+    // Optionally remove the refresh token if stored
+    const refreshToken = localStorage.getItem("refresh_token");
+    if (refreshToken) {
+      localStorage.removeItem("refresh_token");
     }
+  
+    setIsLoggedin(false);
+  
+    try {
+      const response = await fetch("http://localhost:8000/api/logout/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh_token: refreshToken }), // Send refresh token for blacklisting
+      });
+  
+      if (response.ok) {
+        console.log("Logout successful");
+      } else {
+        console.error("Failed to logout:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  
+    // Redirect to login or home page
+    navigate("/login");
   };
+  
+
 
   const handleScroll = () => {
     if (window.scrollY > lastScrollY) {
@@ -56,7 +84,7 @@ const NavBar = () => {
     >
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
-        <a href="/" className="flex items-center">
+        <a href="/home" className="flex items-center">
           <img src={logo} alt="Logo" className="h-10 w-auto" />
         </a>
 
@@ -102,7 +130,7 @@ const NavBar = () => {
           <li className="flex items-center">
             <FaUser className="mr-2" />
             <a
-              onClick={() => handleAuthRedirect("/users")}
+              href="/users"
               className="hover:text-blue-400 cursor-pointer"
             >
               Users
@@ -111,7 +139,6 @@ const NavBar = () => {
           <li className="flex items-center">
             <FaUsers className="mr-2" />
             <a
-              onClick={() => handleAuthRedirect("/teams")}
               className="hover:text-blue-400 cursor-pointer"
             >
               Teams
@@ -121,6 +148,15 @@ const NavBar = () => {
             <FaCog className="mr-2" />
             <a href="/settings" className="hover:text-blue-400">
               Settings
+            </a>
+          </li>
+          <li className="flex items-center">
+            <a 
+            href="/" 
+            className="hover:text-blue-400 rounded"
+            onClick={logout}
+            >
+            <FaDoorOpen className="mr-2" />
             </a>
           </li>
         </ul>

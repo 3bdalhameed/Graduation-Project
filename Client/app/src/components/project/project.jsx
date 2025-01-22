@@ -11,9 +11,9 @@ function ProjectSection() {
   ];
 
   const portals = [
-    { src: playctf, title: "User Portal", description: "Manage your profile and activities." },
-    { src: playctf, title: "Admin Portal", description: "Access administrative tools and analytics." },
-    { src: playctf, title: "Team Portal", description: "Collaborate and manage your team." },
+    { src: playctf, title: "CTF Portal", description: "Manage your profile and activities." },
+    { src: playctf, title: "School Portal", description: "Access administrative tools and analytics." },
+    { src: playctf, title: "Learning Portal", description: "Collaborate and manage your team." },
   ];
 
   return (

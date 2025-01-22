@@ -15,7 +15,7 @@ function MainSection() {
             Welcome to <span className="text-blue-600">JuCC</span>
           </p>
           <p className="text-lg text-gray-300 mb-6 leading-relaxed">
-            Enhance your development experience with exciting challenges, engaging projects, and a vibrant community.
+            Enhance your Hacking experience with exciting challenges, and a vibrant community.
           </p>
           <button className=" bg-blue-800 rounded-lg shadow-lg">
             <Button />

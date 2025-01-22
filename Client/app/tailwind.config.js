@@ -13,6 +13,9 @@ export default {
     "./src/pages/scoreboard.jsx",
     "./src/pages/rules.jsx",
     "./src/pages/setting.jsx",
+    "./src/pages/users.jsx",
+    "./src/pages/createjointeam.jsx",
+    "./src/pages/teamprof.jsx",
   ],
   theme: {
     theme: {

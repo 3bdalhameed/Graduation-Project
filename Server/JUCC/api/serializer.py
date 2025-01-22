@@ -1,11 +1,11 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Challenge
+from .models import Challenge, Team, TeamMember
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'password', 'email']
+        fields = ['id', 'username', 'password', 'email']
         extra_kwargs = {'password': {'write_only': True}} # -> Hide password 
 
     def create(self, validated_data):
@@ -16,6 +16,24 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password']) # Hash password
         user.save()
         return user
+
+#########################################################################################################
+
+from rest_framework import serializers
+
+class TeamMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TeamMember
+        fields = ['id', 'user', 'role']
+
+class TeamSerializer(serializers.ModelSerializer):
+    members = TeamMemberSerializer(source='member', many=True)
+
+    class Meta:
+        model = Team
+        fields = ['id', 'name', 'code', 'points', 'rank', 'created_by', 'members']
+
+#########################################################################################################
 
 class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Navbar from "../components/Navbar_logon/navbar";
+import Navbar from "../components/Navbar/navbar";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
@@ -22,10 +22,10 @@ function Login() {
 
       if (response.ok) {
         const data = await response.json();
-        alert("Login successful");
-        navigate("/home");
+        console.log("Access Token:", data.access_token); // Log the token
+        localStorage.setItem("access_token", data.access_token); // Save access token
+        navigate("/createteam");
         // Save token to localStorage or other state management
-        localStorage.setItem("token", data.token);
       } else {
         alert("Login failed. Please check your credentials.");
       }

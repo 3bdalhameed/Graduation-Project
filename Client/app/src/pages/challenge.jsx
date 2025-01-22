@@ -1,7 +1,11 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import NavBar from "../components/Navbar_logon/navbar";
+import { useNavigate } from "react-router-dom";
+
 
 const App = () => {
+  const navigate = useNavigate();
+  const [message, setMessage] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedChallenge, setSelectedChallenge] = useState(null);
   const [activeFilters, setActiveFilters] = useState({
@@ -10,6 +14,38 @@ const App = () => {
     subcategory: "All",
   });
 
+
+  useEffect(() => {
+    const validateToken = async () => {
+      const token = localStorage.getItem("access_token");
+      console.log("Token sent for validation:", token);
+      if (!token) {
+        console.error("No token found");
+        navigate("/login");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:8000/api/validate-token/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Token is valid:", data.payload);
+        } else {
+          console.error("Invalid token");
+          navigate("/login");
+        }
+      } catch (error) {
+        console.error("Error validating token:", error);
+        navigate("/login");
+      }
+    };
+    validateToken();
+  }, [navigate]);
 
   const challenges = [
     {

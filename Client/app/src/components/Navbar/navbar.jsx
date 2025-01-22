@@ -1,14 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
-import {
-  FaCog,
-  FaBell,
-  FaFlag,
-  FaUser,
-  FaUsers,
-  FaGavel,
-  FaChartBar,
-} from "react-icons/fa";
-import { checkAuthentication } from "./auth";
+import React, { useState, useEffect } from "react";
+import { FaFlag, FaUser, FaUsers, FaGavel } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import logo from "../../pages/img/JuCC_logo.png";
 
@@ -23,8 +14,8 @@ const NavBar = () => {
   };
 
   const handleAuthRedirect = async (path) => {
-    const isAuthenticated = await checkAuthentication();
-    if (isAuthenticated) {
+    const token = localStorage.getItem("access_token");
+    if (token) {
       navigate(path);
     } else {
       navigate("/login");
@@ -42,7 +33,6 @@ const NavBar = () => {
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
-
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };

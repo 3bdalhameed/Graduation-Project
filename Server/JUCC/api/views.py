@@ -7,14 +7,22 @@ from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
-from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK, HTTP_201_CREATED
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK, HTTP_201_CREATED, HTTP_205_RESET_CONTENT
 from .serializer import ChallengeSerializer
 from datetime import datetime, timedelta
+from rest_framework_simplejwt.exceptions import TokenError
 import random
 import re
 
 Users = get_user_model()
 otp_storage = {}  # Store OTPs in-memory
+
+
+class HomeView(APIView):
+    permission_classes = (IsAuthenticated, )   
+    def get(self, request):
+        content = {'message': 'Welcome to the JWT Authentication page using React Js and Django!'}   
+        return Response(content)
 
 ###############################################################################################################################################
 class TokenHelper:
@@ -47,22 +55,25 @@ class LoginView(APIView):
 
         user = authenticate(username=username, password=password)
         if user:
-            otp = random.randint(100000, 999999)
-            otp_storage[user.username] = {"otp": otp, "expires_at": datetime.now() + timedelta(minutes=5)}
+            tokens = RefreshToken.for_user(user)
+            return Response({
+                "access_token": str(tokens.access_token),
+                "refresh_token": str(tokens),
+            }, status=200)
+        return Response({"error": "Invalid credentials"}, status=400)
 
-            try:
-                send_mail(
-                    "Your OTP Code",
-                    f"Your One-Time Password (OTP) is: {otp}",
-                    settings.EMAIL_HOST_USER,
-                    [user.email],
-                )
-                return Response({"message": "OTP sent to your email. Please verify."}, status=HTTP_200_OK)
-            except Exception as e:
-                return Response({"error": f"Failed to send OTP. Error: {e}"}, status=500)
+###############################################################################################################################################
 
-        return Response({"error": "Invalid username or password"}, status=HTTP_400_BAD_REQUEST)
-
+class LogoutView(APIView):     
+    permission_classes = (IsAuthenticated,)     
+    def post(self, request):
+          try:               
+              refresh_token = request.data["refresh_token"]               
+              token = RefreshToken(refresh_token)               
+              token.blacklist()               
+              return Response(status=HTTP_205_RESET_CONTENT)
+          except Exception as e:               
+              return Response(status=HTTP_400_BAD_REQUEST)
 ###############################################################################################################################################
 
 class SignUpView(APIView):
@@ -130,6 +141,8 @@ class VerifySignUpOTPView(APIView):
         del otp_storage[email]
         user = User.objects.create_user(username=username, email=email, password=password)
         return Response({"message": "Sign-up successful!"}, status=HTTP_200_OK)
+    
+###############################################################################################################################################
 
 class ChallengeView(APIView):
     permission_classes = [IsAuthenticated]
@@ -158,6 +171,37 @@ class ChallengeView(APIView):
 
 ###############################################################################################################################################
 
+from django.http import JsonResponse
+from django.contrib.auth.models import User
+from django.views import View
+
+class UsersListView(View):
+    def get(self, request, *args, **kwargs):
+        users = User.objects.values("username", "date_joined").order_by("-date_joined")
+        return JsonResponse(list(users), safe=False)
+
+###############################################################################################################################################
+
+class ValidateTokenView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        token = request.data.get("token")
+
+        if not token:
+            return Response({"error": "Token is required"}, status=400)
+
+        try:
+            access_token = AccessToken(token)
+            return Response({"valid": True, "payload": access_token.payload}, status=200)
+        except InvalidToken:
+            return Response({"valid": False, "error": "Invalid or expired token"}, status=400)
+        except TokenError as e:
+            return Response({"valid": False, "error": str(e)}, status=400)
+
+
+###############################################################################################################################################
+
 class AuthenticationCheckView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -169,3 +213,107 @@ class NotAuthenticatedView(APIView):
 
     def get(self, request):
         return Response({"authenticated": False}, status=HTTP_200_OK)
+
+###############################################################################################################################################
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .models import Team, TeamMember
+from .serializer import TeamSerializer
+import random
+import string
+
+def generate_unique_code():
+    while True:
+        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+        if not Team.objects.filter(code=code).exists():
+            return code
+
+class CreateTeamView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        team_name = request.data.get("team_name")
+        if not team_name:
+            return Response({"error": "Team name is required."}, status=400)
+
+        code = generate_unique_code()
+        try:
+            # Create the team
+            team = Team.objects.create(name=team_name, code=code, created_by=request.user)
+
+            # Add the creator as a TeamMember
+            TeamMember.objects.create(user=request.user, team=team, role="Admin")
+
+            return Response(
+                {"message": "Team created successfully.", "team_id": team.id},
+                status=201
+            )
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+###############################################################################################################################################
+
+class JoinTeamView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        code = request.data.get("code")
+        if not code:
+            return Response({"error": "Team code is required."}, status=400)
+
+        try:
+            team = Team.objects.get(code=code)
+        except Team.DoesNotExist:
+            return Response({"error": "Invalid team code."}, status=400)
+
+        if request.user in team.member.all():
+            return Response({"error": "You are already a member of this team."}, status=400)
+
+        team.members.add(request.user)
+        serializer = TeamSerializer(team)
+        return Response({"message": "Successfully joined the team!", "team": serializer.data}, status=200)
+
+###############################################################################################################################################
+
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+
+class TeamCheckView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Get the user's team information
+        team_member = TeamMember.objects.filter(user=request.user).first()
+
+        if team_member:
+            return Response({
+                "in_team": True,
+                "team_id": team_member.team.id,
+                "team_name": team_member.team.name,
+                "role": team_member.role
+            })
+
+        return Response({"in_team": False})
+
+
+###############################################################################################################################################
+
+from .models import Team
+from .serializer import TeamSerializer
+class TeamProfile(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, team_id):
+        try:
+            team = Team.objects.get(id=team_id)
+            if not team.member.filter(user=request.user).exists() and team.created_by != request.user:
+                return Response({"error": "You are not a member of this team"}, status=403)
+            
+            serializer = TeamSerializer(team)
+            return Response(serializer.data, status=200)
+        
+        except Team.DoesNotExist:
+            return Response({"error": "Team not Found"}, status=404)
