@@ -47,7 +47,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    # 'JUCC.middleware.DisableCSRF',
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
