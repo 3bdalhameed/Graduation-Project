@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar/navbar";
+import { useNavigate } from "react-router-dom";
 
 function SignUp() {
   const [username, setUsername] = useState("");
@@ -8,7 +9,7 @@ function SignUp() {
   const [gmail, setGmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
+  const navigate = useNavigate();
   const handleSignup = async (event) => {
     event.preventDefault();
     setError("");
@@ -29,11 +30,8 @@ function SignUp() {
       });
 
       if (response.ok) {
-        setSuccess("SignUp successful! You can now log in.");
-        setUsername("");
-        setPassword("");
-        setConfirmPassword("");
-        setGmail("");
+        setSuccess("OTP sent to your email. Please verify.");
+        navigate("/verify-otp", { state: { email: gmail, username, password } });
       } else {
         const errorData = await response.json();
         setError(errorData.error || "SignUp failed. Please try again.");
