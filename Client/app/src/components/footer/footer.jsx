@@ -1,4 +1,5 @@
 import React from "react";
+import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
 import logo from "../../pages/img/logo.png";
 
 function FooterSection() {
@@ -18,11 +19,7 @@ function FooterSection() {
             aria-label="Facebook"
             className="hover:text-blue-500"
           >
-            <img
-              src={logo}
-              alt="Facebook"
-              className="w-8 h-8 rounded-full"
-            />
+            <FaTwitter className="mr-2" />
           </a>
           <a
             href="https://twitter.com"
@@ -31,11 +28,7 @@ function FooterSection() {
             aria-label="Twitter"
             className="hover:text-blue-500"
           >
-            <img
-              src={logo}
-              alt="Twitter"
-              className="w-8 h-8 rounded-full"
-            />
+            <FaInstagram className="mr-2" />
           </a>
           <a
             href="https://pinterest.com"
@@ -44,11 +37,7 @@ function FooterSection() {
             aria-label="Pinterest"
             className="hover:text-blue-500"
           >
-            <img
-              src={logo}
-              alt="Pinterest"
-              className="w-8 h-8 rounded-full"
-            />
+            <FaFacebook className="mr-2" />
           </a>
         </div>
       </div>

@@ -65,16 +65,24 @@ class LoginView(APIView):
 ###############################################################################################################################################
 
 class LogoutView(APIView):     
-    permission_classes = (IsAuthenticated,)     
+    permission_classes = (IsAuthenticated,)
     def post(self, request):
-          try:               
-              refresh_token = request.data["refresh_token"]               
-              token = RefreshToken(refresh_token)               
-              token.blacklist()               
+          try:
+              refresh_token = request.data["refresh_token"]
+              token = RefreshToken(refresh_token)
+              token.blacklist()
               return Response(status=HTTP_205_RESET_CONTENT)
           except Exception as e:               
               return Response(status=HTTP_400_BAD_REQUEST)
 ###############################################################################################################################################
+
+import re
+from datetime import datetime
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_201_CREATED
+from django.contrib.auth.models import User
 
 class SignUpView(APIView):
     permission_classes = [AllowAny]
@@ -84,15 +92,19 @@ class SignUpView(APIView):
         email = request.data.get('email')
         password = request.data.get('password')
 
+        # Validate fields
         if not username or not email or not password:
             return Response({"error": "All fields are required"}, status=HTTP_400_BAD_REQUEST)
 
+        # Check if username is already taken
         if User.objects.filter(username=username).exists():
             return Response({"error": "Username already taken"}, status=HTTP_400_BAD_REQUEST)
 
+        # Check if email is already registered
         if User.objects.filter(email=email).exists():
             return Response({"error": "Email already registered"}, status=HTTP_400_BAD_REQUEST)
 
+        # Validate password complexity
         password_regex = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$'
         if not re.match(password_regex, password):
             return Response({
@@ -102,19 +114,13 @@ class SignUpView(APIView):
                 )
             }, status=HTTP_400_BAD_REQUEST)
 
-        otp = random.randint(100000, 999999)
-        otp_storage[email] = {"otp": otp, "expires_at": datetime.now() + timedelta(minutes=1)}
-
+        # Create the user
         try:
-            send_mail(
-                "Your Signup OTP Code",
-                f"Enter Your One-Time Password (OTP) to verify your email : {otp}",
-                settings.EMAIL_HOST_USER,
-                [email],
-            )
-            return Response({"message": "OTP sent to your email. Please verify."}, status=HTTP_200_OK)
+            user = User.objects.create_user(username=username, email=email, password=password)
+            return Response({"message": "User created successfully"}, status=HTTP_201_CREATED)
         except Exception as e:
-            return Response({"error": f"Failed to send OTP. Error: {e}"}, status=500)
+            return Response({"error": f"Failed to create user. Error: {e}"}, status=500)
+
 
 ###############################################################################################################################################
 
