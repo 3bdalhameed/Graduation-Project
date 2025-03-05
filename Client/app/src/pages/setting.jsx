@@ -156,14 +156,14 @@ function TeamAndUserDashboard() {
         </div>
 
         {/* Main Content */}
-        <div className="w-3/4 p-8">
+        <div className="top-1/3 w-3/4 p-8">
           {activeTab === "team" ? (
             loading ? (
               <p className="text-gray-700 dark:text-gray-300">Loading...</p>
             ) : error ? (
               <p className="text-red-500">{error}</p>
             ) : (
-              <div className="bottom-12 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+              <div className="top-1/3 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
                 <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">{teamData.name}</h1>
                 <div className="flex justify-between">
                   <div>

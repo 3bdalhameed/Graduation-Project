@@ -113,13 +113,20 @@ class SignUpView(APIView):
                     "contain uppercase and lowercase letters, a number, and a special character."
                 )
             }, status=HTTP_400_BAD_REQUEST)
-
-        # Create the user
+            
+        otp = random.randint(100000, 999999)
+        otp_storage[email] = {"otp": otp, "expires_at": datetime.now() + timedelta(minutes=1)}
+        
         try:
-            user = User.objects.create_user(username=username, email=email, password=password)
-            return Response({"message": "User created successfully"}, status=HTTP_201_CREATED)
+            send_mail(
+                "Your Signup OTP Code",
+                f"Enter Your One-Time Password (OTP) to verify your email : {otp}",
+                settings.EMAIL_HOST_USER,
+                [email],
+            )
+            return Response({"message": "OTP sent to your email. Please verify."}, status=HTTP_200_OK)
         except Exception as e:
-            return Response({"error": f"Failed to create user. Error: {e}"}, status=500)
+            return Response({"error": f"Failed to send OTP. Error: {e}"}, status=500)
 
 
 ###############################################################################################################################################
