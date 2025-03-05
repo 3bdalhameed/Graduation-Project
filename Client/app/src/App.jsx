@@ -12,6 +12,7 @@ import Setting from "./pages/setting.jsx";
 import Users from "./pages/users.jsx";
 import Createteam from "./pages/createjointeam.jsx";
 import Teamprof from "./pages/teamprof.jsx";
+import VerifyOTP from "./pages/VerifyOTP.jsx";
 import "./pages/style.css";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           <Route path="/home" element={<HomeLogon />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/verify-otp" element={<VerifyOTP />} />
           <Route path="/test" element={<Test />} />
           <Route path="/challenge" element={<Createchallenge />} />
           <Route path="/scoreboard" element={<Scoreboard />} />
