@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Pie, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -23,7 +23,12 @@ ChartJS.register(
   PointElement
 );
 
-function UserDashboard() {
+function TeamAndUserDashboard() {
+  const [teamData, setTeamData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState("team"); // 'team' or 'user'
+
   // User State
   const [user, setUser] = useState({
     name: "3bdalhameed",
@@ -32,8 +37,55 @@ function UserDashboard() {
     profilePicture: null,
   });
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [newScore, setNewScore] = useState(3759);
+  useEffect(() => {
+    // Fetch team data
+    const fetchTeamDetails = async () => {
+      const token = localStorage.getItem("access_token");
+      try {
+        const response = await fetch("http://localhost:8000/api/teams/check/", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.in_team) {
+            const teamResponse = await fetch(
+              `http://localhost:8000/api/teams/${data.team_id}/`,
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+
+            if (teamResponse.ok) {
+              const teamData = await teamResponse.json();
+              setTeamData(teamData);
+            } else {
+              setError("Failed to fetch team details.");
+            }
+          } else {
+            setError("You are not part of any team.");
+          }
+        } else {
+          setError("Failed to fetch user team status.");
+        }
+      } catch (err) {
+        console.error("Error:", err);
+        setError("An error occurred while fetching team data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeamDetails();
+  }, []);
 
   // Chart Data
   const keyPercentagesData = {
@@ -57,19 +109,11 @@ function UserDashboard() {
   };
 
   const scoreOverTimeData = {
-    labels: [
-      "01:45",
-      "02:00",
-      "02:15",
-      "02:30",
-      "02:45",
-      "03:00",
-      "03:15",
-    ],
+    labels: ["01:45", "02:00", "02:15", "02:30", "02:45", "03:00", "03:15"],
     datasets: [
       {
         label: "Score",
-        data: [200, 400, 600, 800, 1000, 1200, newScore],
+        data: [200, 400, 600, 800, 1000, 1200, user.points],
         borderColor: "#e74c3c",
       },
     ],
@@ -78,135 +122,98 @@ function UserDashboard() {
   const lineChartOptions = {
     responsive: true,
     plugins: {
-      legend: {
-        display: false,
-      },
+      legend: { display: false },
     },
     scales: {
-      x: {
-        ticks: { color: "#ffffff" },
-        title: { display: true, text: "Time", color: "#ffffff" },
-      },
-      y: {
-        ticks: { color: "#ffffff" },
-        title: { display: true, text: "Score", color: "#ffffff" },
-        beginAtZero: true,
-      },
+      x: { ticks: { color: "#ffffff" }, title: { text: "Time", color: "#ffffff" } },
+      y: { ticks: { color: "#ffffff" }, title: { text: "Score", color: "#ffffff" }, beginAtZero: true },
     },
-  };
-
-  // Handlers
-  const handleEditProfile = () => setIsEditing(true);
-  const handleSaveProfile = () => setIsEditing(false);
-  const handleInputChange = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
-  };
-  const handleProfilePictureChange = (e) => {
-    setUser({ ...user, profilePicture: URL.createObjectURL(e.target.files[0]) });
-  };
-
-  const updateScore = () => {
-    const randomScore = newScore + Math.floor(Math.random() * 500 + 100);
-    setNewScore(randomScore);
-    setUser({ ...user, points: randomScore });
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-black dark:text-white">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       {/* Navbar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 shadow-md">
-        <Navbar />
-      </div>
+      <Navbar />
 
-      {/* Header */}
-      <div className="bg-gray-200 dark:bg-gray-800 w-full py-6 text-center mt-16">
-        <div className="flex flex-col items-center">
-          <div className="w-24 h-24 mb-4">
-            <img
-              src={
-                user.profilePicture ||
-                "https://via.placeholder.com/150?text=Profile"
-              }
-              alt="Profile"
-              className="w-full h-full rounded-full object-cover"
-            />
-            <input
-              type="file"
-              onChange={handleProfilePictureChange}
-              className="mt-2 text-sm text-gray-800 dark:text-gray-300"
-            />
-          </div>
-          {isEditing ? (
-            <div className="space-y-4 mt-4">
-              <input
-                type="text"
-                name="name"
-                value={user.name}
-                onChange={handleInputChange}
-                className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white rounded-lg px-4 py-2 w-60"
-              />
-              <button
-                onClick={handleSaveProfile}
-                className="bg-green-500 px-4 py-2 rounded-lg hover:bg-green-600"
-              >
-                Save
-              </button>
-            </div>
+      {/* Sidebar Navigation */}
+      <div className="flex">
+        <div className=" w-1/4 bg-white dark:bg-gray-800 p-6 shadow-lg">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Dashboard</h2>
+          <ul>
+            <li
+              className={`p-3 cursor-pointer rounded-lg ${activeTab === "team" ? "bg-blue-500 text-white" : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"}`}
+              onClick={() => setActiveTab("team")}
+            >
+              Team Profile
+            </li>
+            <li
+              className={`p-3 cursor-pointer rounded-lg ${activeTab === "user" ? "bg-blue-500 text-white" : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"}`}
+              onClick={() => setActiveTab("user")}
+            >
+              User Dashboard
+            </li>
+          </ul>
+        </div>
+
+        {/* Main Content */}
+        <div className="w-3/4 p-8">
+          {activeTab === "team" ? (
+            loading ? (
+              <p className="text-gray-700 dark:text-gray-300">Loading...</p>
+            ) : error ? (
+              <p className="text-red-500">{error}</p>
+            ) : (
+              <div className="bottom-12 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">{teamData.name}</h1>
+                <div className="flex justify-between">
+                  <div>
+                    <p><strong>Team Code:</strong> {teamData.code}</p>
+                    <p><strong>Points:</strong> {teamData.points}</p>
+                    <p><strong>Rank:</strong> {teamData.rank}</p>
+                    <p><strong>Created By:</strong> {teamData.created_by.username}</p>
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold">Members</h2>
+                    <ul>
+                      {teamData.members.map((member) => (
+                        <li key={member.id} className="bg-gray-200 dark:bg-gray-700 p-2 rounded-lg my-1">
+                          {member.username} - {member.email}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )
           ) : (
-            <>
-              <h1 className="text-3xl font-bold mt-6">{user.name}</h1>
-              <p>{user.email}</p>
-              <button
-                onClick={handleEditProfile}
-                className="bg-blue-500 px-4 py-2 rounded-lg hover:bg-blue-600"
-              >
-                Edit Profile
-              </button>
-            </>
+            <div className="text-center">
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-white">{user.name}</h1>
+              <p>{user.rank}</p>
+              <p className="text-2xl font-bold text-green-400">{user.points} points</p>
+
+              {/* Charts */}
+              <div className="flex flex-wrap justify-center mt-6 gap-6">
+                <div className="w-72 bg-gray-200 dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                  <h3 className="text-lg font-medium mb-4">Key Percentages</h3>
+                  <Pie data={keyPercentagesData} />
+                </div>
+
+                <div className="w-72 bg-gray-200 dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                  <h3 className="text-lg font-medium mb-4">Category Breakdown</h3>
+                  <Pie data={categoryBreakdownData} />
+                </div>
+              </div>
+
+              <div className="w-3/4 bg-gray-200 dark:bg-gray-800 p-6 mt-6 rounded-lg shadow-md mx-auto">
+                <h3 className="text-lg font-medium mb-4">Score over Time</h3>
+                <Line data={scoreOverTimeData} options={lineChartOptions} />
+              </div>
+            </div>
           )}
         </div>
-      </div>
-
-      {/* User Info */}
-      <div className="text-center mt-8">
-        <p className="text-xl font-medium">{user.rank}</p>
-        <p className="text-2xl font-bold text-green-400">{user.points} points</p>
-        <button
-          onClick={updateScore}
-          className="bg-yellow-500 px-4 py-2 rounded-lg hover:bg-yellow-600 mt-4"
-        >
-          Update Score
-        </button>
-      </div>
-
-      {/* Charts */}
-      <div className="flex flex-wrap justify-center mt-12 gap-8">
-        {/* Key Percentages */}
-        <div className="w-80 bg-gray-200 dark:bg-gray-800 p-6 rounded-lg shadow-md">
-          <h3 className="text-center text-lg font-medium mb-4">
-            Key Percentages
-          </h3>
-          <Pie data={keyPercentagesData} />
-        </div>
-
-        {/* Category Breakdown */}
-        <div className="w-80 bg-gray-200 dark:bg-gray-800 p-6 rounded-lg shadow-md">
-          <h3 className="text-center text-lg font-medium mb-4">
-            Category Breakdown
-          </h3>
-          <Pie data={categoryBreakdownData} />
-        </div>
-      </div>
-
-      {/* Score Over Time */}
-      <div className="w-4/5 bg-gray-200 dark:bg-gray-800 p-6 mt-12 rounded-lg shadow-md mx-auto">
-        <h3 className="text-center text-lg font-medium mb-4">
-          Score over Time
-        </h3>
-        <Line data={scoreOverTimeData} options={lineChartOptions} />
       </div>
     </div>
   );
 }
 
-export default UserDashboard;
+export default TeamAndUserDashboard;
