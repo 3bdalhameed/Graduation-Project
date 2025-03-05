@@ -1,120 +1,130 @@
-import React, { useEffect } from "react";
-import { gsap } from "gsap";
+import React, { useState } from "react";
+import img1 from "./img/image1.png";
+import img2 from "./img/image2.png";
+import img3 from "./img/image3.png";
+import img4 from "./img/image4.png";
+import Navbar from "../components/Navbar_logon/navbar";
+const quizData = [
+  {
+    image: img1,
+    answer: "phishing",
+    explanation: "The sender's email looks suspicious and asks for sensitive information such as email, password."
+  },
+  {
+    image: img2,
+    answer: "legitimate",
+    explanation: "This email comes from an official domain and does not ask for sensitive information."
+  },
+  {
+    image: img3,
+    answer: "phishing",
+    explanation: "The email appears as though the recipient received money and asks to click on a link to accept money, which is untrusted."
+  },
+  {
+    image: img4,
+    answer: "phishing",
+    explanation: "The sender's email looks suspicious."
+  }
+];
 
-const BongoCat = () => {
-  useEffect(() => {
-    // Custom splitArray function
-    const splitArray = (array, chunkSize) => {
-      const result = [];
-      for (let i = 0; i < array.length; i += chunkSize) {
-        result.push(array.slice(i, i + chunkSize));
-      }
-      return result;
-    };
+function PhishingQuiz() {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [score, setScore] = useState(0);
+  const [feedback, setFeedback] = useState("");
+  const [quizFinished, setQuizFinished] = useState(false);
 
-    // GSAP Animations
-    const animatePawState = (selector) =>
-      gsap.fromTo(
-        selector,
-        { autoAlpha: 0 },
-        {
-          autoAlpha: 1,
-          duration: 0.01,
-          repeatDelay: 0.19,
-          yoyo: true,
-          repeat: -1,
-        }
-      );
+  const currentQuestion = quizData[currentQuestionIndex];
 
-    const tl = gsap.timeline();
-    tl.add(animatePawState(".paw-left-up"), "start")
-      .add(animatePawState(".paw-right-down"), "start")
-      .add(animatePawState(".paw-left-down"), "start+=0.19")
-      .add(animatePawState(".paw-right-up"), "start+=0.19")
-      .timeScale(1.6);
+  const checkAnswer = (selectedAnswer) => {
+    if (selectedAnswer === currentQuestion.answer) {
+      setFeedback(`Correct! ${currentQuestion.explanation}`);
+      setScore(score + 1);
+    } else {
+      setFeedback(`Wrong! ${currentQuestion.explanation}`);
+    }
+  };
 
-    // Music Note Animations
-    const notes = document.querySelectorAll(".note");
-    gsap.set(notes, { scale: 0, autoAlpha: 1 });
+  const nextQuestion = () => {
+    if (currentQuestionIndex < quizData.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setFeedback("");
+    } else {
+      setQuizFinished(true);
+    }
+  };
 
-    const animateNotes = (els) => {
-      els.forEach((el) => {
-        gsap.set(el, {
-          stroke: gsap.utils.random(["#A5EA9B", "#FF61D8", "#569CFA", "#FFCC81"]),
-          rotation: gsap.utils.random(-50, 50, 1),
-          x: gsap.utils.random(-25, 25, 1),
-        });
-      });
+  const restartQuiz = () => {
+    setCurrentQuestionIndex(0);
+    setScore(0);
+    setFeedback("");
+    setQuizFinished(false);
+  };
 
-      return gsap.fromTo(
-        els,
-        {
-          autoAlpha: 1,
-          y: 0,
-          scale: 0,
-        },
-        {
-          duration: 2,
-          autoAlpha: 0,
-          scale: 1,
-          ease: "none",
-          stagger: { from: "random", each: 0.5 },
-          rotation: `${gsap.utils.random(["-", "+"])}=${gsap.utils.random(20, 30)}`,
-          x: `${gsap.utils.random(["-", "+"])}=${gsap.utils.random(40, 60)}`,
-          y: gsap.utils.random(-200, -220),
-          onComplete: () => animateNotes(els),
-        }
-      );
-    };
-
-    const groupedNotes = splitArray([...notes], Math.ceil(notes.length / 3));
-    groupedNotes.forEach((group, i) => {
-      tl.add(animateNotes(group), i * 0.25);
-    });
-  }, []);
+  if (quizFinished) {
+    return (
+      <>
+      
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <h1 className="text-4xl font-bold mb-6">Quiz Completed!</h1>
+        <p className="text-xl mb-4">Your final score is: {score} / {quizData.length}</p>
+        <button
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+          onClick={restartQuiz}
+        >
+          Try Again
+        </button>
+      </div>
+      </>
+    );
+  }
 
   return (
-    <div className="flex items-end justify-center bg-gray-900 h-screen">
-      {/* Bongo Cat Container */}
-      <div className="relative w-4/5 h-4/5">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 783.55 354.91">
-          {/* Cat Body */}
-          <g id="bongo-cat" className="fill-current text-gray-800 stroke-current stroke-[4]">
-            <g className="head">
-              <path d="M280.4,221l383.8,62.6a171.4,171.4,0,0,0-9.2-40.5..." />
-            </g>
+    <>
+    <Navbar />
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <div className="max-w-lg bg-white p-6 rounded-lg shadow-lg text-center">
+        <h1 className="text-3xl font-bold mb-4">Can You Spot the Phishing Email?</h1>
+        <p className="mb-4">Analyze the email below and decide whether it's phishing or legitimate.</p>
 
-            {/* Paw Animation */}
-            <g className="paw paw-left">
-              <path className="paw-left-up" d="M586.6,208.8c-.6-2.3-4.2-15.6-17.2-22.2..." />
-              <path className="paw-left-down" d="M534.1,231.4c-19.7,6-32.9,18.4-34.2,29.1..." />
-            </g>
+        <div className="mb-6">
+          <img src={currentQuestion.image} alt="Quiz Email" className="w-full rounded-md shadow-md" />
+        </div>
 
-            <g className="paw paw-right">
-              <path className="paw-right-up" d="M327.3,170c-.4-1.4-6.3-18.8-23.5-23.5..." />
-              <path className="paw-right-down" d="M289.1,181.7c-12.1,9.8-20.6,20.7-20.7,32.1..." />
-            </g>
+        <div className="flex gap-4 mb-4">
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+            onClick={() => checkAnswer("phishing")}
+          >
+            Phishing
+          </button>
+          <button
+            className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+            onClick={() => checkAnswer("legitimate")}
+          >
+            Legitimate
+          </button>
+        </div>
 
-            {/* Music Notes */}
-            <g className="music">
-              <g className="note">
-                <path d="M368.5,46.5c.5,2.1,1.2,3.5,3.8,6.3..." />
-              </g>
-              <g className="note">
-                <path d="M368.5,46.5c.5,2.1,1.2,3.5,3.8,6.3..." />
-              </g>
-            </g>
+        {feedback && (
+          <p className={`text-lg font-bold mb-4 ${feedback.startsWith("Correct") ? "text-green-600" : "text-red-600"}`}>
+            {feedback}
+          </p>
+        )}
 
-            {/* Table */}
-            <g className="table">
-              <polygon points="25.3 158.5 783.2 293 513 354.9 25.3 158.5" />
-              <line x1="25.3" y1="158.5" x2="783.2" y2="293" />
-            </g>
-          </g>
-        </svg>
+        {feedback && (
+          <button
+            className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded"
+            onClick={nextQuestion}
+          >
+            Next
+          </button>
+        )}
+
+        <p className="mt-6 text-xl">Score: {score}</p>
       </div>
     </div>
+    </>
   );
-};
+}
 
-export default BongoCat;
+export default PhishingQuiz;

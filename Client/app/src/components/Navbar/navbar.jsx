@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaFlag, FaUser, FaUsers, FaGavel } from "react-icons/fa";
+import { FaFlag, FaUsers, FaBook, FaSchool } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import logo from "../../pages/img/JuCC_logo.png";
 
@@ -66,33 +66,27 @@ const NavBar = () => {
           } md:static absolute top-16 left-0 w-full md:w-auto bg-gray-900 md:bg-transparent md:py-0 py-6 md:shadow-none shadow-lg z-50`}
         >
           <li className="flex items-center">
-            <FaGavel className="mr-2" />
-            <a href="/rules" className="hover:text-blue-400">
-              Rules
-            </a>
-          </li>
-          <li className="flex items-center">
             <FaFlag className="mr-2" />
-            <a href="/challenge" className="hover:text-blue-400">
-              Challenges
+            <a href="/login" className="hover:text-blue-400">
+              CTF Portal
             </a>
           </li>
           <li className="flex items-center">
-            <FaUser className="mr-2" />
+            <FaBook className="mr-2" />
             <a
-              onClick={() => handleAuthRedirect("/users")}
+              onClick={() => handleAuthRedirect("/login")}
               className="hover:text-blue-400 cursor-pointer"
             >
-              Users
+              Learning Portal
             </a>
           </li>
           <li className="flex items-center">
-            <FaUsers className="mr-2" />
+            <FaSchool className="mr-2" />
             <a
-              onClick={() => handleAuthRedirect("/teams")}
+              onClick={() => handleAuthRedirect("/login")}
               className="hover:text-blue-400 cursor-pointer"
             >
-              Teams
+              School Portal
             </a>
           </li>
           <li className="flex items-center">
