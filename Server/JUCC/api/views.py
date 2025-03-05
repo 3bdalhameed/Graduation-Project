@@ -167,6 +167,7 @@ class ChallengeView(APIView):
             serializer.save()
             return Response({"success": "Challenge created successfully", "data": serializer.data}, status=HTTP_201_CREATED)
         else:
+            # print(serializer.errors)
             return Response({"error": "Invalid data", "details": serializer.errors}, status=HTTP_400_BAD_REQUEST)
 
 ###############################################################################################################################################
