@@ -16,6 +16,7 @@ export default {
     "./src/pages/users.jsx",
     "./src/pages/createjointeam.jsx",
     "./src/pages/teamprof.jsx",
+    "./src/pages/Createchallenge.jsx",
   ],
   theme: {
     theme: {

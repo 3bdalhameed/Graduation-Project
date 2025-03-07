@@ -44,3 +44,9 @@ class ChallengeSerializer(serializers.ModelSerializer):
         Overriding the create method to create a new Challenge instance.
         """
         return Challenge.objects.create(**validated_data)
+
+
+class ChallengeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Challenge
+        fields = '__all__'  # Include all model fields

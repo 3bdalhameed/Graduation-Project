@@ -10,7 +10,8 @@ import {
   LinearScale,
   PointElement,
 } from "chart.js";
-import Navbar from "../components/Navbar_logon/navbar";
+import Navbar from "../components/Navbar_logon/navbar.jsx";
+import axios from "axios";
 
 // Register Chart.js components
 ChartJS.register(
@@ -25,192 +26,191 @@ ChartJS.register(
 
 function TeamAndUserDashboard() {
   const [teamData, setTeamData] = useState(null);
+  const [user, setUser] = useState(null);
+  const [solvedChallenges, setSolvedChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState("team"); // 'team' or 'user'
-
-  // User State
-  const [user, setUser] = useState({
-    name: "3bdalhameed",
-    rank: "1st place",
-    points: 3759,
-    profilePicture: null,
-  });
+  const [activeTab, setActiveTab] = useState("team");
+  const [teamCode, setTeamCode] = useState("");
+  const [joinMessage, setJoinMessage] = useState("");
 
   useEffect(() => {
-    // Fetch team data
-    const fetchTeamDetails = async () => {
-      const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("access_token");
+
+    const fetchUserData = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/teams/check/", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+        const response = await axios.get("http://localhost:8000/api/home/", {
+          headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          if (data.in_team) {
-            const teamResponse = await fetch(
-              `http://localhost:8000/api/teams/${data.team_id}/`,
-              {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
+        if (response.status === 200) {
+          setUser(response.data);
+        } else {
+          setError("Failed to fetch user data.");
+        }
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+        setError("An error occurred while fetching user data.");
+      }
+    };
 
-            if (teamResponse.ok) {
-              const teamData = await teamResponse.json();
-              setTeamData(teamData);
-            } else {
-              setError("Failed to fetch team details.");
-            }
+    const fetchTeamData = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/api/teams/check/", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.status === 200) {
+          if (response.data.in_team) {
+            const teamResponse = await axios.get(
+              `http://localhost:8000/api/teams/${response.data.team_id}/`,
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setTeamData(teamResponse.data);
           } else {
-            setError("You are not part of any team.");
+            setTeamData(null);
           }
         } else {
           setError("Failed to fetch user team status.");
         }
       } catch (err) {
-        console.error("Error:", err);
+        console.error("Error fetching team data:", err);
         setError("An error occurred while fetching team data.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTeamDetails();
+    const fetchSolvedChallenges = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/api/solved_challenges/", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.status === 200) {
+          setSolvedChallenges(response.data);
+        }
+      } catch (err) {
+        console.error("Error fetching solved challenges:", err);
+      }
+    };
+
+    fetchUserData();
+    fetchTeamData();
+    fetchSolvedChallenges();
   }, []);
 
-  // Chart Data
-  const keyPercentagesData = {
-    labels: ["Fails", "Solves"],
-    datasets: [
-      {
-        data: [23.1, 76.9],
-        backgroundColor: ["#e74c3c", "#27ae60"],
-      },
-    ],
-  };
+  const handleJoinTeam = async () => {
+    const token = localStorage.getItem("access_token");
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/teams/join/",
+        { code: teamCode },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-  const categoryBreakdownData = {
-    labels: ["Exploitation", "Networking", "Web"],
-    datasets: [
-      {
-        data: [50, 33.3, 16.7],
-        backgroundColor: ["#3498db", "#e67e22", "#2ecc71"],
-      },
-    ],
-  };
-
-  const scoreOverTimeData = {
-    labels: ["01:45", "02:00", "02:15", "02:30", "02:45", "03:00", "03:15"],
-    datasets: [
-      {
-        label: "Score",
-        data: [200, 400, 600, 800, 1000, 1200, user.points],
-        borderColor: "#e74c3c",
-      },
-    ],
-  };
-
-  const lineChartOptions = {
-    responsive: true,
-    plugins: {
-      legend: { display: false },
-    },
-    scales: {
-      x: { ticks: { color: "#ffffff" }, title: { text: "Time", color: "#ffffff" } },
-      y: { ticks: { color: "#ffffff" }, title: { text: "Score", color: "#ffffff" }, beginAtZero: true },
-    },
+      if (response.status === 200) {
+        setJoinMessage("Successfully joined the team!");
+        setTimeout(() => {
+          setJoinMessage("");
+          window.location.reload(); // Reload to fetch the team data
+        }, 1500);
+      } else {
+        setJoinMessage("Failed to join the team.");
+      }
+    } catch (err) {
+      setJoinMessage("Invalid team code or an error occurred.");
+      console.error("Error joining team:", err);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      {/* Navbar */}
+    <div className="min-h-screen flex bg-gray-100 dark:bg-gray-900">
       <Navbar />
 
-      {/* Sidebar Navigation */}
-      <div className="flex">
-        <div className=" w-1/4 bg-white dark:bg-gray-800 p-6 shadow-lg">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Dashboard</h2>
-          <ul>
-            <li
-              className={`p-3 cursor-pointer rounded-lg ${activeTab === "team" ? "bg-blue-500 text-white" : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"}`}
-              onClick={() => setActiveTab("team")}
-            >
-              Team Profile
-            </li>
-            <li
-              className={`p-3 cursor-pointer rounded-lg ${activeTab === "user" ? "bg-blue-500 text-white" : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"}`}
-              onClick={() => setActiveTab("user")}
-            >
-              User Dashboard
-            </li>
-          </ul>
-        </div>
+      {/* Sidebar */}
+      <div className="w-1/4 h-screen bg-white dark:bg-gray-800 p-6 shadow-lg pt-24">
+        <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Dashboard</h2>
+        <ul>
+          <li
+            className={`p-3 cursor-pointer rounded-lg ${
+              activeTab === "team"
+                ? "bg-blue-500 text-white"
+                : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+            }`}
+            onClick={() => setActiveTab("team")}
+          >
+            Team Profile
+          </li>
+          <li
+            className={`p-3 cursor-pointer rounded-lg ${
+              activeTab === "user"
+                ? "bg-blue-500 text-white"
+                : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+            }`}
+            onClick={() => setActiveTab("user")}
+          >
+            User Dashboard
+          </li>
+        </ul>
+      </div>
 
-        {/* Main Content */}
-        <div className="top-1/3 w-3/4 p-8">
-          {activeTab === "team" ? (
-            loading ? (
-              <p className="text-gray-700 dark:text-gray-300">Loading...</p>
-            ) : error ? (
-              <p className="text-red-500">{error}</p>
-            ) : (
-              <div className="top-1/3 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-                <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">{teamData.name}</h1>
-                <div className="flex justify-between">
-                  <div>
-                    <p><strong>Team Code:</strong> {teamData.code}</p>
-                    <p><strong>Points:</strong> {teamData.points}</p>
-                    <p><strong>Rank:</strong> {teamData.rank}</p>
-                    <p><strong>Created By:</strong> {teamData.created_by.username}</p>
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-semibold">Members</h2>
-                    <ul>
-                      {teamData.members.map((member) => (
-                        <li key={member.id} className="bg-gray-200 dark:bg-gray-700 p-2 rounded-lg my-1">
-                          {member.username} - {member.email}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+      {/* Main Content */}
+      <div className="ml-1/4 w-3/4 p-8 pt-24">
+        {activeTab === "team" ? (
+          loading ? (
+            <p className="text-gray-700 dark:text-gray-300">Loading...</p>
+          ) : error ? (
+            <p className="text-red-500">{error}</p>
+          ) : teamData ? (
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">
+                {teamData.name}
+              </h1>
+              <div className="flex justify-between">
+                <div>
+                  <p><strong>Team Code:</strong> {teamData.code}</p>
+                  <p><strong>Points:</strong> {teamData.points}</p>
+                  <p><strong>Rank:</strong> {teamData.rank}</p>
+                  <p><strong>Created By:</strong> {teamData.created_by.username}</p>
                 </div>
-              </div>
-            )
-          ) : (
-            <div className="text-center">
-              <h1 className="text-3xl font-bold text-gray-800 dark:text-white">{user.name}</h1>
-              <p>{user.rank}</p>
-              <p className="text-2xl font-bold text-green-400">{user.points} points</p>
-
-              {/* Charts */}
-              <div className="flex flex-wrap justify-center mt-6 gap-6">
-                <div className="w-72 bg-gray-200 dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                  <h3 className="text-lg font-medium mb-4">Key Percentages</h3>
-                  <Pie data={keyPercentagesData} />
+                <div>
+                  <h2 className="text-lg font-semibold">Members</h2>
+                  <ul>
+                    {teamData.members.map((member) => (
+                      <li key={member.id} className="bg-gray-200 dark:bg-gray-700 p-2 rounded-lg my-1">
+                        {member.username} - {member.email}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-
-                <div className="w-72 bg-gray-200 dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                  <h3 className="text-lg font-medium mb-4">Category Breakdown</h3>
-                  <Pie data={categoryBreakdownData} />
-                </div>
-              </div>
-
-              <div className="w-3/4 bg-gray-200 dark:bg-gray-800 p-6 mt-6 rounded-lg shadow-md mx-auto">
-                <h3 className="text-lg font-medium mb-4">Score over Time</h3>
-                <Line data={scoreOverTimeData} options={lineChartOptions} />
               </div>
             </div>
-          )}
-        </div>
+          ) : (
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg text-center">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
+                You are not in a team
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">Enter a team code to join:</p>
+              <input
+                type="text"
+                placeholder="Enter team code"
+                value={teamCode}
+                onChange={(e) => setTeamCode(e.target.value)}
+                className="w-1/2 p-2 border rounded dark:bg-gray-700 dark:text-white"
+              />
+              <button
+                onClick={handleJoinTeam}
+                className="ml-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                Join Team
+              </button>
+              {joinMessage && <p className="mt-4 text-green-500">{joinMessage}</p>}
+            </div>
+          )
+        ) : (
+          <div className="text-center text-white"> {/* User Dashboard */}</div>
+        )}
       </div>
     </div>
   );

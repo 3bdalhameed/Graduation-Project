@@ -24,7 +24,7 @@ function Login() {
         const data = await response.json();
         console.log("Access Token:", data.access_token); // Log the token
         localStorage.setItem("access_token", data.access_token); // Save access token
-        navigate("/createteam");
+        navigate("/settings");
         // Save token to localStorage or other state management
       } else {
         alert("Login failed. Please check your credentials.");

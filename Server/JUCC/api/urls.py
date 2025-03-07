@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     LoginView, LogoutView, SignUpView, VerifySignUpOTPView,
     ValidateTokenView, ChallengeView, HomeView, UsersListView,
-    CreateTeamView, JoinTeamView, TeamCheckView, TeamProfile
+    CreateTeamView, JoinTeamView, TeamCheckView, TeamProfile, CreateChallengeAPI
 )
 from rest_framework_simplejwt import views as jwt_views
 
@@ -14,6 +14,7 @@ urlpatterns = [
     path('verify-signup-otp/', VerifySignUpOTPView.as_view(), name='verify_signup_otp'),
     path('validate-token/', ValidateTokenView.as_view(), name='validate_token'),
     path('challenge/', ChallengeView.as_view(), name='challenge'),
+    path('challenge/create/', CreateChallengeAPI.as_view(), name='create-challenge'),
     path('home/', HomeView.as_view(), name='home'),
     path('token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),

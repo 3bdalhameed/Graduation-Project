@@ -1,168 +1,244 @@
 import React, { useState, useEffect } from "react";
+import { Pie, Line, Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  LineElement,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+} from "chart.js";
 import Navbar from "../components/Navbar_logon/navbar";
-import {  useNavigate } from "react-router-dom";
 
-function CreateOrJoinTeam() {
-    const [teamName, setTeamName] = useState("");
-    const [teamCode, setTeamCode] = useState("");
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
-    const [action, setAction] = useState("create"); // 'create' or 'join'
-    const navigate = useNavigate();
+// Register Chart.js components
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  LineElement,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  PointElement
+);
 
-    useEffect(() => {
-        const checkTeamStatus = async () => {
-          const token = localStorage.getItem("access_token"); // Assuming token is stored in localStorage
-          const response = await fetch("http://localhost:8000/api/teams/check/", {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-    
+function TeamAndUserDashboard() {
+  const [teamData, setTeamData] = useState(null);
+  const [user, setUser] = useState(null);
+  const [solvedChallenges, setSolvedChallenges] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState("team");
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+
+    // Fetch User Data
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/api/home/", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+        } else {
+          setError("Failed to fetch user data.");
+        }
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+        setError("An error occurred while fetching user data.");
+      }
+    };
+
+    // Fetch Team Data
+    const fetchTeamData = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/api/teams/check/", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
           const data = await response.json();
           if (data.in_team) {
-            navigate('/teamprofile'); // Redirect to the team dashboard
-          }
-        };
-    
-        checkTeamStatus();
-      }, [navigate]);
+            const teamResponse = await fetch(`http://localhost:8000/api/teams/${data.team_id}/`, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            });
 
-      const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError("");
-        setSuccess("");
-      
-        // Validation for create and join actions
-        if (action === "create" && !teamName) {
-          setError("Please provide a team name.");
-          return;
-        }
-      
-        if (action === "join" && !teamCode) {
-          setError("Please provide a team code.");
-          return;
-        }
-      
-        try {
-          const token = localStorage.getItem("access_token");
-          const endpoint =
-            action === "create"
-              ? "http://localhost:8000/api/teams/create/"
-              : "http://localhost:8000/api/teams/join/";
-      
-          const body =
-            action === "create"
-              ? { team_name: teamName } // Match backend field
-              : { team_code: teamCode }; // Match backend field
-      
-          const response = await fetch(endpoint, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(body),
-          });
-      
-          const data = await response.json();
-      
-          if (response.ok) {
-            setSuccess(data.message || "Action successful!");
-            setTeamName("");
-            setTeamCode("");
-            navigate("/teamprofile/"); // Adjust as necessary
+            if (teamResponse.ok) {
+              const teamDetails = await teamResponse.json();
+              setTeamData(teamDetails);
+            } else {
+              setError("Failed to fetch team details.");
+            }
           } else {
-            setError(data.error || "An error occurred. Please try again.");
+            setError("You are not part of any team.");
           }
-        } catch (err) {
-          console.error(err);
-          setError("An error occurred. Please try again.");
+        } else {
+          setError("Failed to fetch user team status.");
         }
-      };
-      
-      
+      } catch (err) {
+        console.error("Error fetching team data:", err);
+        setError("An error occurred while fetching team data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Fetch Solved Challenges
+    const fetchSolvedChallenges = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/api/challenges/solved/", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const challenges = await response.json();
+          setSolvedChallenges(challenges);
+        } else {
+          setError("Failed to fetch solved challenges.");
+        }
+      } catch (err) {
+        console.error("Error fetching solved challenges:", err);
+        setError("An error occurred while fetching solved challenges.");
+      }
+    };
+
+    fetchUserData();
+    fetchTeamData();
+    fetchSolvedChallenges();
+  }, []);
+
+  // Chart Data
+  const userPerformanceData = {
+    labels: ["Exploitation", "Networking", "Web"],
+    datasets: [
+      {
+        label: "User Performance",
+        data: [50, 33.3, 16.7],
+        backgroundColor: ["#3498db", "#e67e22", "#2ecc71"],
+      },
+    ],
+  };
+
+  const teamRankingData = {
+    labels: ["Team A", "Team B", "Team C", "Your Team"],
+    datasets: [
+      {
+        label: "Total Points",
+        data: [2500, 3000, 2800, teamData?.points || 0],
+        backgroundColor: ["#f39c12", "#9b59b6", "#1abc9c", "#e74c3c"],
+      },
+    ],
+  };
 
   return (
-    <>
-      <div className="fixed top-0 left-0 right-0 z-50 bg-gray-900 text-white shadow-md">
-        <Navbar />
+    <div className="min-h-screen flex bg-gray-100 dark:bg-gray-900">
+      {/* Sidebar Navigation */}
+      <div className="w-1/4 h-screen bg-white dark:bg-gray-800 p-6 shadow-lg">
+        <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Dashboard</h2>
+        <ul>
+          <li
+            className={`p-3 cursor-pointer rounded-lg ${
+              activeTab === "team"
+                ? "bg-blue-500 text-white"
+                : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+            }`}
+            onClick={() => setActiveTab("team")}
+          >
+            Team Profile
+          </li>
+          <li
+            className={`p-3 cursor-pointer rounded-lg ${
+              activeTab === "user"
+                ? "bg-blue-500 text-white"
+                : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+            }`}
+            onClick={() => setActiveTab("user")}
+          >
+            User Dashboard
+          </li>
+        </ul>
       </div>
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
-        <div className="bg-gray-800 text-white p-8 rounded-lg shadow-lg w-full max-w-md">
-          <h1 className="text-3xl font-bold mb-6 text-center">
-            {action === "create" ? "Create a Team" : "Join a Team"}
-          </h1>
-          {error && (
-            <p className="bg-red-500 text-white p-3 rounded mb-4">{error}</p>
-          )}
-          {success && (
-            <p className="bg-green-500 text-white p-3 rounded mb-4">
-              {success}
-            </p>
-          )}
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {action === "create" && (
-              <div>
-                <label
-                  htmlFor="teamName"
-                  className="block text-gray-300 font-medium mb-2"
-                >
-                  Team Name
-                </label>
-                <input
-                  type="text"
-                  id="teamName"
-                  placeholder="Enter team name"
-                  value={teamName}
-                  onChange={(e) => setTeamName(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
+
+      {/* Main Content */}
+      <div className="ml-1/4 w-3/4 p-8">
+        {activeTab === "team" ? (
+          loading ? (
+            <p className="text-gray-700 dark:text-gray-300">Loading...</p>
+          ) : error ? (
+            <p className="text-red-500">{error}</p>
+          ) : (
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">
+                {teamData.name}
+              </h1>
+              <div className="flex justify-between">
+                <div>
+                  <p><strong>Team Code:</strong> {teamData.code}</p>
+                  <p><strong>Points:</strong> {teamData.points}</p>
+                  <p><strong>Rank:</strong> {teamData.rank}</p>
+                  <p><strong>Created By:</strong> {teamData.created_by.username}</p>
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold">Recent Challenges</h2>
+                  <ul>
+                    {teamData.recent_challenges?.map((challenge) => (
+                      <li key={challenge.id} className="bg-gray-200 dark:bg-gray-700 p-2 rounded-lg my-1">
+                        {challenge.name} - {challenge.status}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-            )}
-            {action === "join" && (
-              <div>
-                <label
-                  htmlFor="teamCode"
-                  className="block text-gray-300 font-medium mb-2"
-                >
-                  Team Code
-                </label>
-                <input
-                  type="text"
-                  id="teamCode"
-                  placeholder="Enter team code"
-                  value={teamCode}
-                  onChange={(e) => setTeamCode(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
+
+              <div className="mt-6">
+                <h3 className="text-lg font-medium mb-4">Team Ranking</h3>
+                <Bar data={teamRankingData} />
               </div>
-            )}
-            <button
-              type="submit"
-              className="w-full py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400"
-            >
-              {action === "create" ? "Create Team" : "Join Team"}
-            </button>
-          </form>
-          <div className="text-center mt-6">
-            <p className="text-gray-400">
-              {action === "create" ? "Want to join instead?" : "Want to create instead?"}{" "}
-              <button
-                onClick={() => setAction(action === "create" ? "join" : "create")}
-                className="text-blue-400 hover:underline focus:outline-none"
-              >
-                Click here
-              </button>
-            </p>
+            </div>
+          )
+        ) : (
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-white">{user?.username}</h1>
+            <p><strong>Email:</strong> {user?.email}</p>
+            <p className="text-2xl font-bold text-green-400">{user?.points} points</p>
+
+            <div className="mt-6">
+              <h2 className="text-xl font-semibold">Solved Challenges</h2>
+              <ul className="mt-4">
+                {solvedChallenges.map((challenge) => (
+                  <li key={challenge.id} className="bg-gray-200 dark:bg-gray-700 p-2 rounded-lg my-1">
+                    {challenge.name} - {challenge.category}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-        </div>
+        )}
       </div>
-    </>
+    </div>
   );
 }
 
-export default CreateOrJoinTeam;
+export default TeamAndUserDashboard;
