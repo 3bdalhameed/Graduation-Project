@@ -14,6 +14,7 @@ import Users from "./pages/users.jsx";
 import Createteam from "./pages/createjointeam.jsx";
 import Teamprof from "./pages/teamprof.jsx";
 import VerifyOTP from "./pages/VerifyOTP.jsx";
+import TicTacToe from "./pages/ticTacToe.jsx";
 import "./pages/style.css";
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
           <Route path="/createteam" element={<Createteam />} />
           <Route path="/teamprofile" element={<Teamprof />} />
           <Route path="/settings" element={<Setting />} />
+          <Route path="/ticTacToe" element={<TicTacToe />} />
         </Routes>
       </Router>
   );

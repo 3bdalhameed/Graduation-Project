@@ -1,0 +1,146 @@
+/* General Styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Game Container */
+.game-container {
+  text-align: center;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Title */
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.turn-message {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Board Styling */
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 80px);
+  grid-gap: 5px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* Cells */
+.cell {
+  width: 80px;
+  height: 80px;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  background-color: #fff;
+  border: 2px solid #333;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.cell:hover {
+  background-color: #ddd;
+}
+
+/* Winning Cells */
+.winning-cell {
+  background-color: #a3e635 !important;
+}
+
+/* Winner Message */
+.winner-message {
+  font-size: 20px;
+  font-weight: bold;
+  color: green;
+  margin-bottom: 10px;
+}
+
+/* Reset Button */
+.reset-button {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s ease-in-out;
+}
+
+.reset-button:hover {
+  background: #a71d2a;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal */
+.modal {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 300px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Question Text */
+.question {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* Timer */
+.timer {
+  font-size: 14px;
+  color: red;
+  margin-bottom: 10px;
+}
+
+/* Options */
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.option {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s ease-in-out;
+}
+
+.option:hover {
+  background: #0056b3;
+}
