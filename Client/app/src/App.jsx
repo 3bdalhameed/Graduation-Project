@@ -19,6 +19,7 @@ import LearningPortalLoginPage from "./pages/learningPortalLogin.jsx";
 import LearningPortalHomePage from "./pages/learningPortalHome.jsx";
 import LearningPortalMaterials from "./pages/learningPortalMaterials.jsx";
 import LearningPortalAssessments from "./pages/learningPortalAssesments.jsx";
+import LearningPortalSignup from "./pages/learningPortalSignup.jsx";
 import "./pages/style.css";
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
           <Route path="/learningPortalHome" element={<LearningPortalHomePage />} />
           <Route path="/learningPortalAssessments" element={<LearningPortalAssessments />} />
           <Route path="/learningPortalMaterials" element={<LearningPortalMaterials />} />
+          <Route path="/learningPortalSignup" element={<LearningPortalSignup />} />
           <Route path="/ticTacToe" element={<TicTacToe />} />
         </Routes>
       </Router>
