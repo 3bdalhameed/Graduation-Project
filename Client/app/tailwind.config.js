@@ -17,6 +17,7 @@ export default {
     "./src/pages/createjointeam.jsx",
     "./src/pages/teamprof.jsx",
     "./src/pages/ticTacToe.jsx",
+    "./src/pages/createChallenge.jsx",
   ],
   theme: {
     theme: {

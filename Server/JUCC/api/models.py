@@ -38,10 +38,14 @@ class Challenge(models.Model):
         ('Forensics', 'Digital Forensics'),
         ('PWN', 'Binary Exploitation'),
         ('OSINT', 'OSINT'),
+        ('Miscllaneous', 'Miscllaneous'),
     ]
     SUBCATEGORY_CHOICES = [
         ('RSA', 'RSA'),
+        ('SQL Injection', 'SQL Injection'),
+        ('Memory Forensics', 'Memory Forensics'),
         ('XSS', 'XSS'),
+        ('Steganography', 'Steganography'),
         ('Dynamic', 'Dynamic'),
     ]
     DIFFICULTY_CHOICES = [

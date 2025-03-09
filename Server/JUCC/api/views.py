@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
-from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK, HTTP_201_CREATED, HTTP_205_RESET_CONTENT
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK, HTTP_201_CREATED, HTTP_205_RESET_CONTENT, HTTP_404_NOT_FOUND
 from .serializer import ChallengeSerializer
 from datetime import datetime, timedelta
 from rest_framework_simplejwt.exceptions import TokenError
@@ -157,32 +157,63 @@ class VerifySignUpOTPView(APIView):
     
 ###############################################################################################################################################
 
+from .models import Challenge
 class ChallengeView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]  # Allow public access to view challenges
+
+    def get(self, request, challenge_id=None):
+        """
+        Retrieve all challenges or a specific challenge by ID.
+        """
+        if challenge_id:
+            try:
+                challenge = Challenge.objects.get(id=challenge_id)
+                serializer = ChallengeSerializer(challenge)
+                return Response(serializer.data, status=HTTP_200_OK)
+            except Challenge.DoesNotExist:
+                return Response({"error": "Challenge not found"}, status=HTTP_404_NOT_FOUND)
+        else:
+            challenges = Challenge.objects.all()
+            serializer = ChallengeSerializer(challenges, many=True)
+            return Response(serializer.data, status=HTTP_200_OK)
+
+
+class CreateChallengeAPI(APIView):
+    permission_classes = [AllowAny]
 
     def post(self, request):
         data = {
             'name': request.data.get('name'),
+            'description': request.data.get('description'),
+            'point': request.data.get('point'),
             'category': request.data.get('category'),
             'subcategory': request.data.get('subcategory'),
             'difficulty': request.data.get('difficulty'),
-            'creator': request.data.get('creator'),
+            'creator': request.user.id,  # Automatically assigns the logged-in user
         }
 
+        # Validate required fields
         if not all(data.values()):
             return Response({"error": "All fields are required."}, status=HTTP_400_BAD_REQUEST)
 
-        if data['difficulty'] not in ["Easy", "Medium", "Hard"]:
-            return Response({"error": "Difficulty must be one of: Easy, Medium, or Hard."}, status=HTTP_400_BAD_REQUEST)
+        # Validate difficulty level
+        valid_difficulties = ["Easy", "Medium", "Hard"]
+        if data["difficulty"] not in valid_difficulties:
+            return Response(
+                {"error": f"Difficulty must be one of: {', '.join(valid_difficulties)}."},
+                status=HTTP_400_BAD_REQUEST
+            )
 
+        # Serialize and save challenge
         serializer = ChallengeSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()
-            return Response({"success": "Challenge created successfully", "data": serializer.data}, status=HTTP_201_CREATED)
+            challenge = serializer.save(creator=request.user)  # Assign creator to the logged-in user
+            return Response(
+                {"success": "Challenge created successfully!", "challenge": serializer.data},
+                status=HTTP_201_CREATED
+            )
         else:
-            # print(serializer.errors)
             return Response({"error": "Invalid data", "details": serializer.errors}, status=HTTP_400_BAD_REQUEST)
-
 ###############################################################################################################################################
 
 from django.http import JsonResponse
@@ -285,7 +316,7 @@ class JoinTeamView(APIView):
         if request.user in team.member.all():
             return Response({"error": "You are already a member of this team."}, status=400)
 
-        team.members.add(request.user)
+        team.member.add(request.user)
         serializer = TeamSerializer(team)
         return Response({"message": "Successfully joined the team!", "team": serializer.data}, status=200)
 

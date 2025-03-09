@@ -5,8 +5,8 @@ import Home from "./pages/Home.jsx";
 import HomeLogon from "./pages/HomeLogon.jsx";
 import Login from "./pages/login.jsx";
 import Test from "./pages/test";
-import Createchallenge from "./pages/challenge.jsx";
-import CreateChallengee from "./pages/createChallengePage.jsx"
+import Challenge from "./pages/challenge.jsx";
+import Createchallenge from "./pages/createChallenge.jsx"
 import Scoreboard from "./pages/scoreboard.jsx";
 import Rules from "./pages/rules.jsx";
 import Setting from "./pages/setting.jsx";
@@ -26,9 +26,9 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/verify-otp" element={<VerifyOTP />} />
-          <Route path="/createChallengePage" element={<CreateChallengee />} />
           <Route path="/test" element={<Test />} />
-          <Route path="/challenge" element={<Createchallenge />} />
+          <Route path="/challenge" element={<Challenge />} />
+          <Route path="/createchallenge" element={<Createchallenge />} />
           <Route path="/scoreboard" element={<Scoreboard />} />
           <Route path="/rules" element={<Rules />} />
           <Route path="/users" element={<Users />} />
