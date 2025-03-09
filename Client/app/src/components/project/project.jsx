@@ -11,9 +11,9 @@ function ProjectSection() {
   ];
 
   const portals = [
-    { src: playctf, title: "CTF Portal", description: "Manage your profile and activities." },
-    { src: playctf, title: "School Portal", description: "Access administrative tools and analytics." },
-    { src: playctf, title: "Learning Portal", description: "Collaborate and manage your team." },
+    { src: playctf, title: "CTF Portal", description: "Manage your profile and activities.", path: "/login" },
+    { src: playctf, title: "School Portal", description: "Access administrative tools and analytics.", path: "/"},
+    { src: playctf, title: "Learning Portal", description: "Collaborate and manage your team.", path:"/learningPortalLogin" },
   ];
 
   return (
@@ -78,7 +78,7 @@ function ProjectSection() {
                 </h4>
                 <p className="text-gray-600 dark:text-gray-400 mb-4">{portal.description}</p>
                 <a
-                  href="login.html"
+                  href={portal.path}
                   className="text-indigo-600 dark:text-blue-400 hover:underline"
                 >
                   Access Portal

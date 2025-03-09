@@ -15,6 +15,10 @@ import Createteam from "./pages/createjointeam.jsx";
 import Teamprof from "./pages/teamprof.jsx";
 import VerifyOTP from "./pages/VerifyOTP.jsx";
 import TicTacToe from "./pages/ticTacToe.jsx";
+import LearningPortalLoginPage from "./pages/learningPortalLogin.jsx";
+import LearningPortalHomePage from "./pages/learningPortalHome.jsx";
+import LearningPortalMaterials from "./pages/learningPortalMaterials.jsx";
+import LearningPortalAssessments from "./pages/learningPortalAssesments.jsx";
 import "./pages/style.css";
 
 function App() {
@@ -35,6 +39,10 @@ function App() {
           <Route path="/createteam" element={<Createteam />} />
           <Route path="/teamprofile" element={<Teamprof />} />
           <Route path="/settings" element={<Setting />} />
+          <Route path="/learningPortalLogin" element={<LearningPortalLoginPage />} />
+          <Route path="/learningPortalHome" element={<LearningPortalHomePage />} />
+          <Route path="/learningPortalAssessments" element={<LearningPortalAssessments />} />
+          <Route path="/learningPortalMaterials" element={<LearningPortalMaterials />} />
           <Route path="/ticTacToe" element={<TicTacToe />} />
         </Routes>
       </Router>

@@ -73,10 +73,7 @@ const NavBar = () => {
           </li>
           <li className="flex items-center">
             <FaBook className="mr-2" />
-            <a
-              onClick={() => handleAuthRedirect("/login")}
-              className="hover:text-blue-400 cursor-pointer"
-            >
+            <a href="/learningPortalLogin" className="hover:text-blue-400">
               Learning Portal
             </a>
           </li>
