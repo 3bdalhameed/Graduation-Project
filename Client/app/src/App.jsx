@@ -15,11 +15,12 @@ import Createteam from "./pages/createjointeam.jsx";
 import Teamprof from "./pages/teamprof.jsx";
 import VerifyOTP from "./pages/VerifyOTP.jsx";
 import TicTacToe from "./pages/ticTacToe.jsx";
-import LearningPortalLoginPage from "./pages/learningPortalLogin.jsx";
-import LearningPortalHomePage from "./pages/learningPortalHome.jsx";
-import LearningPortalMaterials from "./pages/learningPortalMaterials.jsx";
-import LearningPortalAssessments from "./pages/learningPortalAssesments.jsx";
-import LearningPortalSignup from "./pages/learningPortalSignup.jsx";
+import LearningPortalLoginPage from "./pages/learning_portal/learningPortalLogin.jsx";
+import LearningPortalHomePage from "./pages/learning_portal/learningPortalHome.jsx";
+import LearningPortalMaterials from "./pages/learning_portal/learningPortalMaterials.jsx";
+import LearningPortalAssessments from "./pages/learning_portal/learningPortalAssesments.jsx";
+import LearningPortalSignup from "./pages/learning_portal/learningPortalSignup.jsx";
+import Introduction from "./pages/learning_portal/Materials/introduction.jsx";
 import "./pages/style.css";
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
           <Route path="/learningPortalAssessments" element={<LearningPortalAssessments />} />
           <Route path="/learningPortalMaterials" element={<LearningPortalMaterials />} />
           <Route path="/learningPortalSignup" element={<LearningPortalSignup />} />
+          <Route path="/learning/cybersecurity" element={<Introduction />} />
           <Route path="/ticTacToe" element={<TicTacToe />} />
         </Routes>
       </Router>

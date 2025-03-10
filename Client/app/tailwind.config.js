@@ -18,10 +18,11 @@ export default {
     "./src/pages/teamprof.jsx",
     "./src/pages/ticTacToe.jsx",
     "./src/pages/createChallenge.jsx",
-    "./src/pages/learningPortalHome.jsx",
-    "./src/pages/learningPortalMaterials.jsx",
-    "./src/pages/learningPortalLogin.jsx",
-    "./src/pages/learningPortalAssesments.jsx",
+    "./src/pages/learning_portal/learningPortalHome.jsx",
+    "./src/pages/learning_portal/learningPortalMaterials.jsx",
+    "./src/pages/learning_portal/learningPortalLogin.jsx",
+    "./src/pages/learning_portal/learningPortalAssesments.jsx",
+    "./src/pages/learning_portal/introduction.jsx",
   ],
   theme: {
     theme: {
