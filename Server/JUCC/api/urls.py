@@ -2,7 +2,9 @@ from django.urls import path
 from .views import (
     LoginView, LogoutView, SignUpView, VerifySignUpOTPView,
     ValidateTokenView, ChallengeView, HomeView, UsersListView,
-    CreateTeamView, JoinTeamView, TeamCheckView, TeamProfile, CreateChallengeAPI
+    CreateTeamView, JoinTeamView, TeamCheckView, TeamProfile, 
+    CreateChallengeAPI, GetTeamsView, SubmitFlagView,  # ✅ FIXED
+    get_csrf_token,
 )
 from rest_framework_simplejwt import views as jwt_views
 
@@ -11,10 +13,12 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
     path('signup/', SignUpView.as_view(), name='signup'),
     path('users/', UsersListView.as_view(), name='users'),
+    path("teams/", GetTeamsView.as_view(), name="create_team"),
     path('verify-signup-otp/', VerifySignUpOTPView.as_view(), name='verify_signup_otp'),
     path('validate-token/', ValidateTokenView.as_view(), name='validate_token'),
     path('challenge/', ChallengeView.as_view(), name='challenge'),
-    path('challenge/create/', CreateChallengeAPI.as_view(), name='challenge'),
+    path('challenge/create/', CreateChallengeAPI.as_view(), name='create_challenge'),
+    path('challenge/submit/', SubmitFlagView.as_view(), name='submit_challenge'),  # ✅ FIXED
     path('home/', HomeView.as_view(), name='home'),
     path('token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
@@ -22,4 +26,5 @@ urlpatterns = [
     path("teams/join/", JoinTeamView.as_view(), name="join_team"),
     path("teams/check/", TeamCheckView.as_view(), name="team_check"),
     path('teams/<int:team_id>/', TeamProfile.as_view(), name='team_profile'),
+    path("csrf/", get_csrf_token, name="get_csrf_token"),
 ]

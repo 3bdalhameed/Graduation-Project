@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import Navbar from "../components/Navbar_logon/navbar";
+import Navbar from "../../components/Navbar_logon/navbar";
 
 const CreateChallenge = () => {
   const [formData, setFormData] = useState({

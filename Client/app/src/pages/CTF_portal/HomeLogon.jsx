@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Main from "../components/main/main";
-import Project from "../components/project/project";
-import Footer from "../components/footer/footer";
-import Navbar from "../components/Navbar_logon/navbar";
+import Main from "../../components/main/main";
+import Project from "../../components/project/project";
+import Footer from "../../components/footer/footer";
+import Navbar from "../../components/Navbar_logon/navbar";
 
 function Home() {
   const navigate = useNavigate();

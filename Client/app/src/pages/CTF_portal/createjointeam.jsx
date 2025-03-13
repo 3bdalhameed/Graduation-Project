@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../components/Navbar_logon/navbar";
+import Navbar from "../../components/Navbar_logon/navbar";
 import {  useNavigate } from "react-router-dom";
 
 function CreateOrJoinTeam() {
@@ -22,7 +22,7 @@ function CreateOrJoinTeam() {
     
           const data = await response.json();
           if (data.in_team) {
-            navigate('/teamprofile'); // Redirect to the team dashboard
+            navigate('/settings'); // Redirect to the team dashboard
           }
         };
     
@@ -72,7 +72,7 @@ function CreateOrJoinTeam() {
             setSuccess(data.message || "Action successful!");
             setTeamName("");
             setTeamCode("");
-            navigate("/teamprofile/"); // Adjust as necessary
+            navigate("/settings"); // Adjust as necessary
           } else {
             setError(data.error || "An error occurred. Please try again.");
           }

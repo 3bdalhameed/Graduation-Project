@@ -10,7 +10,7 @@ import {
   LinearScale,
   PointElement,
 } from "chart.js";
-import Navbar from "../components/Navbar_logon/navbar.jsx";
+import Navbar from "../../components/Navbar_logon/navbar.jsx";
 import axios from "axios";
 
 // Register Chart.js components

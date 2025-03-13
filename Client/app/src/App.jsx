@@ -1,20 +1,25 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import SignUp from "./pages/signup.jsx";
-import Home from "./pages/Home.jsx";
-import HomeLogon from "./pages/HomeLogon.jsx";
-import Login from "./pages/login.jsx";
+
+// CTF Portal
+import SignUp from "./pages/CTF_portal/signup.jsx";
+import Home from "./pages/CTF_portal/Home.jsx";
+import HomeLogon from "./pages/CTF_portal/HomeLogon.jsx";
+import Login from "./pages/CTF_portal/login.jsx";
 import Test from "./pages/test";
-import Challenge from "./pages/challenge.jsx";
-import Createchallenge from "./pages/createChallenge.jsx"
-import Scoreboard from "./pages/scoreboard.jsx";
-import Rules from "./pages/rules.jsx";
-import Setting from "./pages/setting.jsx";
-import Users from "./pages/users.jsx";
-import Createteam from "./pages/createjointeam.jsx";
-import Teamprof from "./pages/teamprof.jsx";
+import Challenge from "./pages/CTF_portal/challenge.jsx";
+import Createchallenge from "./pages/CTF_portal/createChallenge.jsx"
+import Scoreboard from "./pages/CTF_portal/scoreboard.jsx";
+import Rules from "./pages/CTF_portal/rules.jsx";
+import Setting from "./pages/CTF_portal/setting.jsx";
+import Users from "./pages/CTF_portal/users.jsx";
+import Teams from "./pages/CTF_portal/teams.jsx";
+import Createteam from "./pages/CTF_portal/createjointeam.jsx";
+import Teamprof from "./pages/CTF_portal/teamprof.jsx";
 import VerifyOTP from "./pages/VerifyOTP.jsx";
 import TicTacToe from "./pages/ticTacToe.jsx";
+
+// Learning Portal
 import LearningPortalLoginPage from "./pages/learning_portal/learningPortalLogin.jsx";
 import LearningPortalHomePage from "./pages/learning_portal/learningPortalHome.jsx";
 import LearningPortalMaterials from "./pages/learning_portal/learningPortalMaterials.jsx";
@@ -38,6 +43,7 @@ function App() {
           <Route path="/scoreboard" element={<Scoreboard />} />
           <Route path="/rules" element={<Rules />} />
           <Route path="/users" element={<Users />} />
+          <Route path="/teams" element={<Teams />} />
           <Route path="/createteam" element={<Createteam />} />
           <Route path="/teamprofile" element={<Teamprof />} />
           <Route path="/settings" element={<Setting />} />

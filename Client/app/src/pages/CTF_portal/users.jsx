@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../components/Navbar_logon/navbar";
+import Navbar from "../../components/Navbar_logon/navbar";
 
 function UsersPage() {
   const [users, setUsers] = useState([]);

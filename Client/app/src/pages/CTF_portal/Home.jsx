@@ -1,9 +1,9 @@
 // src/components/Home.js
 import React from "react";
-import Main from "../components/main/main";
-import Project from "../components/project/project";
-import Footer from "../components/footer/footer";
-import Navbar from "../components/Navbar/navbar";
+import Main from "../../components/main/main";
+import Project from "../../components/project/project";
+import Footer from "../../components/footer/footer";
+import Navbar from "../../components/Navbar/navbar";
 
 
 function Home() {

@@ -55,11 +55,25 @@ class Challenge(models.Model):
     ]
 
     name = models.CharField(max_length=255)
-    category = models.CharField(max_length=255, choices=CATEGORY_CHOICES)
-    subcategory = models.CharField(max_length=255, choices=SUBCATEGORY_CHOICES)
-    difficulty = models.CharField(max_length=255, choices=DIFFICULTY_CHOICES)
-    creator = models.CharField(max_length=50)
-    created_at = models.DateTimeField(auto_now_add=True)  # Track creation time
+    description = models.TextField(default="No description provided.")  # Ensure a default value
+    point = models.IntegerField(default=50)
+    category = models.CharField(max_length=255)
+    subcategory = models.CharField(max_length=255)
+    difficulty = models.CharField(max_length=255)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    flag = models.CharField(max_length=255)  # Ensure this field exists
+
 
     def __str__(self):
         return self.name
+    
+class SolvedChallenges(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
+    solved_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'challenge')  # Prevent duplicate submissions
+
+    def __str__(self):
+        return f"{self.user.username} solved {self.challenge.name}"

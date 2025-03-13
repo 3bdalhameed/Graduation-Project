@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Challenge, Team, TeamMember
+from .models import SolvedChallenges, Challenge
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,3 +45,15 @@ class ChallengeSerializer(serializers.ModelSerializer):
         Overriding the create method to create a new Challenge instance.
         """
         return Challenge.objects.create(**validated_data)
+
+#########################################################################################################
+
+class SubmitFlagSerializer(serializers.Serializer):
+    challenge_id = serializers.IntegerField()
+    flag = serializers.CharField()
+
+class SolvedChallengeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SolvedChallenges
+        fields = "__all__"
+

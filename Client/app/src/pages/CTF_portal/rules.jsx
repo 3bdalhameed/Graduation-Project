@@ -1,6 +1,6 @@
 import React from "react";
 import { FaCheckCircle } from "react-icons/fa";
-import NavBar from "../components/Navbar_logon/navbar";
+import NavBar from "../../components/Navbar_logon/navbar";
 
 function Rules() {
   const rules = [

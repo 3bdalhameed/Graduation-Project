@@ -33,9 +33,6 @@ class TokenHelper:
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         }
-
-###############################################################################################################################################
-
     @staticmethod
     def verify_token(token):
         try:
@@ -43,6 +40,19 @@ class TokenHelper:
             return access.payload  # Contains user_id, etc.
         except InvalidToken:
             return None
+###############################################################################################################################################
+
+from django.http import JsonResponse
+from django.middleware.csrf import get_token
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+
+@api_view(["GET"])
+@permission_classes([AllowAny])  # Allow anyone to get the CSRF token
+def get_csrf_token(request):
+    """Returns the CSRF token to the frontend."""
+    csrf_token = get_token(request)  # Fetch CSRF token
+    return JsonResponse({"csrfToken": csrf_token})
 
 ###############################################################################################################################################
 
@@ -214,6 +224,56 @@ class CreateChallengeAPI(APIView):
             )
         else:
             return Response({"error": "Invalid data", "details": serializer.errors}, status=HTTP_400_BAD_REQUEST)
+        
+        
+
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_201_CREATED, HTTP_200_OK
+from rest_framework.views import APIView
+from .models import Challenge, SolvedChallenges
+from .serializer import SubmitFlagSerializer, SolvedChallengeSerializer
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class SubmitFlagView(APIView):
+    permission_classes = [IsAuthenticated]  # Ensure only authenticated users can submit flags
+
+    def post(self, request):
+        """Validate flag submission for a challenge."""
+        serializer = SubmitFlagSerializer(data=request.data)
+
+        if serializer.is_valid():
+            challenge_id = serializer.validated_data["challenge_id"]
+            flag = serializer.validated_data["flag"]
+
+            try:
+                challenge = Challenge.objects.get(id=challenge_id)
+            except Challenge.DoesNotExist:
+                return Response({"error": "Challenge not found."}, status=HTTP_404_NOT_FOUND)
+
+            if challenge.flag == flag:
+                # Check if already solved
+                if SolvedChallenges.objects.filter(user=request.user, challenge=challenge).exists():
+                    return Response({"message": "Challenge already solved."}, status=HTTP_200_OK)
+
+                # Mark challenge as solved
+                solved_challenge = SolvedChallenges.objects.create(user=request.user, challenge=challenge)
+                return Response(
+                    {
+                        "message": "Flag correct!",
+                        "solved_challenge": SolvedChallengeSerializer(solved_challenge).data,
+                    },
+                    status=HTTP_201_CREATED,
+                )
+
+            return Response({"error": "Incorrect flag."}, status=HTTP_400_BAD_REQUEST)
+
+        return Response({"error": "Invalid submission", "details": serializer.errors}, status=HTTP_400_BAD_REQUEST)
+
+    
 ###############################################################################################################################################
 
 from django.http import JsonResponse
@@ -297,6 +357,17 @@ class CreateTeamView(APIView):
             )
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+        
+
+from .serializer import TeamSerializer
+
+class GetTeamsView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        teams = Team.objects.all()
+        serializer = TeamSerializer(teams, many=True)
+        return Response(serializer.data, status=200)
 
 ###############################################################################################################################################
 

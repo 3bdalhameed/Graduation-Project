@@ -139,6 +139,7 @@ const NavBar = () => {
           <li className="flex items-center">
             <FaUsers className="mr-2" />
             <a
+              href="/teams"
               className="hover:text-blue-400 cursor-pointer"
             >
               Teams

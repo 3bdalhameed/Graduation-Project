@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import NavBar from "../components/Navbar_logon/navbar";
+import NavBar from "../../components/Navbar_logon/navbar";
 
 function TeamProfile() {
   const [teamData, setTeamData] = useState(null);

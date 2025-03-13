@@ -138,12 +138,24 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # React's default port
 ]
 CORS_ALLOW_ALL_ORIGINS = True
-
+CORS_ALLOW_CREDENTIALS = True  # Allows credentials (cookies) to be sent
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
 ]
 
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SECURE = True  # Change to True in production with HTTPS
+CSRF_COOKIE_SAMESITE = "None"  # Allows cross-origin requests with credentials
+CSRF_USE_SESSIONS = False
 
+SESSION_COOKIE_SECURE = True   # Required for authentication cookies
+SESSION_COOKIE_SAMESITE = "None"
+
+CORS_ALLOW_HEADERS = [
+    "content-type",
+    "X-CSRFToken",
+    "Authorization",
+]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',

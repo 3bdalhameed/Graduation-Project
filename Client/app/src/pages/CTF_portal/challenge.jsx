@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import NavBar from "../components/Navbar_logon/navbar";
+import NavBar from "../../components/Navbar_logon/navbar";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -17,6 +17,7 @@ const App = () => {
     category: "All",
     subcategory: "All",
   });
+
 
   useEffect(() => {
     const validateToken = async () => {
@@ -67,29 +68,64 @@ const App = () => {
     setModalOpen(!isModalOpen);
   };
 
+  // Function to fetch CSRF token from Django backend
+  const getCsrfToken = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/csrf/", {
+        method: "GET",
+        credentials: "include", // Ensures CSRF token is sent
+      });
+  
+      if (!response.ok) {
+        throw new Error(`CSRF Fetch Error: ${response.statusText}`);
+      }
+  
+      const data = await response.json();
+      console.log("CSRF Token received:", data.csrfToken);
+      return data.csrfToken;
+    } catch (error) {
+      console.error("Error fetching CSRF token:", error);
+      return null;
+    }
+  };  
+  
+  
   const handleSubmitFlag = async () => {
     if (!selectedChallenge) return;
-
+  
     const token = localStorage.getItem("access_token");
-
+    const csrfToken = await getCsrfToken(); // Fetch CSRF Token first
+  
+    if (!csrfToken) {
+      console.error("CSRF Token not available");
+      return;
+    }
+  
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/challenge/submit/`,
+        `http://127.0.0.1:8000/api/challenge/submit/`,
         { challenge_id: selectedChallenge.id, flag },
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            "X-CSRFToken": csrfToken, // Include CSRF token
+          },
+          withCredentials: true, // Ensure cookies are sent
         }
       );
-
-      if (response.data.correct) {
+  
+      if (response.status === 201) {
         setFlagResult({ success: true, message: "Correct Flag! 🎉" });
       } else {
-        setFlagResult({ success: false, message: "Incorrect Flag. Try again!" });
+        setFlagResult({ success: false, message: response.data.error || "Incorrect Flag. Try again!" });
       }
     } catch (error) {
+      console.error("Error submitting flag:", error);
       setFlagResult({ success: false, message: "Error checking flag. Please try again." });
     }
   };
+  
+  
 
   const applyFilters = (challenges) => {
     return challenges.filter((challenge) => {

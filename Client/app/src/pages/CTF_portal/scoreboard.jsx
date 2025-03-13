@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import NavBar from "../components/Navbar_logon/navbar";
+import NavBar from "../../components/Navbar_logon/navbar";
 
 // Register Chart.js components
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Legend, Tooltip);
