@@ -8,7 +8,6 @@ from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK, HTTP_201_CREATED, HTTP_205_RESET_CONTENT, HTTP_404_NOT_FOUND
-from .serializer import ChallengeSerializer
 from datetime import datetime, timedelta
 from rest_framework_simplejwt.exceptions import TokenError
 import random
@@ -62,8 +61,9 @@ class LoginView(APIView):
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
-
+        print(request.data)
         user = authenticate(username=username, password=password)
+        
         if user:
             tokens = RefreshToken.for_user(user)
             return Response({
@@ -167,113 +167,52 @@ class VerifySignUpOTPView(APIView):
     
 ###############################################################################################################################################
 
-from .models import Challenge
-class ChallengeView(APIView):
-    permission_classes = [AllowAny]  # Allow public access to view challenges
-
-    def get(self, request, challenge_id=None):
-        """
-        Retrieve all challenges or a specific challenge by ID.
-        """
-        if challenge_id:
-            try:
-                challenge = Challenge.objects.get(id=challenge_id)
-                serializer = ChallengeSerializer(challenge)
-                return Response(serializer.data, status=HTTP_200_OK)
-            except Challenge.DoesNotExist:
-                return Response({"error": "Challenge not found"}, status=HTTP_404_NOT_FOUND)
-        else:
-            challenges = Challenge.objects.all()
-            serializer = ChallengeSerializer(challenges, many=True)
-            return Response(serializer.data, status=HTTP_200_OK)
-
-
-class CreateChallengeAPI(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        data = {
-            'name': request.data.get('name'),
-            'description': request.data.get('description'),
-            'point': request.data.get('point'),
-            'category': request.data.get('category'),
-            'subcategory': request.data.get('subcategory'),
-            'difficulty': request.data.get('difficulty'),
-            'creator': request.user.id,  # Automatically assigns the logged-in user
-        }
-
-        # Validate required fields
-        if not all(data.values()):
-            return Response({"error": "All fields are required."}, status=HTTP_400_BAD_REQUEST)
-
-        # Validate difficulty level
-        valid_difficulties = ["Easy", "Medium", "Hard"]
-        if data["difficulty"] not in valid_difficulties:
-            return Response(
-                {"error": f"Difficulty must be one of: {', '.join(valid_difficulties)}."},
-                status=HTTP_400_BAD_REQUEST
-            )
-
-        # Serialize and save challenge
-        serializer = ChallengeSerializer(data=data)
-        if serializer.is_valid():
-            challenge = serializer.save(creator=request.user)  # Assign creator to the logged-in user
-            return Response(
-                {"success": "Challenge created successfully!", "challenge": serializer.data},
-                status=HTTP_201_CREATED
-            )
-        else:
-            return Response({"error": "Invalid data", "details": serializer.errors}, status=HTTP_400_BAD_REQUEST)
-        
-        
-
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_201_CREATED, HTTP_200_OK
 from rest_framework.views import APIView
-from .models import Challenge, SolvedChallenges
-from .serializer import SubmitFlagSerializer, SolvedChallengeSerializer
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK, HTTP_404_NOT_FOUND
+from django.shortcuts import get_object_or_404
+from .models import Challenge
+from .serializer import ChallengeSerializer
 
-
-@method_decorator(csrf_exempt, name='dispatch')
-class SubmitFlagView(APIView):
-    permission_classes = [IsAuthenticated]  # Ensure only authenticated users can submit flags
-
-    def post(self, request):
-        """Validate flag submission for a challenge."""
-        serializer = SubmitFlagSerializer(data=request.data)
-
-        if serializer.is_valid():
-            challenge_id = serializer.validated_data["challenge_id"]
-            flag = serializer.validated_data["flag"]
-
-            try:
-                challenge = Challenge.objects.get(id=challenge_id)
-            except Challenge.DoesNotExist:
-                return Response({"error": "Challenge not found."}, status=HTTP_404_NOT_FOUND)
-
-            if challenge.flag == flag:
-                # Check if already solved
-                if SolvedChallenges.objects.filter(user=request.user, challenge=challenge).exists():
-                    return Response({"message": "Challenge already solved."}, status=HTTP_200_OK)
-
-                # Mark challenge as solved
-                solved_challenge = SolvedChallenges.objects.create(user=request.user, challenge=challenge)
-                return Response(
-                    {
-                        "message": "Flag correct!",
-                        "solved_challenge": SolvedChallengeSerializer(solved_challenge).data,
-                    },
-                    status=HTTP_201_CREATED,
-                )
-
-            return Response({"error": "Incorrect flag."}, status=HTTP_400_BAD_REQUEST)
-
-        return Response({"error": "Invalid submission", "details": serializer.errors}, status=HTTP_400_BAD_REQUEST)
-
+class ChallengeListView(APIView):
+    permission_classes = [AllowAny]
     
+    def get(self, request):
+        challenges = Challenge.objects.all()
+        serializer = ChallengeSerializer(challenges, many=True)
+        return Response(serializer.data, status=HTTP_200_OK)
+
+class ChallengeCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        serializer = ChallengeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(created_by=request.user)
+            return Response(serializer.data, status=HTTP_201_CREATED)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+class ChallengeDetailView(APIView):
+    permission_classes = [AllowAny]
+    
+    def get(self, request, challenge_slug):
+        challenge = get_object_or_404(Challenge, slug=challenge_slug)
+        serializer = ChallengeSerializer(challenge)
+        return Response(serializer.data, status=HTTP_200_OK)
+
+class ChallengeSubmitView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request, challenge_slug):
+        challenge = get_object_or_404(Challenge, slug=challenge_slug)
+        submitted_flag = request.data.get("flag", "").strip()
+        
+        if submitted_flag == challenge.flag:
+            return Response({"message": "✅ Correct flag! Well done!"}, status=HTTP_200_OK)
+        return Response({"message": "❌ Incorrect flag, try again."}, status=HTTP_400_BAD_REQUEST)
+
+        
 ###############################################################################################################################################
 
 from django.http import JsonResponse
@@ -324,8 +263,8 @@ class NotAuthenticatedView(APIView):
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .models import Team, TeamMember
-from .serializer import TeamSerializer
+from .models import Challenge, Team, TeamMember
+from .serializer import ChallengeSerializer, TeamSerializer
 import random
 import string
 

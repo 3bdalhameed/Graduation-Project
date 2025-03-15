@@ -1,10 +1,11 @@
 from django.urls import path
 from .views import (
-    LoginView, LogoutView, SignUpView, VerifySignUpOTPView,
-    ValidateTokenView, ChallengeView, HomeView, UsersListView,
-    CreateTeamView, JoinTeamView, TeamCheckView, TeamProfile, 
-    CreateChallengeAPI, GetTeamsView, SubmitFlagView,  # ✅ FIXED
-    get_csrf_token,
+    ChallengeCreateView, ChallengeDetailView, 
+    ChallengeListView, ChallengeSubmitView, LoginView, 
+    LogoutView, SignUpView, VerifySignUpOTPView,
+    ValidateTokenView, HomeView, UsersListView,
+    CreateTeamView, JoinTeamView, TeamCheckView, 
+    TeamProfile, GetTeamsView, get_csrf_token,
 )
 from rest_framework_simplejwt import views as jwt_views
 
@@ -16,9 +17,6 @@ urlpatterns = [
     path("teams/", GetTeamsView.as_view(), name="create_team"),
     path('verify-signup-otp/', VerifySignUpOTPView.as_view(), name='verify_signup_otp'),
     path('validate-token/', ValidateTokenView.as_view(), name='validate_token'),
-    path('challenge/', ChallengeView.as_view(), name='challenge'),
-    path('challenge/create/', CreateChallengeAPI.as_view(), name='create_challenge'),
-    path('challenge/submit/', SubmitFlagView.as_view(), name='submit_challenge'),  # ✅ FIXED
     path('home/', HomeView.as_view(), name='home'),
     path('token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
@@ -27,4 +25,8 @@ urlpatterns = [
     path("teams/check/", TeamCheckView.as_view(), name="team_check"),
     path('teams/<int:team_id>/', TeamProfile.as_view(), name='team_profile'),
     path("csrf/", get_csrf_token, name="get_csrf_token"),
+    path('challenge/', ChallengeListView.as_view(), name='challenge_list'),
+    path('challenge/create/', ChallengeCreateView.as_view(), name='challenge_create'),
+    path('challenge/<int:challenge_id>/', ChallengeDetailView.as_view(), name='challenge_detail'),
+    path('challenge/<int:challenge_id>/submit/', ChallengeSubmitView.as_view(), name='challenge_submit'),
 ]

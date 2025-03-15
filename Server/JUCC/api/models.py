@@ -30,50 +30,21 @@ class Profile(models.Model):
         return self.name
 
 
+from django.db import models
+from django.contrib.auth.models import User
+from django.utils.text import slugify
+
 class Challenge(models.Model):
-    CATEGORY_CHOICES = [
-        ('Web', 'Web Exploitation'),
-        ('Reverse', 'Reverse Engineering'),
-        ('Crypto', 'Cryptography'),
-        ('Forensics', 'Digital Forensics'),
-        ('PWN', 'Binary Exploitation'),
-        ('OSINT', 'OSINT'),
-        ('Miscllaneous', 'Miscllaneous'),
-    ]
-    SUBCATEGORY_CHOICES = [
-        ('RSA', 'RSA'),
-        ('SQL Injection', 'SQL Injection'),
-        ('Memory Forensics', 'Memory Forensics'),
-        ('XSS', 'XSS'),
-        ('Steganography', 'Steganography'),
-        ('Dynamic', 'Dynamic'),
-    ]
-    DIFFICULTY_CHOICES = [
-        ('Easy', 'Easy'),
-        ('Medium', 'Medium'),
-        ('Hard', 'Hard'),
-    ]
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, blank=True)
+    description = models.TextField()
+    flag = models.CharField(max_length=255, unique=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="challenges")
+    created_at = models.DateTimeField(auto_now_add=True)
+    points = models.IntegerField(default=0)
 
-    name = models.CharField(max_length=255)
-    description = models.TextField(default="No description provided.")  # Ensure a default value
-    point = models.IntegerField(default=50)
-    category = models.CharField(max_length=255)
-    subcategory = models.CharField(max_length=255)
-    difficulty = models.CharField(max_length=255)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE)
-    flag = models.CharField(max_length=255)  # Ensure this field exists
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
 
-
-    def __str__(self):
-        return self.name
-    
-class SolvedChallenges(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
-    solved_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('user', 'challenge')  # Prevent duplicate submissions
-
-    def __str__(self):
-        return f"{self.user.username} solved {self.challenge.name}"

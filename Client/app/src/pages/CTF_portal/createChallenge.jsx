@@ -4,13 +4,10 @@ import Navbar from "../../components/Navbar_logon/navbar";
 
 const CreateChallenge = () => {
   const [formData, setFormData] = useState({
-    name: "",
+    title: "",
     description: "",
-    point: "50",
-    category: "Web",
-    subcategory: "SQL Injection",
-    difficulty: "Easy",
-    flag: "", // Added field for the correct flag
+    points: "50",
+    flag: "",
   });
 
   const [message, setMessage] = useState(null);
@@ -37,17 +34,8 @@ const CreateChallenge = () => {
           },
         }
       );
-
       setMessage("Challenge created successfully!");
-      setFormData({
-        name: "",
-        description: "",
-        point: "50",
-        category: "Web",
-        subcategory: "SQL Injection",
-        difficulty: "Easy",
-        flag: "",
-      });
+      setFormData({ title: "", description: "", points: "50", flag: "" });
     } catch (err) {
       if (err.response) {
         setError(err.response.data.error || "Failed to create challenge.");
@@ -70,20 +58,18 @@ const CreateChallenge = () => {
           {error && <p className="text-red-500 text-center">{error}</p>}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Name */}
             <div>
-              <label className="block text-gray-700 dark:text-white">Challenge Name</label>
+              <label className="block text-gray-700 dark:text-white">Challenge Title</label>
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="title"
+                value={formData.title}
                 onChange={handleChange}
                 required
                 className="w-full p-3 rounded-lg bg-gray-200 dark:bg-gray-700 dark:text-white border border-gray-300"
               />
             </div>
 
-            {/* Description */}
             <div>
               <label className="block text-gray-700 dark:text-white">Description</label>
               <textarea
@@ -96,12 +82,11 @@ const CreateChallenge = () => {
               />
             </div>
 
-            {/* Points */}
             <div>
               <label className="block text-gray-700 dark:text-white">Points</label>
               <select
-                name="point"
-                value={formData.point}
+                name="points"
+                value={formData.points}
                 onChange={handleChange}
                 className="w-full p-3 rounded-lg bg-gray-200 dark:bg-gray-700 dark:text-white border border-gray-300"
               >
@@ -114,58 +99,6 @@ const CreateChallenge = () => {
               </select>
             </div>
 
-            {/* Category */}
-            <div>
-              <label className="block text-gray-700 dark:text-white">Category</label>
-              <select
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="w-full p-3 rounded-lg bg-gray-200 dark:bg-gray-700 dark:text-white border border-gray-300"
-              >
-                <option value="Web">Web</option>
-                <option value="Crypto">Crypto</option>
-                <option value="Reverse Engineering">Reverse Engineering</option>
-                <option value="Forensics">Forensics</option>
-                <option value="Miscellaneous">Miscellaneous</option>
-                <option value="OSINT">OSINT</option>
-                <option value="PWN">PWN</option>
-              </select>
-            </div>
-
-            {/* Subcategory */}
-            <div>
-              <label className="block text-gray-700 dark:text-white">Subcategory</label>
-              <select
-                name="subcategory"
-                value={formData.subcategory}
-                onChange={handleChange}
-                className="w-full p-3 rounded-lg bg-gray-200 dark:bg-gray-700 dark:text-white border border-gray-300"
-              >
-                <option value="SQL Injection">SQL Injection</option>
-                <option value="XSS">Cross-Site Scripting (XSS)</option>
-                <option value="RSA">RSA</option>
-                <option value="Memory Forensics">Memory Forensics</option>
-                <option value="Steganography">Steganography</option>
-              </select>
-            </div>
-
-            {/* Difficulty */}
-            <div>
-              <label className="block text-gray-700 dark:text-white">Difficulty</label>
-              <select
-                name="difficulty"
-                value={formData.difficulty}
-                onChange={handleChange}
-                className="w-full p-3 rounded-lg bg-gray-200 dark:bg-gray-700 dark:text-white border border-gray-300"
-              >
-                <option value="Easy">Easy</option>
-                <option value="Medium">Medium</option>
-                <option value="Hard">Hard</option>
-              </select>
-            </div>
-
-            {/* Flag */}
             <div>
               <label className="block text-gray-700 dark:text-white">Flag</label>
               <input
@@ -179,7 +112,6 @@ const CreateChallenge = () => {
               />
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               className="w-full bg-blue-500 hover:bg-blue-700 text-white py-3 rounded-lg text-lg font-semibold transition duration-300"
