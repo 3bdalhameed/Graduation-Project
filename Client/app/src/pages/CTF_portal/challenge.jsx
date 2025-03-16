@@ -86,7 +86,7 @@ const ChallengePage = () => {
                 Submit Flag
               </button>
             </form>
-            {message && <p className="text-red-500 mt-2">{message}</p>}
+            {message && <p className="text-green-500 mt-2">{message}</p>}
             <button onClick={() => setSelectedChallenge(null)} className="mt-4 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg">
               Close
             </button>
