@@ -36,12 +36,13 @@ from django.utils.text import slugify
 
 class Challenge(models.Model):
     title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True, blank=True)
     description = models.TextField()
-    flag = models.CharField(max_length=255, unique=True)
+    flag = models.CharField(max_length=255)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="challenges")
     created_at = models.DateTimeField(auto_now_add=True)
     points = models.IntegerField(default=0)
+    slug = models.SlugField(blank=True)  # ✅ Add slug field
+
 
     def save(self, *args, **kwargs):
         if not self.slug:
