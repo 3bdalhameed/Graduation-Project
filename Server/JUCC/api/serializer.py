@@ -40,4 +40,4 @@ class ChallengeSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Challenge
-        fields = ['id', 'title', 'description', 'created_by', 'created_at', 'points']
+        fields = ['id', 'title', 'description', 'created_by', 'created_at', 'points', 'flag']
