@@ -196,16 +196,16 @@ class ChallengeCreateView(APIView):
 class ChallengeDetailView(APIView):
     permission_classes = [AllowAny]
     
-    def get(self, request, challenge_slug):
-        challenge = get_object_or_404(Challenge, slug=challenge_slug)
+    def get(self, request, challenge_id):
+        challenge = get_object_or_404(Challenge, id=challenge_id)
         serializer = ChallengeSerializer(challenge)
         return Response(serializer.data, status=HTTP_200_OK)
 
 class ChallengeSubmitView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     
-    def post(self, request, challenge_slug):
-        challenge = get_object_or_404(Challenge, slug=challenge_slug)
+    def post(self, request, challenge_id):
+        challenge = get_object_or_404(Challenge, id=challenge_id)
         submitted_flag = request.data.get("flag", "").strip()
         
         if submitted_flag == challenge.flag:
