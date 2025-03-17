@@ -195,22 +195,52 @@ class ChallengeCreateView(APIView):
 
 class ChallengeDetailView(APIView):
     permission_classes = [AllowAny]
-    
+
     def get(self, request, challenge_id):
         challenge = get_object_or_404(Challenge, id=challenge_id)
         serializer = ChallengeSerializer(challenge)
-        return Response(serializer.data, status=HTTP_200_OK)
+        solved = False
+
+        if request.user.is_authenticated:
+            solved = SolvedChallenge.objects.filter(user=request.user, challenge=challenge).exists()
+
+        return Response({"challenge": serializer.data, "solved": solved}, status=HTTP_200_OK)
+
 
 class ChallengeSubmitView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     
     def post(self, request, challenge_id):
         challenge = get_object_or_404(Challenge, id=challenge_id)
         submitted_flag = request.data.get("flag", "").strip()
-        
+
         if submitted_flag == challenge.flag:
-            return Response({"message": "✅ Correct flag! Well done!"}, status=HTTP_200_OK)
+            # Check if the challenge is already solved
+            if SolvedChallenge.objects.filter(user=request.user, challenge=challenge).exists():
+                return Response({"message": "✅ You have already solved this challenge!"}, status=HTTP_200_OK)
+            
+            # Save the solved challenge
+            SolvedChallenge.objects.create(user=request.user, challenge=challenge)
+            return Response({"message": "🎉 Correct flag! Challenge marked as solved."}, status=HTTP_200_OK)
+
         return Response({"message": "❌ Incorrect flag, try again."}, status=HTTP_400_BAD_REQUEST)
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.status import HTTP_200_OK
+from .models import Challenge, SolvedChallenge
+from .serializer import ChallengeSerializer
+
+class SolvedChallengesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        solved_challenges = Challenge.objects.filter(
+            id__in=SolvedChallenge.objects.filter(user=request.user).values_list('challenge', flat=True)
+        )
+        serializer = ChallengeSerializer(solved_challenges, many=True)
+        return Response(serializer.data, status=HTTP_200_OK)
 
         
 ###############################################################################################################################################
@@ -337,7 +367,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
 class TeamCheckView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request):
         # Get the user's team information
@@ -359,7 +389,7 @@ class TeamCheckView(APIView):
 from .models import Team
 from .serializer import TeamSerializer
 class TeamProfile(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     
     def get(self, request, team_id):
         try:

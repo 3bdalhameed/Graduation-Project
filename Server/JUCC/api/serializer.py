@@ -27,11 +27,12 @@ class TeamMemberSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'role']
 
 class TeamSerializer(serializers.ModelSerializer):
-    members = TeamMemberSerializer(source='member', many=True)
+    members = TeamMemberSerializer(source='member', many=True, required=False)
 
     class Meta:
         model = Team
         fields = ['id', 'name', 'code', 'points', 'rank', 'created_by', 'members']
+
 
 #########################################################################################################
 
@@ -40,4 +41,4 @@ class ChallengeSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Challenge
-        fields = ['id', 'title', 'description', 'created_by', 'created_at', 'points', 'flag', 'category']
+        fields = ['id', 'title', 'description', 'created_by', 'created_at', 'category', 'points', 'flag']

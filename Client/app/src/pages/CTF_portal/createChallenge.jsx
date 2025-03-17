@@ -6,6 +6,7 @@ const CreateChallenge = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
+    category: "Web Exploitation",
     points: "50",
     flag: "",
   });
@@ -35,7 +36,7 @@ const CreateChallenge = () => {
         }
       );
       setMessage("Challenge created successfully!");
-      setFormData({ title: "", description: "", points: "50", flag: "" });
+      setFormData({ title: "", description: "", points: "50", category: "",flag: "" });
     } catch (err) {
       if (err.response) {
         setError(err.response.data.error || "Failed to create challenge.");
@@ -83,6 +84,23 @@ const CreateChallenge = () => {
             </div>
 
             <div>
+              <label className="block text-gray-700 dark:text-white">Category</label>
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                className="w-full p-3 rounded-lg bg-gray-200 dark:bg-gray-700 dark:text-white border border-gray-300"
+              >
+                <option value="Web Exploitation">Web Exploitation</option>
+                <option value="Reverse Engineering">Reverse Engineering</option>
+                <option value="Cryptography">Cryptography</option>
+                <option value="Digital Forensics">Digital Forensics</option>
+                <option value="OSINT">OSINT</option>
+                <option value="Miscellaneous">Misc</option>
+              </select>
+            </div>
+
+            <div>
               <label className="block text-gray-700 dark:text-white">Points</label>
               <select
                 name="points"
@@ -99,22 +117,6 @@ const CreateChallenge = () => {
               </select>
             </div>
 
-            <div>
-              <label className="block text-gray-700 dark:text-white">Points</label>
-              <select
-                name="points"
-                value={formData.points}
-                onChange={handleChange}
-                className="w-full p-3 rounded-lg bg-gray-200 dark:bg-gray-700 dark:text-white border border-gray-300"
-              >
-                <option value="Web Exploitation">Web Exploitation</option>
-                <option value="Reverse Engineering">Reverse Engineering</option>
-                <option value="Cryptography">Cryptography</option>
-                <option value="Digital Forensics">Digital Forensics</option>
-                <option value="OSINT">OSINT</option>
-                <option value="miscellaneous">Misc</option>
-              </select>
-            </div>
 
             <div>
               <label className="block text-gray-700 dark:text-white">Flag</label>

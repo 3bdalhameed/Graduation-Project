@@ -6,6 +6,7 @@ from .views import (
     ValidateTokenView, HomeView, UsersListView,
     CreateTeamView, JoinTeamView, TeamCheckView, 
     TeamProfile, GetTeamsView, get_csrf_token,
+    SolvedChallengesView
 )
 from rest_framework_simplejwt import views as jwt_views
 
@@ -29,4 +30,5 @@ urlpatterns = [
     path('challenge/create/', ChallengeCreateView.as_view(), name='challenge_create'),
     path('challenge/<int:challenge_id>/', ChallengeDetailView.as_view(), name='challenge_detail'),
     path('challenge/<int:challenge_id>/submit/', ChallengeSubmitView.as_view(), name='challenge_submit'),
+    path("solved-challenges/", SolvedChallengesView.as_view(), name="solved_challenges"),
 ]

@@ -49,3 +49,13 @@ class Challenge(models.Model):
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
 
+class SolvedChallenge(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="solved_challenges")
+    challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE, related_name="solved_by")
+    solved_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'challenge')
+
+    def __str__(self):
+        return f"{self.user.username} solved {self.challenge.title}"
