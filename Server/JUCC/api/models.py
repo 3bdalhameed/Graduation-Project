@@ -59,3 +59,14 @@ class SolvedChallenge(models.Model):
 
     def __str__(self):
         return f"{self.user.username} solved {self.challenge.title}"
+    
+class UserRole(models.Model):
+    ADMIN = 'Admin'
+    USER = 'User'
+    ROLE_CHOICES = [(ADMIN, 'Admin'), (USER, 'User')]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default=USER)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.role}"

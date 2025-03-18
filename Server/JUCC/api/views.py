@@ -84,6 +84,18 @@ class LogoutView(APIView):
               return Response(status=HTTP_205_RESET_CONTENT)
           except Exception as e:               
               return Response(status=HTTP_400_BAD_REQUEST)
+          
+###############################################################################################################################################
+          
+class GetUserRoleView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        role = "User"
+        if hasattr(request.user, 'userrole'):
+            role = request.user.userrole.role
+        return Response({"role": role}, status=HTTP_200_OK)
+
 ###############################################################################################################################################
 
 import re
@@ -182,10 +194,17 @@ class ChallengeListView(APIView):
         challenges = Challenge.objects.all()
         serializer = ChallengeSerializer(challenges, many=True)
         return Response(serializer.data, status=HTTP_200_OK)
+    
+
+from rest_framework.permissions import BasePermission, IsAuthenticated
+class IsAdmin(BasePermission):
+    """ Custom permission to allow only Admin users to modify challenges. """
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and hasattr(request.user, 'userrole') and request.user.userrole.role == 'Admin'
 
 class ChallengeCreateView(APIView):
-    permission_classes = [IsAuthenticated]
-    
+    permission_classes = [IsAuthenticated, IsAdmin]
+
     def post(self, request):
         serializer = ChallengeSerializer(data=request.data)
         if serializer.is_valid():
@@ -382,6 +401,9 @@ class TeamCheckView(APIView):
             })
 
         return Response({"in_team": False})
+
+###############################################################################################################################################
+
 
 
 ###############################################################################################################################################
