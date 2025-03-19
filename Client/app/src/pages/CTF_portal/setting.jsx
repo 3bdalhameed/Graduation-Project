@@ -1,28 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Pie, Line } from "react-chartjs-2";
+import { Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   ArcElement,
   Tooltip,
   Legend,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
 } from "chart.js";
 import Navbar from "../../components/Navbar_logon/navbar.jsx";
 import axios from "axios";
 
 // Register Chart.js components
-ChartJS.register(
-  ArcElement,
-  Tooltip,
-  Legend,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement
-);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 function TeamAndUserDashboard() {
   const [user, setUser] = useState(null);
@@ -83,13 +71,19 @@ function TeamAndUserDashboard() {
     setLoading(false);
   }, []);
 
-  const solvedChallengeData = {
-    labels: solvedChallenges.map((challenge) => challenge.title),
+  // Aggregate data by category
+  const categoryData = solvedChallenges.reduce((acc, challenge) => {
+    acc[challenge.category] = (acc[challenge.category] || 0) + challenge.points;
+    return acc;
+  }, {});
+
+  const pieChartData = {
+    labels: Object.keys(categoryData),
     datasets: [
       {
-        label: "Points Earned",
-        data: solvedChallenges.map((challenge) => challenge.points),
-        backgroundColor: ["#36A2EB", "#FFCE56", "#FF6384", "#4BC0C0"],
+        label: "Points Earned by Category",
+        data: Object.values(categoryData),
+        backgroundColor: ["#36A2EB", "#FFCE56", "#FF6384", "#4BC0C0", "#9966FF"],
       },
     ],
   };
@@ -130,7 +124,7 @@ function TeamAndUserDashboard() {
         {activeTab === "user" ? (
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">
-              Solved Challenges
+              Solved Challenges by Category
             </h2>
             <div className="flex flex-col md:flex-row gap-6">
               <div className="w-full md:w-1/2">
@@ -152,8 +146,8 @@ function TeamAndUserDashboard() {
                 </ul>
               </div>
               <div className="w-full md:w-1/2 flex justify-center">
-                {solvedChallenges.length > 0 ? (
-                  <Pie data={solvedChallengeData} className="max-w-xs" />
+                {Object.keys(categoryData).length > 0 ? (
+                  <Pie data={pieChartData} className="max-w-xs" />
                 ) : (
                   <p className="text-gray-500 dark:text-gray-400 text-center">
                     No data to display.
@@ -173,17 +167,17 @@ function TeamAndUserDashboard() {
                 <p><strong>Total Points:</strong> {teamData.points}</p>
                 <h3 className="text-lg font-semibold mt-4">Members</h3>
                 <ul>
-                {teamData?.members && teamData.members.length > 0 ? (
-                  teamData.members.map((member) => (
-                    <li key={member.id} className="bg-gray-200 dark:bg-gray-700 p-2 rounded-lg my-1">
-                      {member.username} - {member.email}
-                    </li>
-                  ))
-                ) : (
-                  <p className="text-gray-500 dark:text-gray-400 text-center">
-                    No team members available.
-                  </p>
-                )}
+                  {teamData?.members && teamData.members.length > 0 ? (
+                    teamData.members.map((member) => (
+                      <li key={member.id} className="bg-gray-200 dark:bg-gray-700 p-2 rounded-lg my-1">
+                        {member.username} - {member.email}
+                      </li>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 dark:text-gray-400 text-center">
+                      No team members available.
+                    </p>
+                  )}
                 </ul>
               </div>
             ) : (
