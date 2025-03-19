@@ -9,7 +9,6 @@ const ChallengePage = () => {
   const [message, setMessage] = useState(null);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [showSolved, setShowSolved] = useState(false);
   const token = localStorage.getItem("access_token");
 
   // Fetch all challenges
@@ -30,7 +29,7 @@ const ChallengePage = () => {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => response.json())
-      .then((data) => setSolvedChallenges(data))
+      .then((data) => setSolvedChallenges(data.map(challenge => challenge.id)))
       .catch((error) => console.error("Error fetching solved challenges:", error));
   }, [token]);
 
@@ -54,6 +53,7 @@ const ChallengePage = () => {
       
       if (response.ok) {
         setMessage(data.message);
+        setSolvedChallenges([...solvedChallenges, selectedChallenge.id]);
       } else {
         setMessage("Incorrect flag or submission failed.");
       }
@@ -63,9 +63,7 @@ const ChallengePage = () => {
   };
 
   // Filter challenges based on selection
-  const filteredChallenges = showSolved
-    ? solvedChallenges
-    : selectedCategory === "All"
+  const filteredChallenges = selectedCategory === "All"
     ? challenges
     : challenges.filter(challenge => challenge.category === selectedCategory);
 
@@ -80,27 +78,22 @@ const ChallengePage = () => {
             {categories.map((category) => (
               <li key={category} 
                   className={`cursor-pointer p-2 rounded-lg ${selectedCategory === category ? 'bg-blue-500 text-white' : 'text-gray-800 dark:text-white'}`} 
-                  onClick={() => { setSelectedCategory(category); setShowSolved(false); }}>
+                  onClick={() => setSelectedCategory(category)}>
                 {category}
               </li>
             ))}
-            <li 
-              className={`cursor-pointer p-2 rounded-lg mt-4 ${showSolved ? 'bg-green-500 text-white' : 'text-gray-800 dark:text-white'}`} 
-              onClick={() => setShowSolved(!showSolved)}>
-              {showSolved ? "Show All Challenges" : "Show Solved Challenges"}
-            </li>
           </ul>
         </div>
         
         {/* Main Content */}
         <div className="flex-1 p-8">
-          <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">{showSolved ? "Solved Challenges" : "Challenges"}</h2>
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">Challenges</h2>
           
           {/* Challenges List */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {filteredChallenges.map((challenge) => (
-              <div key={challenge.id} className={`p-6 ${showSolved ? "bg-green-200 dark:bg-green-700" : "bg-white dark:bg-gray-700"} rounded-lg shadow-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-300`} 
-                   onClick={() => setSelectedChallenge(challenge)}>
+              <div key={challenge.id} className={`p-6 ${solvedChallenges.includes(challenge.id) ? "bg-green-200 dark:bg-green-700" : "bg-white dark:bg-gray-700"} rounded-lg shadow-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-300`} 
+                   onClick={() => { setSelectedChallenge(challenge); setFlag(''); setMessage(null); }}>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{challenge.title}</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">{challenge.category}</p>
               </div>
@@ -112,32 +105,28 @@ const ChallengePage = () => {
       {/* Modal for Challenge Details */}
       {selectedChallenge && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-96 shadow-lg">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-5/12 shadow-lg">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
               {selectedChallenge.title}
             </h2>
             <p className="text-gray-700 dark:text-gray-300 mt-2">
               {selectedChallenge.description}
             </p>
-            {selectedChallenge.solved ? (
-              <p className="text-green-500 mt-2">✅ Challenge Solved!</p>
-            ) : (
-              <form onSubmit={handleSubmit} className="mt-4 space-y-3">
-                <input
-                  type="text"
-                  value={flag}
-                  onChange={(e) => setFlag(e.target.value)}
-                  placeholder="Enter the flag"
-                  className="w-full p-2 rounded-lg bg-gray-200 dark:bg-gray-700 dark:text-white border border-gray-300"
-                />
-                <button
-                  type="submit"
-                  className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 rounded-lg text-lg font-semibold transition duration-300"
-                >
-                  Submit Flag
-                </button>
-              </form>
-            )}
+            <form onSubmit={handleSubmit} className="mt-4 space-y-3">
+              <input
+                type="text"
+                value={flag}
+                onChange={(e) => setFlag(e.target.value)}
+                placeholder="Enter the flag"
+                className="w-full p-2 rounded-lg bg-gray-200 dark:bg-gray-700 dark:text-white border border-gray-300"
+              />
+              <button
+                type="submit"
+                className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 rounded-lg text-lg font-semibold transition duration-300"
+              >
+                Submit Flag
+              </button>
+            </form>
             {message && <p className="text-green-500 mt-2">{message}</p>}
             <button
               onClick={() => setSelectedChallenge(null)}
