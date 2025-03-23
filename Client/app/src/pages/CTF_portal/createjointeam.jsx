@@ -55,7 +55,7 @@ function CreateOrJoinTeam() {
           const body =
             action === "create"
               ? { team_name: teamName } // Match backend field
-              : { team_code: teamCode }; // Match backend field
+              : { code: teamCode }; // Match backend field
       
           const response = await fetch(endpoint, {
             method: "POST",

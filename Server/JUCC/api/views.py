@@ -425,6 +425,7 @@ class JoinTeamView(APIView):
 
     def post(self, request):
         code = request.data.get("code")
+        print('code is:',code)
         if not code:
             return Response({"error": "Team code is required."}, status=400)
 
@@ -433,12 +434,18 @@ class JoinTeamView(APIView):
         except Team.DoesNotExist:
             return Response({"error": "Invalid team code."}, status=400)
 
-        if request.user in team.member.all():
+        # Check if the user is already in the team
+        if TeamMember.objects.filter(user=request.user, team=team).exists():
             return Response({"error": "You are already a member of this team."}, status=400)
 
-        team.member.add(request.user)
+        # Add user to the team
+        TeamMember.objects.create(user=request.user, team=team)
+
+        # Optional: re-serialize the team
+        from .serializer import TeamSerializer
         serializer = TeamSerializer(team)
         return Response({"message": "Successfully joined the team!", "team": serializer.data}, status=200)
+
 
 ###############################################################################################################################################
 
