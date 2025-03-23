@@ -251,6 +251,7 @@ class ChallengeDetailView(APIView):
 
         return Response({"challenge": serializer.data, "solved": solved}, status=HTTP_200_OK)
 
+from .models import Profile  # Make sure Profile is imported
 
 class ChallengeSubmitView(APIView):
     permission_classes = [IsAuthenticated]
@@ -264,17 +265,20 @@ class ChallengeSubmitView(APIView):
             if SolvedChallenge.objects.filter(user=request.user, challenge=challenge).exists():
                 return Response({"message": "✅ You already solved this challenge!"}, status=HTTP_200_OK)
 
-            # Create solve entry
-            SolvedChallenge.objects.create(user=request.user, challenge=challenge)
+            # Ensure Profile exists or create it
+            profile, _ = Profile.objects.get_or_create(user=request.user)
 
-            # ✅ Update profile points
-            profile = request.user.profile
+            # Update profile points
             profile.points += challenge.points
             profile.save()
+
+            # Create SolvedChallenge entry
+            SolvedChallenge.objects.create(user=request.user, challenge=challenge)
 
             return Response({"message": "🎉 Correct flag! Challenge marked as solved."}, status=HTTP_201_CREATED)
 
         return Response({"message": "❌ Incorrect flag, try again."}, status=HTTP_400_BAD_REQUEST)
+
 
 
 
@@ -392,11 +396,27 @@ class GetTeamsView(APIView):
         return Response(serializer.data, status=200)
 
 class ScoreboardAPIView(APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request):
         teams = Team.objects.all()
         sorted_teams = sorted(teams, key=lambda t: t.points, reverse=True)
-        serializer = TeamSerializer(sorted_teams, many=True)
-        return Response(serializer.data, status=HTTP_200_OK)
+
+        # Dummy progress for demonstration
+        def simulate_progress(score):
+            # Simulate score growth over 6 time points
+            chunk = score // 6 if score > 0 else 0
+            return [chunk * i for i in range(1, 7)]
+
+        data = []
+        for team in sorted_teams:
+            data.append({
+                "name": team.name,
+                "points": team.points,
+                "progress": simulate_progress(team.points),
+            })
+
+        return Response(data)
 
 ###############################################################################################################################################
 
