@@ -211,6 +211,32 @@ class ChallengeCreateView(APIView):
             serializer.save(created_by=request.user)
             return Response(serializer.data, status=HTTP_201_CREATED)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+    
+    
+from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND
+from django.shortcuts import get_object_or_404
+class DeleteChallengeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, challenge_id):
+        challenge = get_object_or_404(Challenge, id=challenge_id)
+
+        challenge.delete()
+        return Response({"message": "Challenge deleted successfully."}, status=HTTP_204_NO_CONTENT)
+    
+    
+class ChallengeEditView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, challenge_id):
+        challenge = get_object_or_404(Challenge, id=challenge_id)
+        
+        serializer = ChallengeSerializer(challenge, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=HTTP_200_OK)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+    
 
 class ChallengeDetailView(APIView):
     permission_classes = [AllowAny]
@@ -234,15 +260,23 @@ class ChallengeSubmitView(APIView):
         submitted_flag = request.data.get("flag", "").strip()
 
         if submitted_flag == challenge.flag:
-            # Check if the challenge is already solved
+            # Check if already solved
             if SolvedChallenge.objects.filter(user=request.user, challenge=challenge).exists():
-                return Response({"message": "✅ You have already solved this challenge!"}, status=HTTP_200_OK)
-            
-            # Save the solved challenge
+                return Response({"message": "✅ You already solved this challenge!"}, status=HTTP_200_OK)
+
+            # Create solve entry
             SolvedChallenge.objects.create(user=request.user, challenge=challenge)
-            return Response({"message": "🎉 Correct flag! Challenge marked as solved."}, status=HTTP_200_OK)
+
+            # ✅ Update profile points
+            profile = request.user.profile
+            profile.points += challenge.points
+            profile.save()
+
+            return Response({"message": "🎉 Correct flag! Challenge marked as solved."}, status=HTTP_201_CREATED)
 
         return Response({"message": "❌ Incorrect flag, try again."}, status=HTTP_400_BAD_REQUEST)
+
+
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -357,6 +391,13 @@ class GetTeamsView(APIView):
         serializer = TeamSerializer(teams, many=True)
         return Response(serializer.data, status=200)
 
+class ScoreboardAPIView(APIView):
+    def get(self, request):
+        teams = Team.objects.all()
+        sorted_teams = sorted(teams, key=lambda t: t.points, reverse=True)
+        serializer = TeamSerializer(sorted_teams, many=True)
+        return Response(serializer.data, status=HTTP_200_OK)
+
 ###############################################################################################################################################
 
 class JoinTeamView(APIView):
@@ -386,21 +427,33 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
 class TeamCheckView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # Get the user's team information
         team_member = TeamMember.objects.filter(user=request.user).first()
 
         if team_member:
+            team = team_member.team
+            members = team.members.all()
+
             return Response({
                 "in_team": True,
-                "team_id": team_member.team.id,
-                "team_name": team_member.team.name,
-                "role": team_member.role
-            })
+                "team_id": team.id,
+                "team_name": team.name,
+                "password": team.code,
+                "points": team.points,
+                "role": team_member.role,
+                "members": [
+                    {
+                        "id": m.user.id,
+                        "username": m.user.username,
+                        "email": m.user.email
+                    } for m in members
+                ]
+            }, status=HTTP_200_OK)
 
-        return Response({"in_team": False})
+        return Response({"in_team": False}, status=HTTP_200_OK)
+
 
 ###############################################################################################################################################
 

@@ -31,7 +31,22 @@ class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ['id', 'name', 'code', 'points', 'rank', 'created_by', 'members']
+        fields = ['id', 'name', 'code', 'rank', 'created_by', 'members']
+        
+# serializer.py
+from rest_framework import serializers
+from .models import Team
+
+class TeamScoreSerializer(serializers.ModelSerializer):
+    points = serializers.SerializerMethodField()
+    members = serializers.StringRelatedField(many=True)
+
+    class Meta:
+        model = Team
+        fields = ['name', 'members', 'points']
+
+    def get_points(self, obj):
+        return obj.points  # Uses the @property
 
 
 #########################################################################################################
