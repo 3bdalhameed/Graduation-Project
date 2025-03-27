@@ -6,33 +6,33 @@ const NavigationLinks = ({ isMenuOpen, handleAuthRedirect }) => {
   return (
     <ul className={`${styles.navLinks} ${isMenuOpen ? styles.navLinksOpen : ""}`}>
       <li className={styles.navItem}>
-        <FaFlag className={styles.navIconBlue} />
         <a href="/login" className={styles.navLinkBlue}>
-          CTF Portal
+          <FaFlag className={styles.navIconBlue} />
+          <span>CTF Portal</span>
         </a>
       </li>
       <li className={styles.navItem}>
-        <FaBook className={styles.navIconGreen} />
         <a href="/learningPortalLogin" className={styles.navLinkGreen}>
-          Learning Portal
+          <FaBook className={styles.navIconGreen} />
+          <span>Learning Portal</span>
         </a>
       </li>
       <li className={styles.navItem}>
-        <FaSchool className={styles.navIconYellow} />
         <a
           onClick={() => handleAuthRedirect("/login")}
           className={styles.navLinkYellow}
         >
-          School Portal
+          <FaSchool className={styles.navIconYellow} />
+          <span>School Portal</span>
         </a>
       </li>
       <li className={styles.navItem}>
-        <FaUsers className={styles.navIconPurple} />
         <a
           onClick={() => handleAuthRedirect("/login")}
           className={styles.navLinkPurple}
         >
-          Login
+          <FaUsers className={styles.navIconPurple} />
+          <span>Login</span>
         </a>
       </li>
     </ul>

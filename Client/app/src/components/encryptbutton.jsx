@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 const Example = () => {
   return (
-    <div className="grid min-h-[200px] place-content-center bg-neutral-900 p-4">
+    <div className="grid min-h-[200px] place-content-center">
       <EncryptButton />
     </div>
   );
@@ -63,7 +63,7 @@ const EncryptButton = () => {
   }}
   onMouseEnter={scramble}
   onMouseLeave={stopScramble}
-  className="group relative overflow-hidden rounded-lg border-[1px] border-neutral-500 bg-neutral-700 px-4 py-2 font-mono font-medium uppercase text-neutral-300 transition-colors hover:text-indigo-300 cursor-pointer"
+  className="group relative overflow-hidden rounded-lg border-[1px] border-primary-300/30 dark:border-primary-700/50 bg-white dark:bg-gray-800 px-4 py-2 font-mono font-medium uppercase text-primary-700 dark:text-primary-300 shadow-sm hover:shadow-md transition-all duration-300 hover:text-primary-600 dark:hover:text-primary-200 cursor-pointer ring-offset-2 hover:ring-2 hover:ring-primary-300/50 dark:hover:ring-primary-600/50"
 >
   <div className="relative z-10 flex items-center gap-2">
     <span>{text}</span>
@@ -81,7 +81,7 @@ const EncryptButton = () => {
       duration: 1,
       ease: "linear",
     }}
-    className="duration-300 absolute inset-0 z-0 scale-125 bg-gradient-to-t from-indigo-400/0 from-40% via-indigo-400/100 to-indigo-400/0 to-60% opacity-0 transition-opacity group-hover:opacity-100"
+    className="duration-300 absolute inset-0 z-0 scale-125 bg-gradient-to-t from-primary-400/0 from-40% via-primary-400/20 dark:via-primary-500/30 to-primary-400/0 to-60% opacity-0 transition-opacity group-hover:opacity-100"
   />
 </motion.div>
 
