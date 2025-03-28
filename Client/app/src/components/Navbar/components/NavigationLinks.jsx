@@ -1,41 +1,62 @@
 import React from "react";
-import { FaFlag, FaUsers, FaBook, FaSchool } from "react-icons/fa";
-import styles from "../styles/navbar.module.css";
 
-const NavigationLinks = ({ isMenuOpen, handleAuthRedirect }) => {
+const NavigationLinks = ({ navItems, isMobile }) => {
+  if (isMobile) {
+    return (
+      <>
+        {navItems.map((item, index) => (
+          <div key={index}>
+            {item.href ? (
+              <a
+                href={item.href}
+                className={`flex items-center py-2 px-3 rounded-md transition-all duration-200 
+                font-medium ${item.colorClass} ${item.hoverClass}`}
+              >
+                <span className="mr-2">{item.icon}</span>
+                <span>{item.label}</span>
+              </a>
+            ) : (
+              <button
+                onClick={item.onClick}
+                className={`flex w-full text-left items-center py-2 px-3 rounded-md transition-all duration-200 
+                font-medium ${item.colorClass} ${item.hoverClass}`}
+              >
+                <span className="mr-2">{item.icon}</span>
+                <span>{item.label}</span>
+              </button>
+            )}
+          </div>
+        ))}
+      </>
+    );
+  }
+  
   return (
-    <ul className={`${styles.navLinks} ${isMenuOpen ? styles.navLinksOpen : ""}`}>
-      <li className={styles.navItem}>
-        <a href="/login" className={styles.navLinkBlue}>
-          <FaFlag className={styles.navIconBlue} />
-          <span>CTF Portal</span>
-        </a>
-      </li>
-      <li className={styles.navItem}>
-        <a href="/learningPortalLogin" className={styles.navLinkGreen}>
-          <FaBook className={styles.navIconGreen} />
-          <span>Learning Portal</span>
-        </a>
-      </li>
-      <li className={styles.navItem}>
-        <a
-          onClick={() => handleAuthRedirect("/login")}
-          className={styles.navLinkYellow}
-        >
-          <FaSchool className={styles.navIconYellow} />
-          <span>School Portal</span>
-        </a>
-      </li>
-      <li className={styles.navItem}>
-        <a
-          onClick={() => handleAuthRedirect("/login")}
-          className={styles.navLinkPurple}
-        >
-          <FaUsers className={styles.navIconPurple} />
-          <span>Login</span>
-        </a>
-      </li>
-    </ul>
+    <div className="hidden md:flex items-center space-x-6">
+      {navItems.map((item, index) => (
+        <div key={index} className="flex items-center">
+          {item.href ? (
+            <a 
+              href={item.href}
+              className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 
+              font-medium ${item.colorClass} ${item.hoverClass}`}
+            >
+              <span className="mr-2">{item.icon}</span>
+              <span>{item.label}</span>
+            </a>
+          ) : (
+            <button
+              onClick={item.onClick}
+              className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 
+              font-medium ${item.colorClass} ${item.hoverClass}`}
+            >
+              <span className="mr-2">{item.icon}</span>
+              <span>{item.label}</span>
+            </button>
+          )}
+        </div>
+      ))}
+    </div>
   );
 };
 

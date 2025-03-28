@@ -29,17 +29,17 @@ function MainSection() {
       opacity: Math.random() * 0.4 + 0.1,
     }));
 
-    // Particle animation loop with dark mode awareness
+    // Particle animation loop with improved light mode
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const isDarkMode = document.documentElement.classList.contains("dark");
 
       particles.forEach((particle) => {
-        // Use theme colors based on dark/light mode
+        // Enhanced light mode colors for particles
         ctx.fillStyle = isDarkMode
           ? `rgba(56, 189, 248, ${particle.opacity})`
-          : `rgba(2, 132, 199, ${particle.opacity})`;
+          : `rgba(37, 99, 235, ${particle.opacity * 1.2})`; // Brighter blue for light mode
 
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
@@ -72,35 +72,35 @@ function MainSection() {
         {/* Transparent spacer - actual navbar is handled by the Navbar component */}
       </div>
 
-      {/* Content-to-background gradient transition */}
-      <div className="absolute top-16 left-0 w-full h-8 z-30 bg-gradient-to-b from-white/80 dark:from-gray-900/80 to-transparent"></div>
+      {/* Content-to-background gradient transition with improved light mode */}
+      <div className="absolute top-16 left-0 w-full h-8 z-30 bg-gradient-to-b from-blue-50/90 dark:from-gray-900/80 "></div>
 
       {/* Optimized canvas background */}
       <canvas ref={canvasRef} className="absolute inset-0" aria-hidden="true" />
 
-      {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-radial from-blue-50/50 dark:from-blue-900/20 via-white/30 dark:via-gray-900/30 to-white dark:to-gray-900"></div>
+      {/* Subtle gradient overlay with improved light mode */}
+      <div className="absolute inset-0 bg-gradient-radial from-blue-100/70 dark:from-blue-900/20 via-white/60 dark:via-gray-900/30 to-blue-50 dark:to-gray-900"></div>
 
-      {/* Tech symbols */}
-      <div className="hidden md:block absolute top-28 left-10 text-4xl font-mono animate-float-slow text-blue-500/10 dark:text-blue-400/10">{`{ }`}</div>
-      <div className="hidden md:block absolute bottom-20 right-10 text-3xl font-mono animate-float text-teal-500/10 dark:text-teal-400/10">{`</>`}</div>
+      {/* Tech symbols with improved light mode visibility */}
+      <div className="hidden md:block absolute top-28 left-10 text-4xl font-mono animate-float-slow text-blue-600/20 dark:text-blue-400/10">{`{ }`}</div>
+      <div className="hidden md:block absolute bottom-20 right-10 text-3xl font-mono animate-float text-teal-600/20 dark:text-teal-400/10">{`</>`}</div>
 
       <div className="container mx-auto px-6 py-24 sm:py-32 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          {/* Content section */}
+          {/* Content section with improved light mode */}
           <div className="space-y-8 animate-fade-in">
             <div>
-              <p className="text-sm font-medium uppercase tracking-wider mb-2 text-blue-600 dark:text-blue-400">
+              <p className="text-sm font-medium uppercase tracking-wider mb-2 text-blue-700 dark:text-blue-400">
                 Cyber Security Platform
               </p>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-gray-900 dark:text-white">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-gray-800 dark:text-white">
                 Welcome to <span className="text-gradient">JuCC</span>
               </h1>
             </div>
 
             <p className="text-lg max-w-lg text-gray-700 dark:text-gray-300">
               Enhance your{" "}
-              <span className="font-medium text-blue-600 dark:text-blue-400">
+              <span className="font-medium text-blue-700 dark:text-blue-400">
                 Hacking
               </span>{" "}
               experience with cutting-edge challenges, immersive learning, and a
@@ -113,20 +113,20 @@ function MainSection() {
             </div>
           </div>
 
-          {/* Image with improved responsive handling */}
+          {/* Image with improved light mode handling */}
           <div className="relative mt-8 md:mt-0">
-            <div className="absolute inset-0 -z-10 blur-3xl rounded-full bg-blue-100/50 dark:bg-blue-900/20"></div>
+            <div className="absolute inset-0 -z-10 blur-3xl rounded-full bg-blue-200/60 dark:bg-blue-900/20"></div>
             <img
               src={hacker}
               alt="Cybersecurity specialist"
-              className="w-full max-w-lg mx-auto object-contain relative animate-image-reveal filter dark:brightness-110"
+              className="w-full max-w-lg mx-auto object-contain relative animate-image-reveal filter dark:brightness-110 drop-shadow-xl"
               loading="lazy"
             />
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="hidden md:block absolute bottom-8 left-1/2 -translate-x-1/2 text-blue-600/60 dark:text-blue-400/60 animate-bounce">
+        {/* Scroll indicator with improved light mode */}
+        <div className="hidden md:block absolute bottom-8 left-1/2 -translate-x-1/2 text-blue-700/70 dark:text-blue-400/60 animate-bounce">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
@@ -144,11 +144,11 @@ function MainSection() {
         </div>
       </div>
 
-      {/* Minimal grid pattern */}
-      <div className="absolute inset-0 bg-grid opacity-[0.02] dark:opacity-[0.03]"></div>
+      {/* Minimal grid pattern with improved light mode visibility */}
+      <div className="absolute inset-0 bg-grid opacity-[0.05] dark:opacity-[0.03]"></div>
 
-      {/* Enhanced footer gradient for smooth transition */}
-      <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-white dark:from-gray-900 to-transparent"></div>
+      {/* Enhanced footer gradient for smooth transition in light mode */}
+      <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-blue-50 dark:from-gray-900 to-transparent"></div>
     </section>
   );
 }
