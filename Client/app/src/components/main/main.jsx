@@ -7,10 +7,10 @@ function MainSection() {
 
   useEffect(() => {
     const canvas = canvasRef.current;
+    if (!canvas) return;
     const ctx = canvas.getContext("2d");
     let animationFrameId;
 
-    // Handle responsive canvas sizing
     const handleResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -19,7 +19,6 @@ function MainSection() {
     window.addEventListener("resize", handleResize);
     handleResize();
 
-    // Create optimized particles
     const particles = Array.from({ length: 80 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
@@ -29,17 +28,15 @@ function MainSection() {
       opacity: Math.random() * 0.4 + 0.1,
     }));
 
-    // Particle animation loop with improved light mode
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const isDarkMode = document.documentElement.classList.contains("dark");
 
       particles.forEach((particle) => {
-        // Enhanced light mode colors for particles
         ctx.fillStyle = isDarkMode
           ? `rgba(56, 189, 248, ${particle.opacity})`
-          : `rgba(37, 99, 235, ${particle.opacity * 1.2})`; // Brighter blue for light mode
+          : `rgba(37, 99, 235, ${particle.opacity * 1.2})`;
 
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
@@ -67,27 +64,11 @@ function MainSection() {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden pt-20">
-      {/* Navbar spacer - height matches navbar height */}
-      <div className="absolute top-0 left-0 w-full h-16 z-30">
-        {/* Transparent spacer - actual navbar is handled by the Navbar component */}
+      <div className="absolute inset-0 -z-10">
+        <canvas ref={canvasRef} aria-hidden="true" className="w-full h-full" />
       </div>
-
-      {/* Content-to-background gradient transition with improved light mode */}
-      <div className="absolute top-16 left-0 w-full h-8 z-30 bg-gradient-to-b from-blue-50/90 dark:from-gray-900/80 "></div>
-
-      {/* Optimized canvas background */}
-      <canvas ref={canvasRef} className="absolute inset-0" aria-hidden="true" />
-
-      {/* Subtle gradient overlay with improved light mode */}
-      <div className="absolute inset-0 bg-gradient-radial from-blue-100/70 dark:from-blue-900/20 via-white/60 dark:via-gray-900/30 to-blue-50 dark:to-gray-900"></div>
-
-      {/* Tech symbols with improved light mode visibility */}
-      <div className="hidden md:block absolute top-28 left-10 text-4xl font-mono animate-float-slow text-blue-600/20 dark:text-blue-400/10">{`{ }`}</div>
-      <div className="hidden md:block absolute bottom-20 right-10 text-3xl font-mono animate-float text-teal-600/20 dark:text-teal-400/10">{`</>`}</div>
-
       <div className="container mx-auto px-6 py-24 sm:py-32 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          {/* Content section with improved light mode */}
           <div className="space-y-8 animate-fade-in">
             <div>
               <p className="text-sm font-medium uppercase tracking-wider mb-2 text-blue-700 dark:text-blue-400">
@@ -107,13 +88,11 @@ function MainSection() {
               vibrant community of security enthusiasts.
             </p>
 
-            {/* Main CTA Button with improved styling */}
             <div className="inline-block">
               <Button />
             </div>
           </div>
 
-          {/* Image with improved light mode handling */}
           <div className="relative mt-8 md:mt-0">
             <div className="absolute inset-0 -z-10 blur-3xl rounded-full bg-blue-200/60 dark:bg-blue-900/20"></div>
             <img
@@ -125,7 +104,6 @@ function MainSection() {
           </div>
         </div>
 
-        {/* Scroll indicator with improved light mode */}
         <div className="hidden md:block absolute bottom-8 left-1/2 -translate-x-1/2 text-blue-700/70 dark:text-blue-400/60 animate-bounce">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -143,12 +121,7 @@ function MainSection() {
           </svg>
         </div>
       </div>
-
-      {/* Minimal grid pattern with improved light mode visibility */}
-      <div className="absolute inset-0 bg-grid opacity-[0.05] dark:opacity-[0.03]"></div>
-
-      {/* Enhanced footer gradient for smooth transition in light mode */}
-      <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-blue-50 dark:from-gray-900 to-transparent"></div>
+      <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-transparent to-transparent z-10"></div>
     </section>
   );
 }
