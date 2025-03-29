@@ -1,21 +1,23 @@
 import React from "react";
-import logo from "../../pages/img/logo.png";
-import playctf from "../../pages/img/playctf.png";
+import Awareness from "../../pages/img/Awareness.png";
+import Competition from "../../pages/img/Competition.png";
+import Assessment from "../../pages/img/Assessment.png";
+import Media from "../../pages/img/Media.png";
 import ServiceCard from "./ServiceCard";
 import PortalCard from "./PortalCard";
 
 function ProjectSection() {
   const services = [
-    { src: logo, title: "Learn", description: "Access comprehensive learning materials and tutorials" },
-    { src: logo, title: "Practice", description: "Sharpen your skills through interactive exercises" },
-    { src: playctf, title: "Compete", description: "Join challenges and competitions to test your abilities" },
-    { src: playctf, title: "Play", description: "Engage in gamified cybersecurity scenarios" },
+    { src: Awareness, title: "", description: "Access comprehensive learning materials and tutorials" },
+    { src: Competition, title: "", description: "Sharpen your skills through interactive exercises" },
+    { src: Assessment, title: "", description: "Join challenges and competitions to test your abilities" },
+    { src: Media, title: "", description: "Engage in gamified cybersecurity scenarios" },
   ];
 
   const portals = [
-    { src: playctf, title: "CTF Portal", description: "Join capture the flag competitions and track your progress", path: "/login", color: "blue", icon: "🚩" },
-    { src: playctf, title: "School Portal", description: "Access administrative tools, analytics, and educational resources", path: "/", color: "purple", icon: "🏫" },
-    { src: playctf, title: "Learning Portal", description: "Structured learning paths and collaborative educational content", path:"/learningPortalLogin", color: "green", icon: "📚" },
+    { src: Competition, title: "CTF Portal", description: "Join capture the flag competitions and track your progress", path: "/login", color: "blue", icon: "🚩" },
+    { src: Competition, title: "School Portal", description: "Access administrative tools, analytics, and educational resources", path: "/", color: "purple", icon: "🏫" },
+    { src: Competition, title: "Learning Portal", description: "Structured learning paths and collaborative educational content", path:"/learningPortalLogin", color: "green", icon: "📚" },
   ];
 
   return (
