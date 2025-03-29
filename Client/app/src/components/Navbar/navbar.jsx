@@ -47,13 +47,6 @@ const NavBar = () => {
   // Navigation link items
   const navItems = [
     {
-      label: "CTF Portal",
-      icon: <FaFlag />,
-      href: "/login",
-      colorClass: "text-blue-600 dark:text-blue-400",
-      hoverClass: "hover:bg-blue-50 dark:hover:bg-blue-900/30"
-    },
-    {
       label: "Learning Portal",
       icon: <FaBook />,
       href: "/learningPortalLogin",
