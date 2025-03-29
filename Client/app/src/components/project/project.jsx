@@ -14,12 +14,6 @@ function ProjectSection() {
     { src: Media, title: "", description: "Engage in gamified cybersecurity scenarios" },
   ];
 
-  const portals = [
-    { src: Competition, title: "CTF Portal", description: "Join capture the flag competitions and track your progress", path: "/login", color: "blue", icon: "🚩" },
-    { src: Competition, title: "School Portal", description: "Access administrative tools, analytics, and educational resources", path: "/", color: "purple", icon: "🏫" },
-    { src: Competition, title: "Learning Portal", description: "Structured learning paths and collaborative educational content", path:"/learningPortalLogin", color: "green", icon: "📚" },
-  ];
-
   return (
     <section className="relative py-24 overflow-hidden">
 
@@ -48,12 +42,6 @@ function ProjectSection() {
             Our Portals
           </h2>
           <div className="w-24 h-1.5 bg-gradient-to-r from-blue-700 to-blue-500 dark:from-blue-500 dark:to-blue-300 mx-auto rounded-full"></div>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10">
-          {portals.map((portal, index) => (
-            <PortalCard key={index} portal={portal} index={index} />
-          ))}
         </div>
       </div>
     </section>
