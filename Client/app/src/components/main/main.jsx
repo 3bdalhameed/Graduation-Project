@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import hacker from "../../pages/img/hacker.png";
 import Button from "../encryptbutton.jsx";
 
