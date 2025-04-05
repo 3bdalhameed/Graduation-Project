@@ -28,6 +28,11 @@ import LearningPortalSignup from "./pages/learning_portal/learningPortalSignup.j
 import Introduction from "./pages/learning_portal/Materials/introduction.jsx";
 import "./pages/style.css";
 
+// School Portal
+import Schoollogin from "./pages/School_portal/SchoolLogin.jsx";
+import Schoolmain from "./pages/School_portal/SchoolMainPage.jsx";
+
+
 function App() {
   return (
       <Router>
@@ -53,6 +58,8 @@ function App() {
           <Route path="/learningPortalMaterials" element={<LearningPortalMaterials />} />
           <Route path="/learningPortalSignup" element={<LearningPortalSignup />} />
           <Route path="/learning/cybersecurity" element={<Introduction />} />
+          <Route path="/schoollogin" element={<Schoollogin />} />          
+          <Route path="/schoolmain" element={<Schoolmain />} />
           <Route path="/ticTacToe" element={<TicTacToe />} />
         </Routes>
       </Router>

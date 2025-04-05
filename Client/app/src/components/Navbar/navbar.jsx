@@ -79,10 +79,7 @@ const NavBar = () => {
           </li>
           <li className="flex items-center">
             <FaSchool className="mr-2" />
-            <a
-              onClick={() => handleAuthRedirect("/login")}
-              className="hover:text-blue-400 cursor-pointer"
-            >
+            <a href="/SchoolLogin" className="hover:text-blue-400">
               School Portal
             </a>
           </li>

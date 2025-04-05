@@ -2,7 +2,8 @@
 export default {
   darkMode: 'class',
   content: [
-    "./src/*/*/*"
+    "./src/*/*/*",
+    "./src/pages/test.jsx"
   ],
   theme: {
     theme: {
