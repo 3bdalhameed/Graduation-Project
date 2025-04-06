@@ -1,21 +1,37 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
-
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+        
 class Team(models.Model):
     name = models.CharField(max_length=50)
     code = models.CharField(max_length=10, unique=True)
-    points = models.IntegerField(default=0)
     rank = models.IntegerField(default=1)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="created_teams")
 
     def __str__(self):
         return self.name
+    
+    @property
+    def points(self):
+        total = 0
+        for member in self.members.all():
+            try:
+                total += member.user.profile.points
+            except Exception:
+                total += 0
+        return total
+
 
 
 class TeamMember(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='member')
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='members')
     role = models.CharField(max_length=50, default="Member")
 
     def __str__(self):
@@ -25,9 +41,10 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)  # Link to Django's User model
     name = models.CharField(max_length=50)  # Real name
     created_at = models.DateTimeField(auto_now_add=True)  # Track creation time
+    points = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return self.name
+        return f"{self.user.username} Profile"
 
 
 from django.db import models

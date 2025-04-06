@@ -165,6 +165,7 @@ function TeamAndUserDashboard() {
               <div>
                 <p><strong>Team Name:</strong> {teamData.name}</p>
                 <p><strong>Total Points:</strong> {teamData.points}</p>
+                <p><strong>Team Code:</strong> {teamData.password}</p>
                 <h3 className="text-lg font-semibold mt-4">Members</h3>
                 <ul>
                   {teamData?.members && teamData.members.length > 0 ? (
