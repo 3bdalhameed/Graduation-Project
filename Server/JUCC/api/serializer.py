@@ -57,3 +57,41 @@ class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Challenge
         fields = ['id', 'title', 'description', 'created_by', 'created_at', 'category', 'points', 'flag']
+        
+        
+#########################################################################################################
+        
+from rest_framework import serializers
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+from api.models import UserRole
+
+class RoleLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
+    role = serializers.ChoiceField(choices=UserRole.ROLE_CHOICES)
+
+    def validate(self, data):
+        email = data.get("email")
+        password = data.get("password")
+        role = data.get("role")
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Invalid email or password.")
+
+        user = authenticate(username=user.username, password=password)
+        if not user:
+            raise serializers.ValidationError("Invalid email or password.")
+
+        try:
+            user_role = user.userrole.role
+        except UserRole.DoesNotExist:
+            raise serializers.ValidationError("User role not set.")
+
+        if user_role != role:
+            raise serializers.ValidationError("Incorrect role selected.")
+
+        data["user"] = user
+        return data
