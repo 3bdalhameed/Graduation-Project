@@ -486,7 +486,7 @@ class TeamCheckView(APIView):
 
 
 
-###############################################################################################################################################
+
 
 from .models import Team
 from .serializer import TeamSerializer
@@ -504,3 +504,34 @@ class TeamProfile(APIView):
         
         except Team.DoesNotExist:
             return Response({"error": "Team not Found"}, status=404)
+        
+        
+###############################################################################################################################################
+        
+# views.py
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser
+from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
+from django.contrib.auth.models import User
+from api.models import UserRole
+
+class AdminCreateUserView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def post(self, request):
+        username = request.data.get("username")
+        email = request.data.get("email")
+        password = request.data.get("password")
+        role = request.data.get("role")
+
+        if not all([username, email, password, role]):
+            return Response({"error": "Missing fields."}, status=HTTP_400_BAD_REQUEST)
+
+        if role not in dict(UserRole.ROLE_CHOICES).keys():
+            return Response({"error": "Invalid role."}, status=HTTP_400_BAD_REQUEST)
+
+        user = User.objects.create_user(username=username, email=email, password=password)
+        UserRole.objects.create(user=user, role=role)
+        return Response({"message": "User created successfully."}, status=HTTP_201_CREATED)

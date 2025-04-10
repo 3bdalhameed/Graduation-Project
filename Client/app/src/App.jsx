@@ -31,6 +31,7 @@ import "./pages/style.css";
 // School Portal
 import Schoollogin from "./pages/School_portal/SchoolLogin.jsx";
 import Schoolmain from "./pages/School_portal/SchoolMainPage.jsx";
+import Schooladmin from "./pages/School_portal/AdminUserCreatePage.jsx";
 
 
 function App() {
@@ -58,8 +59,14 @@ function App() {
           <Route path="/learningPortalMaterials" element={<LearningPortalMaterials />} />
           <Route path="/learningPortalSignup" element={<LearningPortalSignup />} />
           <Route path="/learning/cybersecurity" element={<Introduction />} />
+
+
           <Route path="/schoollogin" element={<Schoollogin />} />          
           <Route path="/schoolmain" element={<Schoolmain />} />
+          <Route path="/school/createuser" element={<Schooladmin />} />
+
+
+
           <Route path="/ticTacToe" element={<TicTacToe />} />
         </Routes>
       </Router>
