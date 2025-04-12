@@ -56,33 +56,36 @@ def get_csrf_token(request):
 ###############################################################################################################################################
 
 
-# views.py
-from rest_framework.views import APIView
+
+from django.contrib.auth.models import User
+from rest_framework import generics
+from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.status import HTTP_404_NOT_FOUND, HTTP_200_OK
-from .models import Profile, UserRole
+from rest_framework import status
+from .serializer import UserSerializer, UserProfileSerializer
 
-class ProfileView(APIView):
-    permission_classes = [IsAuthenticated]
+class UserListView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+    
+from .models import Team
+from .serializer import TeamSerializer
+class TeamDetailView(generics.RetrieveAPIView):
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
+    permission_classes = [AllowAny]  
+    
+class UserProfileView(generics.RetrieveAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = [AllowAny]
 
-    def get(self, request):
-        try:
-            profile = Profile.objects.get(user=request.user)
-        except Profile.DoesNotExist:
-            return Response({"error": "Profile not found."}, status=HTTP_404_NOT_FOUND)
+    def get_queryset(self):
+        return User.objects.all()
 
-        try:
-            role = UserRole.objects.get(user=request.user).role
-        except UserRole.DoesNotExist:
-            pass
-
-        return Response({
-            "id": request.user.id,
-            "username": request.user.username,
-            "email": request.user.email,
-        }, status=HTTP_200_OK)
-
+    def get_object(self):
+        username = self.kwargs['username']
+        return self.get_queryset().get(username=username)
 
 
 
@@ -600,3 +603,23 @@ class AddCourseView(APIView):
             serializer.save(created_by=request.user)
             return Response(serializer.data, status=HTTP_201_CREATED)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+
+###############################################################################################################################################
+
+from rest_framework import generics, permissions
+from .models import Assessment
+from .serializer import AssessmentSerializer
+
+class AssessmentListCreateView(generics.ListCreateAPIView):
+    queryset = Assessment.objects.all()
+    serializer_class = AssessmentSerializer
+    permission_classes = [AllowAny]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+class AssessmentDetailView(generics.RetrieveAPIView):
+    queryset = Assessment.objects.all()
+    serializer_class = AssessmentSerializer
+    permission_classes = [AllowAny]

@@ -35,19 +35,18 @@ export default function LearningMaterials() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex">
-        
+      <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-100 dark:from-gray-900 dark:to-gray-800 flex">
         {/* Sidebar Filter */}
-        <aside className="w-64 min-h-screen bg-white dark:bg-gray-800 p-6 shadow-lg pt-20">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Filter by Category</h2>
+        <aside className="w-64 min-h-screen bg-white dark:bg-gray-800 p-6 shadow-xl pt-24">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 border-b pb-2 border-blue-500">Categories</h2>
           <div className="space-y-3">
             {categories.map((category) => (
               <button
                 key={category}
-                className={`w-full py-2 px-4 rounded-lg text-left font-medium transition ${
+                className={`w-full py-2 px-4 rounded-xl text-left font-semibold tracking-wide transition duration-200 ${
                   selectedCategory === category
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                    ? "bg-blue-600 text-white shadow-md"
+                    : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
                 }`}
                 onClick={() => setSelectedCategory(category)}
               >
@@ -58,24 +57,25 @@ export default function LearningMaterials() {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-8 pt-20">
-          <h1 className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-6 text-center">
-            Cybersecurity & CTF Fundamentals
+        <main className="flex-1 p-10 pt-24">
+          <h1 className="text-4xl font-extrabold text-center text-gray-800 dark:text-white mb-12 drop-shadow-md">
+            📘 Cybersecurity & CTF Learning Hub
           </h1>
 
-          {/* Learning Materials Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredMaterials.map((material) => (
               <div
                 key={material.id}
-                className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 cursor-pointer hover:scale-105 transition-transform border border-gray-200 dark:border-gray-700"
+                className="bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-6 hover:scale-[1.03] hover:shadow-2xl transform transition duration-300 border border-gray-200 dark:border-gray-700 cursor-pointer"
                 onClick={() => navigate(material.link)}
               >
-                <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
                   {material.title}
                 </h2>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">{material.description}</p>
-                <span className="block mt-4 text-sm font-semibold text-blue-500 dark:text-blue-400">
+                <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-3">
+                  {material.description}
+                </p>
+                <span className="inline-block mt-4 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline">
                   Read More →
                 </span>
               </div>

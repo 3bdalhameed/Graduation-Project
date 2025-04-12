@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar_logon/navbar";
+import ReactMarkdown from "react-markdown";
 
 const ChallengePage = () => {
   const [challenges, setChallenges] = useState([]);
@@ -37,9 +38,9 @@ const ChallengePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(null);
-    
+
     if (!selectedChallenge) return;
-    
+
     try {
       const response = await fetch(`http://127.0.0.1:8000/api/challenge/${selectedChallenge.id}/submit/`, {
         method: "POST",
@@ -50,7 +51,7 @@ const ChallengePage = () => {
         body: JSON.stringify({ flag }),
       });
       const data = await response.json();
-      
+
       if (response.ok) {
         setMessage(data.message);
         setSolvedChallenges([...solvedChallenges, selectedChallenge.id]);
@@ -84,28 +85,27 @@ const ChallengePage = () => {
             ))}
           </ul>
         </div>
-        
+
         {/* Main Content */}
         <div className="flex-1 p-8">
           <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">Challenges</h2>
-          
+
           {/* Challenges List */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {filteredChallenges.map((challenge) => (
-                <div key={challenge.id} 
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {filteredChallenges.map((challenge) => (
+              <div key={challenge.id} 
                 className={`p-6 ${solvedChallenges.includes(challenge.id) ? "bg-green-200 dark:bg-green-700" : "bg-white dark:bg-gray-700"} 
                           rounded-lg shadow-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-300`} 
                 onClick={() => { setSelectedChallenge(challenge); setFlag(''); setMessage(null); }}>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{challenge.title}</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-300">{challenge.category}</p>
-            <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
-              <strong>Difficulty:</strong> {challenge.difficulty}
-            </p>
-            <p className="text-sm text-gray-500 dark:text-gray-300">
-              <strong>Solves:</strong> {challenge.solve_count}
-            </p>
-          </div>
-          
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{challenge.title}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-300">{challenge.category}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
+                  <strong>Difficulty:</strong> {challenge.difficulty}
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-300">
+                  <strong>Solves:</strong> {challenge.solve_count}
+                </p>
+              </div>
             ))}
           </div>
         </div>
@@ -118,9 +118,9 @@ const ChallengePage = () => {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
               {selectedChallenge.title}
             </h2>
-            <p className="text-gray-700 dark:text-gray-300 mt-2">
-              {selectedChallenge.description}
-            </p>
+            <div className="text-gray-700 dark:text-gray-300 mt-2 prose dark:prose-invert">
+              <ReactMarkdown>{selectedChallenge.description}</ReactMarkdown>
+            </div>
             <form onSubmit={handleSubmit} className="mt-4 space-y-3">
               <input
                 type="text"

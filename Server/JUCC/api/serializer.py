@@ -2,21 +2,33 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Challenge, Team, TeamMember
 
+from django.contrib.auth.models import User
+from rest_framework import serializers
+
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True, min_length=8)
+
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'email']
-        extra_kwargs = {'password': {'write_only': True}} # -> Hide password 
+        fields = ['id', 'username', 'email', 'password']
+        extra_kwargs = {
+            'email': {'required': True},
+        }
 
     def create(self, validated_data):
         user = User(
-            username = validated_data['username'],
-            email = validated_data['email']
+            username=validated_data['username'],
+            email=validated_data['email']
         )
-        user.set_password(validated_data['password']) # Hash password
+        user.set_password(validated_data['password'])  # Securely hash the password
         user.save()
         return user
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'date_joined']
+        
 #########################################################################################################
 
 from rest_framework import serializers
@@ -115,3 +127,27 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = ['id', 'name', 'description', 'created_by', 'created_at']
         read_only_fields = ['id', 'created_by', 'created_at']
+
+
+
+from rest_framework import serializers
+from .models import Assessment, Question
+
+class QuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = ['question', 'option1', 'option2', 'option3', 'option4', 'answer']
+        
+class AssessmentSerializer(serializers.ModelSerializer):
+    questions = QuestionSerializer(many=True)
+
+    class Meta:
+        model = Assessment
+        fields = ['id', 'name', 'category', 'difficulty', 'type', 'questions']
+
+    def create(self, validated_data):
+        questions_data = validated_data.pop('questions')
+        assessment = Assessment.objects.create(**validated_data)
+        for question_data in questions_data:
+            Question.objects.create(assessment=assessment, **question_data)
+        return assessment

@@ -1,6 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
+import UserProfile from "./pages/UserProfile";
+import TeamProfile from "./pages/TeamProfile.jsx"
+
 // CTF Portal
 import SignUp from "./pages/CTF_portal/signup.jsx";
 import Home from "./pages/CTF_portal/Home.jsx";
@@ -38,6 +41,9 @@ function App() {
   return (
       <Router>
         <Routes>
+          <Route path="/profile/:username" element={<UserProfile />} />
+          <Route path="/teams/:teamId" element={<TeamProfile />} />
+
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<HomeLogon />} />
           <Route path="/login" element={<Login />} />
@@ -53,6 +59,8 @@ function App() {
           <Route path="/createteam" element={<Createteam />} />
           <Route path="/teamprofile" element={<Teamprof />} />
           <Route path="/settings" element={<Setting />} />
+
+          
           <Route path="/learningPortalLogin" element={<LearningPortalLoginPage />} />
           <Route path="/learningPortalHome" element={<LearningPortalHomePage />} />
           <Route path="/learningPortalAssessments" element={<LearningPortalAssessments />} />

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar_logon/navbar";
 
 function TeamsPage() {
@@ -56,7 +57,14 @@ function TeamsPage() {
                       index % 2 === 0 ? "bg-gray-900" : "bg-gray-800"
                     } hover:bg-gray-700`}
                   >
-                    <td className="px-6 py-4">{team.name}</td>
+                    <td className="px-6 py-4">
+                      <Link
+                        to={`/teams/${team.id}`}
+                        className="text-blue-400 hover:text-blue-300 underline"
+                      >
+                        {team.name}
+                      </Link>
+                    </td>
                     <td className="px-6 py-4">
                       {new Date(team.created_date).toLocaleString()}
                     </td>

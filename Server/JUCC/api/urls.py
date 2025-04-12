@@ -10,12 +10,17 @@ from .views import (
     DeleteChallengeView, ChallengeEditView,
     ScoreboardAPIView, AdminCreateUserView,
     AddCourseView, SolvedChallengeLogsView,
-    ProfileView, 
+    UserListView, UserProfileView, TeamDetailView,
+    AssessmentDetailView, AssessmentListCreateView,
+    
 )
 from rest_framework_simplejwt import views as jwt_views
 
 urlpatterns = [
-    path('profile/', ProfileView.as_view(), name='profile'),
+    path('users/', UserListView.as_view(), name='user-list'),
+    path('profile/<str:username>/', UserProfileView.as_view(), name='user-profile'),
+    path('teams/<int:pk>/', TeamDetailView.as_view(), name='team-detail'),
+    
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('signup/', SignUpView.as_view(), name='signup'),
@@ -45,4 +50,8 @@ urlpatterns = [
     
     path("school/admin/create-user/", AdminCreateUserView.as_view(), name="admin_create_user"),
     path('courses/add/', AddCourseView.as_view(), name='add_course'),
+    
+    
+    path('assessments/', AssessmentListCreateView.as_view(), name='assessment-list'),
+    path('assessments/<int:pk>/', AssessmentDetailView.as_view(), name='assessment-detail'),
 ]
