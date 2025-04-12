@@ -535,3 +535,29 @@ class AdminCreateUserView(APIView):
         user = User.objects.create_user(username=username, email=email, password=password)
         UserRole.objects.create(user=user, role=role)
         return Response({"message": "User created successfully."}, status=HTTP_201_CREATED)
+
+###############################################################################################################################################
+
+class RoleLoginView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        role = request.data.get('role')
+        
+        user = authenticate(username=username, password=password)
+        
+        if not user:
+            return Response({"error": "Invalid credentials"}, status=400)
+            
+        # Check if user has the requested role
+        if hasattr(user, 'userrole') and user.userrole.role == role:
+            tokens = RefreshToken.for_user(user)
+            return Response({
+                "access_token": str(tokens.access_token),
+                "refresh_token": str(tokens),
+                "role": role
+            }, status=200)
+        else:
+            return Response({"error": f"User does not have {role} privileges"}, status=403)
