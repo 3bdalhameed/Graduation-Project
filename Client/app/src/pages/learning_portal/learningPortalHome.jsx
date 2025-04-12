@@ -1,6 +1,5 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../../components/learning_Navbar_logon/navbar";
 import { motion } from "framer-motion";
 
 export default function HomePage() {
@@ -8,7 +7,6 @@ export default function HomePage() {
 
   return (
     <>
-      <Navbar />
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 to-black text-white p-6">
         {/* Animated Heading */}
         <motion.h1

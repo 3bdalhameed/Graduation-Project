@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../../components/Navbar_logon/navbar";
+import useTokenStore from "../../stores/useTokenStore";
 
 const ChallengePage = () => {
   const [challenges, setChallenges] = useState([]);
@@ -14,7 +14,7 @@ const ChallengePage = () => {
   const [editedChallenge, setEditedChallenge] = useState({ title: "", description: "", category: "", points: "", flag: "" });
   const [isCreating, setIsCreating] = useState(false);
   const [newChallenge, setNewChallenge] = useState({ title: "", description: "", category: "Web Exploitation", points: "50", flag: "" });
-  const token = localStorage.getItem("access_token");
+  const token = useTokenStore((state) => state.token);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -87,7 +87,7 @@ const ChallengePage = () => {
 
   return (
     <>
-      <Navbar />
+    
       <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-100 dark:from-gray-900 dark:to-gray-800 pt-24 px-4">
         <div className="flex flex-col items-center">
           <button

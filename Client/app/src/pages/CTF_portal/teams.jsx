@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../../components/Navbar_logon/navbar";
 
 function TeamsPage() {
   const [teams, setTeams] = useState([]);
@@ -28,11 +27,6 @@ function TeamsPage() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      {/* Navbar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-gray-800 shadow-md">
-        <Navbar />
-      </div>
-
       <div className="pt-20 px-4 md:px-8">
         <h1 className="text-4xl font-bold text-center my-6 py-9">Registered Teams</h1>
 

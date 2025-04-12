@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../../components/learning_Navbar_logon/navbar";
 
 const learningMaterials = [
   { id: 1, title: "What is Cybersecurity?", category: "Introduction", description: "Learn the basics of cybersecurity and its importance.", link: "/learning/cybersecurity" },
@@ -34,7 +33,6 @@ export default function LearningMaterials() {
 
   return (
     <>
-      <Navbar />
       <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex">
         
         {/* Sidebar Filter */}

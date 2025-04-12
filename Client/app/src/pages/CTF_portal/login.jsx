@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import Navbar from "../../components/Navbar/navbar";
 import { useNavigate } from "react-router-dom";
 import { FaLock, FaUser } from "react-icons/fa";
+import useTokenStore from "../../stores/useTokenStore";
+
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -9,6 +10,8 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const setToken = useTokenStore((state) => state.setToken);
+
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -27,6 +30,8 @@ function Login() {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem("access_token", data.access_token);
+        setToken(data.access_token);
+
         navigate("/createteam");
       } else {
         const errorData = await response.json();
@@ -42,11 +47,6 @@ function Login() {
 
   return (
     <>
-      {/* Fixed Navbar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-md">
-        <Navbar />
-      </div>
-
       {/* Main Login Section - Full height with proper spacing */}
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 py-20 px-4">
         <div className="w-full max-w-md mt-16 md:mt-12">

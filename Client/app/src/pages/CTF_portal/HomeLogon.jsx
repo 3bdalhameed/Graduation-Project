@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import Main from "../../components/main/main";
 import Project from "../../components/project/project";
 import Footer from "../../components/footer/footer";
-import Navbar from "../../components/Navbar_logon/navbar";
+import useTokenStore from "../../stores/useTokenStore";
 
 function Home() {
   const navigate = useNavigate();
+  const token = useTokenStore((state) => state.token);
 
   useEffect(() => {
     const validateToken = async () => {
-      const token = localStorage.getItem("access_token");
       console.log("Token sent for validation:", token);
       if (!token) {
         console.error("No token found");
@@ -38,13 +38,11 @@ function Home() {
       }
     };
     validateToken();
-  }, [navigate]);
+  }, [navigate, token]);
 
   return (
     <header>
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
-        <Navbar />
-      </div>
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md"></div>
       <Main />
       <Project />
       <Footer />

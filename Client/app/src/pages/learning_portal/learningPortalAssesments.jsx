@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Navbar from "../../components/learning_Navbar_logon/navbar";
 
 const assessments = [
   {
@@ -137,7 +136,6 @@ export default function Assessments() {
 
   return (
     <>
-      <Navbar />
       <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
 
         {/* Sidebar */}

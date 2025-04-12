@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react";
-import NavBar from "../../components/Navbar_logon/navbar";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import useTokenStore from "../../stores/useTokenStore";
 
 function TeamProfile() {
+  const { teamId } = useParams();
   const [teamData, setTeamData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const token = useTokenStore((state) => state.token);
 
   useEffect(() => {
     // Fetch team data
     const fetchTeamDetails = async () => {
-      const token = localStorage.getItem("access_token");
       try {
         const response = await fetch("http://localhost:8000/api/teams/check/", {
           method: "GET",
@@ -55,7 +57,7 @@ function TeamProfile() {
     };
 
     fetchTeamDetails();
-  }, []);
+  }, [token]);
 
   if (loading) {
     return (
@@ -75,7 +77,6 @@ function TeamProfile() {
 
   return (
     <>
-    <NavBar />
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-24">
       
       <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">

@@ -2,14 +2,10 @@ import React from "react";
 import Main from "../../components/main/main";
 import Project from "../../components/project/project";
 import Footer from "../../components/footer/footer";
-import Navbar from "../../components/Navbar/navbar";
 
 function Home() {
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Navbar */}
-      <Navbar />
-      
       {/* Main content wrapper */}
       <div className="flex-grow">
         {/* Subtle background elements */}
