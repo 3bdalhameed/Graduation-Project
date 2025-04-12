@@ -7,7 +7,7 @@ import { API_BASE_URL, getAuthHeader } from "./config";
  * @returns {Promise} Promise resolving to challenges data
  */
 export const fetchChallenges = async (token) => {
-  const response = await fetch(`${API_BASE_URL}/challenges/`, {
+  const response = await fetch(`${API_BASE_URL}/challenge/`, {
     headers: getAuthHeader(token),
   });
   
@@ -18,23 +18,6 @@ export const fetchChallenges = async (token) => {
   return response.json();
 };
 
-/**
- * Fetches a specific challenge by ID
- * @param {number} challengeId - ID of the challenge to fetch
- * @param {string} token - JWT authentication token
- * @returns {Promise} Promise resolving to challenge data
- */
-export const fetchChallengeById = async (challengeId, token) => {
-  const response = await fetch(`${API_BASE_URL}/challenges/${challengeId}/`, {
-    headers: getAuthHeader(token),
-  });
-  
-  if (!response.ok) {
-    throw new Error("Failed to fetch challenge");
-  }
-  
-  return response.json();
-};
 
 /**
  * Fetches solved challenges for the current user
@@ -61,13 +44,13 @@ export const fetchSolvedChallenges = async (token) => {
  * @returns {Promise} Promise resolving to submission result
  */
 export const submitFlag = async (challengeId, flag, token) => {
-  const response = await fetch(`${API_BASE_URL}/challenges/submit/`, {
+  const response = await fetch(`${API_BASE_URL}/challenge/${challengeId}/submit/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       ...getAuthHeader(token),
     },
-    body: JSON.stringify({ challenge_id: challengeId, flag }),
+    body: JSON.stringify({ flag }),
   });
   
   const data = await response.json();

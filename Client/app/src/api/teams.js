@@ -8,11 +8,11 @@ import { API_BASE_URL, getAuthHeader } from "./config";
  */
 export const fetchTeams = async () => {
   const response = await fetch(`${API_BASE_URL}/teams/`);
-  
+
   if (!response.ok) {
     throw new Error("Failed to fetch teams");
   }
-  
+
   return response.json();
 };
 
@@ -22,14 +22,14 @@ export const fetchTeams = async () => {
  * @returns {Promise} Promise resolving to scoreboard data
  */
 export const fetchScoreboard = async (token) => {
-  const response = await fetch(`${API_BASE_URL}/teams/scoreboard/`, {
+  const response = await fetch(`${API_BASE_URL}/scoreboard/`, {
     headers: getAuthHeader(token),
   });
-  
+
   if (!response.ok) {
     throw new Error("Failed to fetch teams");
   }
-  
+
   return response.json();
 };
 
@@ -62,11 +62,11 @@ export const fetchTeamDetails = async (teamId, token) => {
   const response = await fetch(`${API_BASE_URL}/teams/${teamId}/`, {
     headers: getAuthHeader(token),
   });
-  
+
   if (!response.ok) {
     throw new Error("Failed to fetch team details");
   }
-  
+
   return response.json();
 };
 
@@ -85,13 +85,13 @@ export const createTeam = async (teamName, token) => {
     },
     body: JSON.stringify({ name: teamName }),
   });
-  
+
   const data = await response.json();
-  
+
   if (!response.ok) {
     throw new Error(data.error || "Failed to create team");
   }
-  
+
   return data;
 };
 
@@ -110,12 +110,12 @@ export const joinTeam = async (teamCode, token) => {
     },
     body: JSON.stringify({ team_code: teamCode }),
   });
-  
+
   const data = await response.json();
-  
+
   if (!response.ok) {
     throw new Error(data.error || "Failed to join team");
   }
-  
+
   return data;
 };
