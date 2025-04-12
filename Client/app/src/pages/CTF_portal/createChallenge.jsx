@@ -14,6 +14,8 @@ const ChallengePage = () => {
   const [editedChallenge, setEditedChallenge] = useState({ title: "", description: "", category: "", points: "", flag: "" });
   const [isCreating, setIsCreating] = useState(false);
   const [newChallenge, setNewChallenge] = useState({ title: "", description: "", category: "Web Exploitation", points: "50", flag: "" });
+  const [logs, setLogs] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
   const token = localStorage.getItem("access_token");
   const navigate = useNavigate();
 
@@ -28,7 +30,34 @@ const ChallengePage = () => {
         setCategories(uniqueCategories);
       })
       .catch((error) => console.error("Error fetching challenges:", error));
+
+    // Get user role
+    fetch("http://127.0.0.1:8000/api/profile/", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    .then((res) => {
+      if (res.status === 401) {
+        navigate("/login"); // redirect to login if token is invalid
+        return;
+      }
+      return res.json();
+    })
+    .then((data) => {
+      if (data) setIsAdmin(data.role === "admin");
+    })
+    .catch(() => setIsAdmin(false));
   }, [token]);
+
+  useEffect(() => {
+    if (isAdmin) {
+      fetch("http://127.0.0.1:8000/api/challenges/solved-logs/", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then((res) => res.json())
+      .then((data) => setLogs(data))
+      .catch((err) => console.error("Error fetching logs:", err));
+    }
+  }, [isAdmin]);
 
   const handleCreateChallenge = async (e) => {
     e.preventDefault();
@@ -83,7 +112,6 @@ const ChallengePage = () => {
       console.error("Error deleting challenge:", error);
     }
   };
-  
 
   return (
     <>
@@ -94,14 +122,14 @@ const ChallengePage = () => {
             onClick={() => setIsCreating(true)}
             className="mb-8 bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-xl text-lg font-semibold transition"
           >
-             Create New Challenge
+            Create New Challenge
           </button>
-  
+
           <div className="w-full max-w-6xl">
             <h2 className="text-4xl font-extrabold text-center text-gray-800 dark:text-white mb-8">
               🧩 Challenges
             </h2>
-  
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {challenges.map((challenge) => (
                 <div
@@ -130,162 +158,25 @@ const ChallengePage = () => {
                 </div>
               ))}
             </div>
+
+            {isAdmin && (
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mt-12">
+                <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">🧠 Challenge Solving Logs</h2>
+                <ul className="space-y-2">
+                  {logs.map((log) => (
+                    <li key={log.id} className="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg text-sm">
+                      <span className="font-semibold">{log.username}</span> solved <strong>{log.challenge_title}</strong> at {new Date(log.solved_at).toLocaleString()}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
           </div>
         </div>
       </div>
-  
-      {/* Modal - Create */}
-      {isCreating && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex justify-center items-center z-50">
-          <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl w-[95%] max-w-md shadow-2xl">
-            <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-6">
-              ✍️ Create Challenge
-            </h2>
-            <form onSubmit={handleEditChallenge} className="space-y-4">
-            <input
-              type="text"
-              placeholder="Title"
-              value={editedChallenge.title}
-              onChange={(e) => setEditedChallenge({ ...editedChallenge, title: e.target.value })}
-              className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
-            />
-
-            <textarea
-              placeholder="Description"
-              value={editedChallenge.description}
-              onChange={(e) => setEditedChallenge({ ...editedChallenge, description: e.target.value })}
-              className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
-              rows="3"
-            />
-
-            <select
-              value={editedChallenge.category}
-              onChange={(e) => setEditedChallenge({ ...editedChallenge, category: e.target.value })}
-              className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
-            >
-              <option>Web Exploitation</option>
-              <option>Reverse Engineering</option>
-              <option>Cryptography</option>
-              <option>Digital Forensics</option>
-              <option>OSINT</option>
-              <option>Miscellaneous</option>
-            </select>
-
-            <input
-              type="number"
-              placeholder="Points"
-              value={editedChallenge.points}
-              onChange={(e) => setEditedChallenge({ ...editedChallenge, points: e.target.value })}
-              className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
-            />
-
-            <input
-              type="text"
-              placeholder="Flag"
-              value={editedChallenge.flag}
-              onChange={(e) => setEditedChallenge({ ...editedChallenge, flag: e.target.value })}
-              className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
-            />
-
-            <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl font-semibold">
-              💾 Save Changes
-            </button>
-            <div className="flex justify-between mt-4 gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                setIsCreating(false);
-                setNewChallenge({
-                  title: "",
-                  description: "",
-                  category: "Web Exploitation",
-                  points: "50",
-                  flag: "",
-                });
-              }}
-              className="w-full mt-2 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-xl"
-            >
-              ✖ Close
-            </button>
-            </div>
-          </form>
-
-          </div>
-        </div>
-      )}
-  
-      {/* Modal - Edit */}
-      {selectedChallenge && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex justify-center items-center z-50">
-          <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl w-[95%] max-w-md shadow-2xl">
-            <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-6">
-              ✏️ Edit Challenge
-            </h2>
-            <form onSubmit={handleEditChallenge} className="space-y-4">
-              <input
-                type="text"
-                placeholder="Title"
-                value={editedChallenge.title}
-                onChange={(e) => setEditedChallenge({ ...editedChallenge, title: e.target.value })}
-                className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
-              />
-
-              <textarea
-                placeholder="Description"
-                value={editedChallenge.description}
-                onChange={(e) => setEditedChallenge({ ...editedChallenge, description: e.target.value })}
-                className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
-                rows="3"
-              />
-
-              <select
-                value={editedChallenge.category}
-                onChange={(e) => setEditedChallenge({ ...editedChallenge, category: e.target.value })}
-                className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
-              >
-                <option>Web Exploitation</option>
-                <option>Reverse Engineering</option>
-                <option>Cryptography</option>
-                <option>Digital Forensics</option>
-                <option>OSINT</option>
-                <option>Miscellaneous</option>
-              </select>
-
-              <input
-                type="number"
-                placeholder="Points"
-                value={editedChallenge.points}
-                onChange={(e) => setEditedChallenge({ ...editedChallenge, points: e.target.value })}
-                className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
-              />
-
-              <input
-                type="text"
-                placeholder="Flag"
-                value={editedChallenge.flag}
-                onChange={(e) => setEditedChallenge({ ...editedChallenge, flag: e.target.value })}
-                className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
-              />
-
-              <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl font-semibold">
-                💾 Save Changes
-              </button>
-            </form>
-            <div className="flex justify-between mt-4 gap-2">
-              <button onClick={handleDeleteChallenge}
-                className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-xl">
-                🗑 Delete
-              </button>
-              <button onClick={() => setSelectedChallenge(null)}
-                className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-xl">
-                ✖ Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
-  );  
+  );
 };
 
 export default ChallengePage;

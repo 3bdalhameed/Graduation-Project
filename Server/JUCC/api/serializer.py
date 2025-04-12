@@ -59,6 +59,16 @@ class ChallengeSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'description', 'created_by', 'created_at', 'category', 'points', 'flag']
         
         
+from .models import SolvedChallenge
+class SolvedChallengeSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username')
+    challenge_title = serializers.CharField(source='challenge.title')
+
+    class Meta:
+        model = SolvedChallenge
+        fields = ['id', 'username', 'challenge_title', 'solved_at']
+
+        
 #########################################################################################################
         
 from rest_framework import serializers
@@ -95,3 +105,13 @@ class RoleLoginSerializer(serializers.Serializer):
 
         data["user"] = user
         return data
+
+
+from rest_framework import serializers
+from .models import Course
+
+class CourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ['id', 'name', 'description', 'created_by', 'created_at']
+        read_only_fields = ['id', 'created_by', 'created_at']

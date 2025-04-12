@@ -55,6 +55,38 @@ def get_csrf_token(request):
 
 ###############################################################################################################################################
 
+
+# views.py
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.status import HTTP_404_NOT_FOUND, HTTP_200_OK
+from .models import Profile, UserRole
+
+class ProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            profile = Profile.objects.get(user=request.user)
+        except Profile.DoesNotExist:
+            return Response({"error": "Profile not found."}, status=HTTP_404_NOT_FOUND)
+
+        try:
+            role = UserRole.objects.get(user=request.user).role
+        except UserRole.DoesNotExist:
+            pass
+
+        return Response({
+            "id": request.user.id,
+            "username": request.user.username,
+            "email": request.user.email,
+        }, status=HTTP_200_OK)
+
+
+
+
+
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
@@ -298,6 +330,21 @@ class SolvedChallengesView(APIView):
         )
         serializer = ChallengeSerializer(solved_challenges, many=True)
         return Response(serializer.data, status=HTTP_200_OK)
+    
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser
+from .models import SolvedChallenge
+from .serializer import SolvedChallengeSerializer
+
+class SolvedChallengeLogsView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        logs = SolvedChallenge.objects.select_related('user', 'challenge').all().order_by('-solved_at')
+        serializer = SolvedChallengeSerializer(logs, many=True)
+        return Response(serializer.data)
+
 
         
 ###############################################################################################################################################
@@ -508,7 +555,6 @@ class TeamProfile(APIView):
         
 ###############################################################################################################################################
         
-# views.py
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -535,3 +581,22 @@ class AdminCreateUserView(APIView):
         user = User.objects.create_user(username=username, email=email, password=password)
         UserRole.objects.create(user=user, role=role)
         return Response({"message": "User created successfully."}, status=HTTP_201_CREATED)
+
+###############################################################################################################################################
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
+from .models import Course
+from .serializer import CourseSerializer
+
+class AddCourseView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = CourseSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(created_by=request.user)
+            return Response(serializer.data, status=HTTP_201_CREATED)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)

@@ -8,14 +8,12 @@ const CourseMaterialPage = () => {
   const [materials, setMaterials] = useState([]);
   const [quizzes, setQuizzes] = useState([]);
   const [isTeacher, setIsTeacher] = useState(false);
-  const token = localStorage.getItem('access_token');
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const res = await axios.get('http://localhost:8000/api/my-courses/', {
-          headers: { Authorization: `Bearer ${token}` },
         });
         setCourses(res.data.courses);
         setIsTeacher(res.data.is_teacher);
@@ -25,12 +23,11 @@ const CourseMaterialPage = () => {
       }
     };
     fetchCourses();
-  }, [token, navigate]);
+  }, [, navigate]);
 
   const fetchCourseContent = async (courseId) => {
     try {
       const res = await axios.get(`http://localhost:8000/api/course/${courseId}/content/`, {
-        headers: { Authorization: `Bearer ${token}` },
       });
       setMaterials(res.data.materials);
       setQuizzes(res.data.quizzes);
@@ -43,7 +40,6 @@ const CourseMaterialPage = () => {
   const handleDelete = async (id, type) => {
     try {
       await axios.delete(`http://localhost:8000/api/${type}/${id}/delete/`, {
-        headers: { Authorization: `Bearer ${token}` },
       });
       fetchCourseContent(selectedCourse);
     } catch (err) {

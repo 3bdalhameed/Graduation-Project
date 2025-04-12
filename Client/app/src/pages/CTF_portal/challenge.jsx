@@ -90,13 +90,22 @@ const ChallengePage = () => {
           <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">Challenges</h2>
           
           {/* Challenges List */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {filteredChallenges.map((challenge) => (
-              <div key={challenge.id} className={`p-6 ${solvedChallenges.includes(challenge.id) ? "bg-green-200 dark:bg-green-700" : "bg-white dark:bg-gray-700"} rounded-lg shadow-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-300`} 
-                   onClick={() => { setSelectedChallenge(challenge); setFlag(''); setMessage(null); }}>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{challenge.title}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">{challenge.category}</p>
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {filteredChallenges.map((challenge) => (
+                <div key={challenge.id} 
+                className={`p-6 ${solvedChallenges.includes(challenge.id) ? "bg-green-200 dark:bg-green-700" : "bg-white dark:bg-gray-700"} 
+                          rounded-lg shadow-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-300`} 
+                onClick={() => { setSelectedChallenge(challenge); setFlag(''); setMessage(null); }}>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{challenge.title}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-300">{challenge.category}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
+              <strong>Difficulty:</strong> {challenge.difficulty}
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-300">
+              <strong>Solves:</strong> {challenge.solve_count}
+            </p>
+          </div>
+          
             ))}
           </div>
         </div>
