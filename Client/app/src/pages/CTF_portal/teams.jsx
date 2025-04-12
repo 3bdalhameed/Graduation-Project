@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { fetchTeams } from "../../api/teams";
 
 function TeamsPage() {
   const [teams, setTeams] = useState([]);
@@ -6,14 +7,10 @@ function TeamsPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch teams from the backend
-    const fetchTeams = async () => {
+    // Fetch teams from the backend using API function
+    const getTeams = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/teams/");
-        if (!response.ok) {
-          throw new Error("Failed to fetch teams");
-        }
-        const data = await response.json();
+        const data = await fetchTeams();
         setTeams(data);
       } catch (error) {
         setError(error.message);
@@ -22,7 +19,7 @@ function TeamsPage() {
       }
     };
 
-    fetchTeams();
+    getTeams();
   }, []);
 
   return (

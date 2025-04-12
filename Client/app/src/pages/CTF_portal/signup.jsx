@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../../components/Navbar/navbar";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaEnvelope, FaLock, FaShieldAlt } from "react-icons/fa";
+import { signup } from "../../api/auth";
 
 function SignUp() {
   const [username, setUsername] = useState("");
@@ -26,24 +27,18 @@ function SignUp() {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/api/signup/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password, email: gmail }),
+      // Using API function instead of direct fetch
+      await signup({ 
+        username, 
+        password, 
+        email: gmail 
       });
-
-      if (response.ok) {
-        setSuccess("OTP sent to your email. Please verify.");
-        navigate("/verify-otp", { state: { email: gmail, username, password } });
-      } else {
-        const errorData = await response.json();
-        setError(errorData.error || "SignUp failed. Please try again.");
-      }
+      
+      setSuccess("OTP sent to your email. Please verify.");
+      navigate("/verify-otp", { state: { email: gmail, username, password } });
     } catch (error) {
       console.error("Error:", error);
-      setError("An error occurred. Please try again later.");
+      setError(error.message || "An error occurred. Please try again later.");
     } finally {
       setLoading(false);
     }

@@ -1,95 +1,103 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import useTokenStore from "../../stores/useTokenStore";
+import { schoolLogin } from "../../api/auth";
 
-const RoleLoginPage = () => {
-  const [role, setRole] = useState("student");
-  const [email, setEmail] = useState("");
+const SchoolLogin = () => {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const setToken = useTokenStore((state) => state.setToken);
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     setError("");
 
     try {
-      const res = await axios.post("http://localhost:8000/api/login/", {
-        email,
-        password,
-        role,
-      });
-
-      if (res.status === 200) {
-        localStorage.setItem("access_token", res.data.token);
-        navigate(`/${role}/dashboard`);
-      } else {
-        setError("Invalid credentials or role mismatch.");
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Login failed. Please check your credentials.");
+      // Use the API function instead of direct axios call
+      const data = await schoolLogin(username, password);
+      setToken(data.access_token);
+      navigate("/schoolmain");
+    } catch (error) {
+      console.error("Login error:", error);
+      setError(error.message || "Invalid username or password");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white flex items-center justify-center">
-      <div className="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center mb-6">Login Portal</h2>
-
-        {/* Role switcher */}
-        <div className="flex justify-around mb-6">
-          <button
-            onClick={() => setRole("student")}
-            className={`px-4 py-2 rounded-full ${
-              role === "student" ? "bg-blue-600" : "bg-gray-600"
-            }`}
-          >
-            Student
-          </button>
-          <button
-            onClick={() => setRole("teacher")}
-            className={`px-4 py-2 rounded-full ${
-              role === "teacher" ? "bg-blue-600" : "bg-gray-600"
-            }`}
-          >
-            Teacher
-          </button>
+    <div className="min-h-screen flex items-center justify-center bg-blue-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 p-10 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+            School Portal Login
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+            Enter your credentials to access the school portal
+          </p>
         </div>
 
-        {/* Error message */}
-        {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
 
-        {/* Login form */}
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="username" className="sr-only">
+                Username
+              </label>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="sr-only">
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          </div>
 
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-
-          <button
-            type="submit"
-            className="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition"
-          >
-            Login as {role.charAt(0).toUpperCase() + role.slice(1)}
-          </button>
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${
+                loading
+                  ? "bg-blue-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              }`}
+            >
+              {loading ? "Signing in..." : "Sign in"}
+            </button>
+          </div>
         </form>
       </div>
     </div>
   );
 };
 
-export default RoleLoginPage;
+export default SchoolLogin;

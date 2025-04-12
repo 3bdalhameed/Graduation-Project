@@ -1,38 +1,31 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useTokenStore from "../../stores/useTokenStore";
+import { login } from "../../api/auth";
 
-function Login() {
-  const [username, setUsername] = useState(""); // Controlled input
-  const [password, setPassword] = useState(""); // Controlled input
-  const [loading, setLoading] = useState(false); // Loading state for the login button
+function LearningPortalLogin() {
   const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const setToken = useTokenStore((state) => state.setToken);
 
-  const handleLogin = async (event) => {
-    event.preventDefault(); // Prevent page reload
-    setLoading(true); // Show loading state
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
     try {
-      const response = await fetch("http://localhost:8000/api/login/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Access Token:", data.access_token); // Log the token
-        localStorage.setItem("access_token", data.access_token); // Save access token
-        navigate("/learningPortalHome");
-        // Save token to localStorage or other state management
-      } else {
-        alert("Login failed. Please check your credentials.");
-      }
+      // Use the API function instead of direct fetch
+      const data = await login(username, password);
+      setToken(data.access_token);
+      navigate("/learningPortalHome");
     } catch (error) {
       console.error("Error:", error);
-      alert("An error occurred. Please try again later.");
+      setError(error.message || "Invalid username or password");
     } finally {
-      setLoading(false); // Hide loading state
+      setLoading(false);
     }
   };
 
@@ -48,7 +41,7 @@ function Login() {
             Sign in to continue to your account
           </p>
 
-          <form className="space-y-6" onSubmit={handleLogin}>
+          <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Username Input */}
             <div>
               <label
@@ -96,6 +89,11 @@ function Login() {
                 </a>
               </div>
             </div>
+
+            {/* Error Message */}
+            {error && (
+              <p className="text-red-500 text-sm text-center">{error}</p>
+            )}
 
             {/* Submit Button */}
             <button
@@ -150,4 +148,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default LearningPortalLogin;

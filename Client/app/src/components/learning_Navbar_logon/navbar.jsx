@@ -1,63 +1,47 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaCog,
-  FaBell,
   FaFlag,
-  FaUser,
-  FaUsers,
-  FaGavel,
-  FaChartBar,
   FaDoorOpen,
 } from "react-icons/fa";
-import { checkAuthentication } from "./auth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../pages/img/JuCC_logo.png";
+import { isAuthenticated } from "./auth";
+import useTokenStore from "../../stores/useTokenStore";
+import { logout } from "../../api/users";
 
 const NavBar = () => {
-  const [isMenuOpen, setMenuOpen] = useState(false);
+  const [auth, setAuth] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const navigate = useNavigate();
+  const token = useTokenStore((state) => state.token);
+  const clearToken = useTokenStore((state) => state.clearToken);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const result = await isAuthenticated();
+      setAuth(result.isAuthenticated);
+    };
+    checkAuth();
+  }, []);
 
   const toggleMenu = () => {
-    setMenuOpen(!isMenuOpen);
+    setMenuOpen(!menuOpen);
   };
 
-
-
-  const logout = async () => {
-    // Remove the access token from localStorage
-    localStorage.removeItem("access_token");
-  
-    // Optionally remove the refresh token if stored
-    const refreshToken = localStorage.getItem("refresh_token");
-    if (refreshToken) {
-      localStorage.removeItem("refresh_token");
-    }
-  
-    setIsLoggedin(false);
-  
+  const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/logout/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refresh_token: refreshToken }), // Send refresh token for blacklisting
-      });
-  
-      if (response.ok) {
-        console.log("Logout successful");
-      } else {
-        console.error("Failed to logout:", response.statusText);
-      }
+      // Use API function instead of direct fetch call
+      await logout(token);
+      localStorage.removeItem("access_token");
+      clearToken();
+      navigate("/");
     } catch (error) {
-      console.error("Error during logout:", error);
+      console.error("Logout error:", error);
     }
-  
-    // Redirect to login or home page
-    navigate("/login");
   };
-  
-
 
   const handleScroll = () => {
     if (window.scrollY > lastScrollY) {
@@ -84,9 +68,9 @@ const NavBar = () => {
     >
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
-        <a href="/home" className="flex items-center">
+        <Link to="/home" className="flex items-center">
           <img src={logo} alt="Logo" className="h-10 w-auto" />
-        </a>
+        </Link>
 
         {/* Burger Menu for Mobile */}
         <div
@@ -100,35 +84,35 @@ const NavBar = () => {
         {/* Navigation Links */}
         <ul
           className={`flex-col md:flex-row md:flex items-center space-y-4 md:space-y-0 md:space-x-8 ${
-            isMenuOpen ? "flex" : "hidden"
+            menuOpen ? "flex" : "hidden"
           } md:static absolute top-16 left-0 w-full md:w-auto bg-gray-900 md:bg-transparent md:py-0 py-6 md:shadow-none shadow-lg z-50`}
         >
           <li className="flex items-center">
             <FaFlag className="mr-2" />
-            <a href="/learningPortalAssessments" className="hover:text-blue-400">
+            <Link to="/learningPortalAssessments" className="hover:text-blue-400">
               Assessments
-            </a>
+            </Link>
           </li>
           <li className="flex items-center">
             <FaFlag className="mr-2" />
-            <a href="/learningPortalMaterials" className="hover:text-blue-400">
+            <Link to="/learningPortalMaterials" className="hover:text-blue-400">
               Learning
-            </a>
+            </Link>
           </li>
           <li className="flex items-center">
             <FaCog className="mr-2" />
-            <a href="/settings" className="hover:text-blue-400">
+            <Link to="/settings" className="hover:text-blue-400">
               Settings
-            </a>
+            </Link>
           </li>
           <li className="flex items-center">
-            <a 
-            href="/" 
-            className="hover:text-blue-400 rounded"
-            onClick={logout}
+            <button 
+              onClick={handleLogout} 
+              className="hover:text-blue-400 rounded"
             >
-            <FaDoorOpen className="mr-2" />
-            </a>
+              <FaDoorOpen className="mr-2" />
+              Logout
+            </button>
           </li>
         </ul>
       </div>

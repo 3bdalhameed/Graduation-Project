@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaTrophy, FaUsers } from "react-icons/fa";
 import { motion } from "framer-motion";
 import useTokenStore from "../../stores/useTokenStore";
+import { fetchScoreboard, checkUserTeam } from "../../api/teams";
 
 const ScoreboardPage = () => {
   const [teams, setTeams] = useState([]);
@@ -12,18 +13,10 @@ const ScoreboardPage = () => {
   const token = useTokenStore((state) => state.token);
 
   useEffect(() => {
-    // Fetch teams for the scoreboard
-    const fetchTeams = async () => {
+    // Fetch teams for the scoreboard using API functions
+    const getTeams = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/teams/scoreboard/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        
-        if (!response.ok) {
-          throw new Error("Failed to fetch teams");
-        }
-        
-        const data = await response.json();
+        const data = await fetchScoreboard(token);
         setTeams(data);
         setLoading(false);
       } catch (error) {
@@ -33,15 +26,11 @@ const ScoreboardPage = () => {
       }
     };
 
-    // Fetch user's team
-    const fetchUserTeam = async () => {
+    // Fetch user's team using API function
+    const getUserTeam = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/teams/check/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
+        const data = await checkUserTeam(token);
+        if (data) {
           setUserTeam(data);
         }
       } catch (error) {
@@ -49,8 +38,8 @@ const ScoreboardPage = () => {
       }
     };
 
-    fetchTeams();
-    fetchUserTeam();
+    getTeams();
+    getUserTeam();
   }, [token]);
 
   return (

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { fetchUsers } from "../../api/users";
 
 function UsersPage() {
   const [users, setUsers] = useState([]);
@@ -6,14 +7,10 @@ function UsersPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch users from the backend
-    const fetchUsers = async () => {
+    // Fetch users from backend using API function
+    const getUsers = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/users/");
-        if (!response.ok) {
-          throw new Error("Failed to fetch users");
-        }
-        const data = await response.json();
+        const data = await fetchUsers();
         setUsers(data);
       } catch (error) {
         setError(error.message);
@@ -22,7 +19,7 @@ function UsersPage() {
       }
     };
 
-    fetchUsers();
+    getUsers();
   }, []);
 
   return (

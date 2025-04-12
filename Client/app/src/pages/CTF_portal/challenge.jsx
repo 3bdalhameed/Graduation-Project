@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useTokenStore from "../../stores/useTokenStore";
+import { fetchChallenges, fetchSolvedChallenges, submitFlag } from "../../api/challenges";
 
 const ChallengePage = () => {
   const [challenges, setChallenges] = useState([]);
@@ -15,10 +16,8 @@ const ChallengePage = () => {
 
   // Fetch all challenges
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/challenge/", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((response) => response.json())
+    // Using API functions instead of direct fetch calls
+    fetchChallenges(token)
       .then((data) => {
         setChallenges(data);
         const uniqueCategories = [
@@ -30,10 +29,7 @@ const ChallengePage = () => {
       .catch((error) => console.error("Error fetching challenges:", error));
 
     // Fetch solved challenges
-    fetch("http://127.0.0.1:8000/api/solved-challenges/", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((response) => response.json())
+    fetchSolvedChallenges(token)
       .then((data) =>
         setSolvedChallenges(data.map((challenge) => challenge.id))
       )
@@ -50,20 +46,11 @@ const ChallengePage = () => {
     if (!selectedChallenge) return;
 
     try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/challenge/${selectedChallenge.id}/submit/`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ flag }),
-        }
-      );
-      const data = await response.json();
-
-      if (response.ok) {
+      // Using API function instead of direct fetch
+      const data = await submitFlag(selectedChallenge.id, flag, token);
+      
+      // Check if response was successful based on data
+      if (data && !data.error) {
         setMessage(data.message);
         setSolvedChallenges([...solvedChallenges, selectedChallenge.id]);
       } else {

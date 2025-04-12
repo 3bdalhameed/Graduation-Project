@@ -1,39 +1,35 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { verifyOTP } from "../api/users";
 
-function VerifyOTP() {
+const VerifyOTP = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { email, username, password } = location.state || {};
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { email, username, password } = location.state || {}; // Get data from signup page
-
-  const handleVerifyOTP = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
     setError("");
-    setSuccess("");
+
+    if (!email || !username || !password) {
+      setError("Missing user details. Please try signing up again.");
+      setLoading(false);
+      return;
+    }
 
     try {
-      const response = await fetch("http://localhost:8000/api/verify-signup-otp/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, username, password, otp }),
-      });
-
-      if (response.ok) {
-        setSuccess("Verification successful! You can now log in.");
-        setTimeout(() => navigate("/login"), 2000); // Redirect to login after 2s
-      } else {
-        const errorData = await response.json();
-        setError(errorData.error || "OTP verification failed. Try again.");
-      }
+      // Use the API function to verify OTP
+      await verifyOTP({ email, otp, username, password });
+      navigate("/login");
     } catch (error) {
       console.error("Error:", error);
-      setError("An error occurred. Pleaase try again.");
+      setError(error.message || "Failed to verify OTP. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -44,9 +40,8 @@ function VerifyOTP() {
         <p className="text-center text-gray-600 mb-4">Enter the OTP sent to {email}</p>
 
         {error && <p className="text-red-500 text-center">{error}</p>}
-        {success && <p className="text-green-500 text-center">{success}</p>}
 
-        <form onSubmit={handleVerifyOTP}>
+        <form onSubmit={handleSubmit}>
           <input
             type="text"
             placeholder="Enter OTP"
@@ -58,13 +53,14 @@ function VerifyOTP() {
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 px-4 rounded mt-4"
+            disabled={loading}
           >
-            Verify OTP
+            {loading ? "Verifying..." : "Verify OTP"}
           </button>
         </form>
       </div>
     </div>
   );
-}
+};
 
 export default VerifyOTP;

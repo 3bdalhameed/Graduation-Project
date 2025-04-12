@@ -6,8 +6,9 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import axios from "axios";
 import useTokenStore from "../../stores/useTokenStore";
+import { fetchHomeData, fetchUserSolvedChallenges } from "../../api/users";
+import { checkUserTeam } from "../../api/teams";
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -24,14 +25,9 @@ function TeamAndUserDashboard() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/home/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (response.status === 200) {
-          setUser(response.data);
-        } else {
-          setError("Failed to fetch user data.");
-        }
+        // Use the API function instead of direct axios call
+        const data = await fetchHomeData(token);
+        setUser(data);
       } catch (err) {
         console.error("Error fetching user data:", err);
         setError("An error occurred while fetching user data.");
@@ -40,11 +36,10 @@ function TeamAndUserDashboard() {
 
     const fetchTeamData = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/teams/check/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (response.status === 200) {
-          setTeamData(response.data);
+        // Use the API function instead of direct axios call
+        const data = await checkUserTeam(token);
+        if (data) {
+          setTeamData(data);
         }
       } catch (err) {
         console.error("Error fetching team data:", err);
@@ -53,12 +48,9 @@ function TeamAndUserDashboard() {
 
     const fetchSolvedChallenges = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/solved-challenges/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (response.status === 200) {
-          setSolvedChallenges(response.data);
-        }
+        // Use the API function instead of direct axios call
+        const data = await fetchUserSolvedChallenges(token);
+        setSolvedChallenges(data);
       } catch (err) {
         console.error("Error fetching solved challenges:", err);
       }

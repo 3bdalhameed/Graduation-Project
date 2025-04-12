@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaLock, FaUser } from "react-icons/fa";
 import useTokenStore from "../../stores/useTokenStore";
+import { login } from "../../api/auth";
 
 
 function Login() {
@@ -19,27 +20,12 @@ function Login() {
     setError("");
     
     try {
-      const response = await fetch("http://localhost:8000/api/login/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("access_token", data.access_token);
-        setToken(data.access_token);
-
-        navigate("/createteam");
-      } else {
-        const errorData = await response.json();
-        setError(errorData.detail || "Invalid username or password");
-      }
+      const data = await login(username, password);
+      setToken(data.access_token);
+      navigate("/createteam");
     } catch (error) {
       console.error("Error:", error);
-      setError("Network error. Please try again later.");
+      setError(error.message || "Network error. Please try again later.");
     } finally {
       setLoading(false);
     }

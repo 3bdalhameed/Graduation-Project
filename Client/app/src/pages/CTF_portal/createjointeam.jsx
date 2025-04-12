@@ -1,6 +1,7 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useTokenStore from "../../stores/useTokenStore";
+import { createTeam, joinTeam } from "../../api/teams";
 
 const CreateJoinTeamPage = () => {
   const navigate = useNavigate();
@@ -17,26 +18,12 @@ const CreateJoinTeamPage = () => {
     setErrorMessage("");
 
     try {
-      const response = await fetch("http://localhost:8000/api/teams/create/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ name: teamName }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage("Team created successfully!");
-        navigate("/home");
-      } else {
-        setErrorMessage(data.error || "Failed to create team.");
-      }
+      await createTeam(teamName, token);
+      setMessage("Team created successfully!");
+      navigate("/home");
     } catch (error) {
       console.error("Error:", error);
-      setErrorMessage("An error occurred. Please try again.");
+      setErrorMessage(error.message || "An error occurred. Please try again.");
     }
   };
 
@@ -46,26 +33,12 @@ const CreateJoinTeamPage = () => {
     setErrorMessage("");
 
     try {
-      const response = await fetch("http://localhost:8000/api/teams/join/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ team_code: teamCode }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage("Successfully joined the team!");
-        navigate("/home");
-      } else {
-        setErrorMessage(data.error || "Failed to join team.");
-      }
+      await joinTeam(teamCode, token);
+      setMessage("Successfully joined the team!");
+      navigate("/home");
     } catch (error) {
       console.error("Error:", error);
-      setErrorMessage("An error occurred. Please try again.");
+      setErrorMessage(error.message || "An error occurred. Please try again.");
     }
   };
 

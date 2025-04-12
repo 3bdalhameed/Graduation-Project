@@ -1,63 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import useTokenStore from "../../stores/useTokenStore";
+import { checkUserTeam, fetchTeamDetails } from "../../api/teams";
 
-function TeamProfile() {
-  const { teamId } = useParams();
+const TeamProfile = () => {
+  const { id } = useParams();
   const [teamData, setTeamData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
+  const [userTeam, setUserTeam] = useState(null);
   const token = useTokenStore((state) => state.token);
 
   useEffect(() => {
-    // Fetch team data
-    const fetchTeamDetails = async () => {
+    const fetchData = async () => {
+      setLoading(true);
       try {
-        const response = await fetch("http://localhost:8000/api/teams/check/", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.in_team) {
-            // Fetch full team details using the team ID
-            const teamResponse = await fetch(
-              `http://localhost:8000/api/teams/${data.team_id}/`,
-              {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
-
-            if (teamResponse.ok) {
-              const teamData = await teamResponse.json();
-              setTeamData(teamData);
-            } else {
-              setError("Failed to fetch team details.");
-            }
-          } else {
-            setError("You are not part of any team.");
-          }
-        } else {
-          setError("Failed to fetch user team status.");
-        }
+        // Get user's team using API function
+        const userData = await checkUserTeam(token);
+        setUserTeam(userData);
+        
+        // Get team details using API function
+        const team = await fetchTeamDetails(id, token);
+        setTeamData(team);
+        setError(null);
       } catch (err) {
-        console.error("Error:", err);
-        setError("An error occurred while fetching team data.");
+        console.error("Error fetching data:", err);
+        setError("Failed to load team data. Please try again.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTeamDetails();
-  }, [token]);
+    fetchData();
+  }, [id, token]);
 
   if (loading) {
     return (

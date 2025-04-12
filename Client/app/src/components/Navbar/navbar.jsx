@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
   FaFlag,
@@ -14,12 +14,12 @@ import {
   FaUserPlus,
   FaDoorOpen,
   FaBell
-  
 } from "react-icons/fa";
 import Logo from "./components/Logo";
 import BurgerMenu from "./components/BurgerMenu";
 import DarkModeToggle from "./components/DarkModeToggle";
 import useTokenStore from "../../stores/useTokenStore";
+import { logout } from "../../api/users";
 
 const NavBar = () => {
   // State management
@@ -175,36 +175,13 @@ const NavBar = () => {
   ];
 
   // Logout functionality
-  const logout = async () => {
-    // Clear token from store
-    clearToken();
-
-    // Also remove from localStorage for compatibility
-    localStorage.removeItem("access_token");
-
-    // Handle refresh token if needed
-    const refreshToken = localStorage.getItem("refresh_token");
-    if (refreshToken) {
-      localStorage.removeItem("refresh_token");
-
-      try {
-        const response = await fetch("http://localhost:8000/api/logout/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ refresh_token: refreshToken }),
-        });
-
-        if (response.ok) {
-          console.log("Logout successful");
-        } else {
-          console.error("Failed to logout:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error during logout:", error);
-      }
+  const handleLogout = async () => {
+    try {
+      await logout(token);
+      clearToken();
+    } catch (error) {
+      console.error("Logout error:", error);
     }
-
-    // Redirect to login page
     navigate("/");
   };
 
@@ -420,7 +397,7 @@ const NavBar = () => {
             </div>
           ) : (
             <button
-              onClick={logout}
+              onClick={handleLogout}
               className="hidden md:flex items-center space-x-1 px-4 py-2 text-sm font-medium rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition-colors"
             >
               <FaDoorOpen className="mr-1" />
@@ -468,7 +445,7 @@ const NavBar = () => {
             ) : (
               <button
                 onClick={() => {
-                  logout();
+                  handleLogout();
                   setMenuOpen(false);
                 }}
                 className="flex items-center w-full py-2 px-4 mt-4 text-left text-sm font-medium rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"

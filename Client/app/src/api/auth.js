@@ -1,0 +1,97 @@
+// API methods for authentication
+import axios from "axios";
+
+/**
+ * Logs in a user with username and password
+ * @param {string} username - User's username
+ * @param {string} password - User's password
+ * @returns {Promise} Promise resolving to authentication data with access token
+ */
+export const login = async (username, password) => {
+  const response = await fetch("http://localhost:8000/api/login/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username, password }),
+  });
+  
+  const data = await response.json();
+  
+  if (!response.ok) {
+    throw new Error(data.detail || "Invalid username or password");
+  }
+  
+  return data;
+};
+
+/**
+ * Registers a new user
+ * @param {Object} userData - The user registration data
+ * @returns {Promise} Promise resolving to the registered user data
+ */
+export const signup = async (userData) => {
+  const response = await fetch("http://localhost:8000/api/signup/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userData),
+  });
+  
+  const data = await response.json();
+  
+  if (!response.ok) {
+    throw new Error(data.detail || "Registration failed");
+  }
+  
+  return data;
+};
+
+/**
+ * Validates a JWT token
+ * @param {string} token - The JWT token to validate
+ * @returns {Promise} Promise resolving to the token payload if valid
+ */
+export const validateToken = async (token) => {
+  if (!token) {
+    throw new Error("No token provided");
+  }
+
+  const response = await fetch("http://localhost:8000/api/validate-token/", {
+    method: "POST",
+    headers: { 
+      "Content-Type": "application/json" 
+    },
+    body: JSON.stringify({ token }),
+  });
+
+  const data = await response.json();
+  
+  if (!response.ok) {
+    throw new Error("Invalid token");
+  }
+  
+  return data;
+};
+
+/**
+ * Logs in a school user with username and password using axios
+ * @param {string} username - User's username
+ * @param {string} password - User's password
+ * @returns {Promise} Promise resolving to authentication data with access token
+ */
+export const schoolLogin = async (username, password) => {
+  try {
+    const response = await axios.post("http://localhost:8000/api/login/", {
+      username,
+      password,
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(error.response.data.detail || "Login failed");
+    }
+    throw error;
+  }
+};

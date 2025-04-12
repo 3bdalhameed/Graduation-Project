@@ -4,13 +4,14 @@ import Main from "../../components/main/main";
 import Project from "../../components/project/project";
 import Footer from "../../components/footer/footer";
 import useTokenStore from "../../stores/useTokenStore";
+import { validateToken } from "../../api/auth";
 
 function Home() {
   const navigate = useNavigate();
   const token = useTokenStore((state) => state.token);
 
   useEffect(() => {
-    const validateToken = async () => {
+    const checkToken = async () => {
       console.log("Token sent for validation:", token);
       if (!token) {
         console.error("No token found");
@@ -19,25 +20,14 @@ function Home() {
       }
 
       try {
-        const response = await fetch("http://localhost:8000/api/validate-token/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Token is valid:", data.payload);
-        } else {
-          console.error("Invalid token");
-          navigate("/login");
-        }
+        const data = await validateToken(token);
+        console.log("Token is valid:", data.payload);
       } catch (error) {
         console.error("Error validating token:", error);
         navigate("/login");
       }
     };
-    validateToken();
+    checkToken();
   }, [navigate, token]);
 
   return (
