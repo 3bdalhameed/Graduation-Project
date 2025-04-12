@@ -1,12 +1,13 @@
 // API methods for teams
 import axios from "axios";
+import { API_BASE_URL, getAuthHeader } from "./config";
 
 /**
  * Fetches all teams from the API
  * @returns {Promise} Promise resolving to teams data
  */
 export const fetchTeams = async () => {
-  const response = await fetch("http://localhost:8000/api/teams/");
+  const response = await fetch(`${API_BASE_URL}/teams/`);
   
   if (!response.ok) {
     throw new Error("Failed to fetch teams");
@@ -21,8 +22,8 @@ export const fetchTeams = async () => {
  * @returns {Promise} Promise resolving to scoreboard data
  */
 export const fetchScoreboard = async (token) => {
-  const response = await fetch("http://localhost:8000/api/teams/scoreboard/", {
-    headers: { Authorization: `Bearer ${token}` },
+  const response = await fetch(`${API_BASE_URL}/teams/scoreboard/`, {
+    headers: getAuthHeader(token),
   });
   
   if (!response.ok) {
@@ -39,8 +40,8 @@ export const fetchScoreboard = async (token) => {
  */
 export const checkUserTeam = async (token) => {
   try {
-    const response = await axios.get("http://localhost:8000/api/teams/check/", {
-      headers: { Authorization: `Bearer ${token}` },
+    const response = await axios.get(`${API_BASE_URL}/teams/check/`, {
+      headers: getAuthHeader(token),
     });
     return response.data;
   } catch (error) {
@@ -58,8 +59,8 @@ export const checkUserTeam = async (token) => {
  * @returns {Promise} Promise resolving to the team's detailed information
  */
 export const fetchTeamDetails = async (teamId, token) => {
-  const response = await fetch(`http://localhost:8000/api/teams/${teamId}/`, {
-    headers: { Authorization: `Bearer ${token}` },
+  const response = await fetch(`${API_BASE_URL}/teams/${teamId}/`, {
+    headers: getAuthHeader(token),
   });
   
   if (!response.ok) {
@@ -76,11 +77,11 @@ export const fetchTeamDetails = async (teamId, token) => {
  * @returns {Promise} Promise resolving to the created team data
  */
 export const createTeam = async (teamName, token) => {
-  const response = await fetch("http://localhost:8000/api/teams/create/", {
+  const response = await fetch(`${API_BASE_URL}/teams/create/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      ...getAuthHeader(token),
     },
     body: JSON.stringify({ name: teamName }),
   });
@@ -101,11 +102,11 @@ export const createTeam = async (teamName, token) => {
  * @returns {Promise} Promise resolving to the joined team data
  */
 export const joinTeam = async (teamCode, token) => {
-  const response = await fetch("http://localhost:8000/api/teams/join/", {
+  const response = await fetch(`${API_BASE_URL}/teams/join/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      ...getAuthHeader(token),
     },
     body: JSON.stringify({ team_code: teamCode }),
   });

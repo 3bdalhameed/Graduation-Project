@@ -1,5 +1,6 @@
 // API methods for authentication
 import axios from "axios";
+import { API_BASE_URL, getAuthHeader } from "./config";
 
 /**
  * Logs in a user with username and password
@@ -8,7 +9,7 @@ import axios from "axios";
  * @returns {Promise} Promise resolving to authentication data with access token
  */
 export const login = async (username, password) => {
-  const response = await fetch("http://localhost:8000/api/login/", {
+  const response = await fetch(`${API_BASE_URL}/login/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -31,7 +32,7 @@ export const login = async (username, password) => {
  * @returns {Promise} Promise resolving to the registered user data
  */
 export const signup = async (userData) => {
-  const response = await fetch("http://localhost:8000/api/signup/", {
+  const response = await fetch(`${API_BASE_URL}/signup/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -58,7 +59,7 @@ export const validateToken = async (token) => {
     throw new Error("No token provided");
   }
 
-  const response = await fetch("http://localhost:8000/api/validate-token/", {
+  const response = await fetch(`${API_BASE_URL}/validate-token/`, {
     method: "POST",
     headers: { 
       "Content-Type": "application/json" 
@@ -83,7 +84,7 @@ export const validateToken = async (token) => {
  */
 export const schoolLogin = async (username, password) => {
   try {
-    const response = await axios.post("http://localhost:8000/api/login/", {
+    const response = await axios.post(`${API_BASE_URL}/login/`, {
       username,
       password,
     });

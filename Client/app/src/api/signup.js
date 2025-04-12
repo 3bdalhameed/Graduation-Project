@@ -1,24 +1,25 @@
-export const signupUser = async (username, password, email) => {
-  try {
-    const response = await fetch("http://localhost:8000/api/signup/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password, email }),
-    });
+// API methods for signup
+import { API_BASE_URL } from "./config";
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Signup failed. Please try again.");
-    }
-
-    const data = await response.json();
-    return { success: true, data };
-  } catch (error) {
-    return {
-      success: false,
-      error: error.message || "Network error. Please try again later."
-    };
+/**
+ * Registers a new user
+ * @param {Object} userData - The user registration data
+ * @returns {Promise} Promise resolving to the registered user data
+ */
+export const signup = async (userData) => {
+  const response = await fetch(`${API_BASE_URL}/signup/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userData),
+  });
+  
+  const data = await response.json();
+  
+  if (!response.ok) {
+    throw new Error(data.detail || "Registration failed");
   }
+  
+  return data;
 };

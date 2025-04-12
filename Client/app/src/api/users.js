@@ -1,12 +1,13 @@
 // API methods for users
 import axios from "axios";
+import { API_BASE_URL, getAuthHeader } from "./config";
 
 /**
  * Fetches all users from the API
  * @returns {Promise} Promise resolving to users data
  */
 export const fetchUsers = async () => {
-  const response = await fetch("http://localhost:8000/api/users/");
+  const response = await fetch(`${API_BASE_URL}/users/`);
   
   if (!response.ok) {
     throw new Error("Failed to fetch users");
@@ -21,11 +22,11 @@ export const fetchUsers = async () => {
  * @returns {Promise} Promise resolving when the user is logged out
  */
 export const logout = async (token) => {
-  const response = await fetch("http://localhost:8000/api/logout/", {
+  const response = await fetch(`${API_BASE_URL}/logout/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      ...getAuthHeader(token),
     },
   });
   
@@ -42,7 +43,7 @@ export const logout = async (token) => {
  * @returns {Promise} Promise resolving to verification result
  */
 export const verifyOTP = async (verifyData) => {
-  const response = await fetch("http://localhost:8000/api/verify-signup-otp/", {
+  const response = await fetch(`${API_BASE_URL}/verify-signup-otp/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -79,10 +80,8 @@ export const checkAuthentication = async () => {
  * @returns {Promise} Promise resolving to user home data
  */
 export const fetchHomeData = async (token) => {
-  const response = await axios.get("http://localhost:8000/api/home/", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  const response = await axios.get(`${API_BASE_URL}/home/`, {
+    headers: getAuthHeader(token),
   });
   
   return response.data;
@@ -94,10 +93,8 @@ export const fetchHomeData = async (token) => {
  * @returns {Promise} Promise resolving to solved challenges data
  */
 export const fetchUserSolvedChallenges = async (token) => {
-  const response = await axios.get("http://localhost:8000/api/solved-challenges/", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  const response = await axios.get(`${API_BASE_URL}/solved-challenges/`, {
+    headers: getAuthHeader(token),
   });
   
   return response.data;

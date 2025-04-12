@@ -1,24 +1,26 @@
-export const loginUser = async (username, password) => {
-  try {
-    const response = await fetch("http://localhost:8000/api/login/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    });
+// API methods for login
+import { API_BASE_URL } from "./config";
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || "Invalid username or password");
-    }
-
-    const data = await response.json();
-    return { success: true, data };
-  } catch (error) {
-    return { 
-      success: false, 
-      error: error.message || "Network error. Please try again later." 
-    };
+/**
+ * Logs in a user with username and password
+ * @param {string} username - User's username
+ * @param {string} password - User's password
+ * @returns {Promise} Promise resolving to authentication data with access token
+ */
+export const login = async (username, password) => {
+  const response = await fetch(`${API_BASE_URL}/login/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username, password }),
+  });
+  
+  const data = await response.json();
+  
+  if (!response.ok) {
+    throw new Error(data.detail || "Invalid username or password");
   }
+  
+  return data;
 };

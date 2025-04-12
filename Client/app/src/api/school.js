@@ -1,5 +1,6 @@
 // API methods for school portal
 import axios from "axios";
+import { API_BASE_URL, getAuthHeader } from "./config";
 
 /**
  * Fetches all students from the API
@@ -7,10 +8,8 @@ import axios from "axios";
  * @returns {Promise} Promise resolving to students data
  */
 export const fetchStudents = async (token) => {
-  const response = await fetch("http://localhost:8000/api/students/", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  const response = await fetch(`${API_BASE_URL}/students/`, {
+    headers: getAuthHeader(token),
   });
   
   if (!response.ok) {
@@ -26,10 +25,8 @@ export const fetchStudents = async (token) => {
  * @returns {Promise} Promise resolving to classes data
  */
 export const fetchClasses = async (token) => {
-  const response = await fetch("http://localhost:8000/api/classes/", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  const response = await fetch(`${API_BASE_URL}/classes/`, {
+    headers: getAuthHeader(token),
   });
   
   if (!response.ok) {
@@ -46,11 +43,11 @@ export const fetchClasses = async (token) => {
  * @returns {Promise} Promise resolving to the created teacher
  */
 export const createTeacher = async (teacherData, token) => {
-  const response = await fetch("http://localhost:8000/api/create-teacher/", {
+  const response = await fetch(`${API_BASE_URL}/create-teacher/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      ...getAuthHeader(token),
     },
     body: JSON.stringify(teacherData),
   });
@@ -71,11 +68,11 @@ export const createTeacher = async (teacherData, token) => {
  * @returns {Promise} Promise resolving to the created student
  */
 export const createStudent = async (studentData, token) => {
-  const response = await fetch("http://localhost:8000/api/create-student/", {
+  const response = await fetch(`${API_BASE_URL}/create-student/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      ...getAuthHeader(token),
     },
     body: JSON.stringify(studentData),
   });
@@ -96,10 +93,8 @@ export const createStudent = async (studentData, token) => {
  */
 export const fetchMyCourses = async (token) => {
   try {
-    const response = await axios.get('http://localhost:8000/api/my-courses/', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    const response = await axios.get(`${API_BASE_URL}/my-courses/`, {
+      headers: getAuthHeader(token)
     });
     return response.data;
   } catch (error) {
@@ -118,10 +113,8 @@ export const fetchMyCourses = async (token) => {
  */
 export const fetchCourseContent = async (courseId, token) => {
   try {
-    const response = await axios.get(`http://localhost:8000/api/course/${courseId}/content/`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    const response = await axios.get(`${API_BASE_URL}/course/${courseId}/content/`, {
+      headers: getAuthHeader(token)
     });
     return response.data;
   } catch (error) {
@@ -141,10 +134,8 @@ export const fetchCourseContent = async (courseId, token) => {
  */
 export const deleteSchoolItem = async (type, id, token) => {
   try {
-    await axios.delete(`http://localhost:8000/api/${type}/${id}/delete/`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    await axios.delete(`${API_BASE_URL}/${type}/${id}/delete/`, {
+      headers: getAuthHeader(token)
     });
     return true;
   } catch (error) {
