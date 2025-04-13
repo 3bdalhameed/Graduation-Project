@@ -25,10 +25,13 @@ function LearningPortalSignup() {
     try {
       // Use the API function instead of direct fetch call
       await signup({ username, email, password });
-      navigate("/learningPortalLogin");
+      navigate("/login");
     } catch (error) {
       console.error("Error:", error);
-      setError(error.message || "An error occurred during registration. Please try again.");
+      setError(
+        error.message ||
+          "An error occurred during registration. Please try again."
+      );
     } finally {
       setLoading(false);
     }

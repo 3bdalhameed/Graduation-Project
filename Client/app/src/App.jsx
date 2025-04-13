@@ -4,7 +4,6 @@ import Navbar from "./components/Navbar/navbar.jsx";
 // CTF Portal
 import SignUp from "./pages/CTF_portal/signup.jsx";
 import Home from "./pages/CTF_portal/Home.jsx";
-import HomeLogon from "./pages/CTF_portal/HomeLogon.jsx";
 import Login from "./pages/CTF_portal/login.jsx";
 import Test from "./pages/test";
 import Challenge from "./pages/CTF_portal/challenge.jsx";
@@ -20,7 +19,6 @@ import VerifyOTP from "./pages/VerifyOTP.jsx";
 import TicTacToe from "./pages/ticTacToe.jsx";
 
 // Learning Portal
-import LearningPortalLoginPage from "./pages/learning_portal/learningPortalLogin.jsx";
 import LearningPortalHomePage from "./pages/learning_portal/learningPortalHome.jsx";
 import LearningPortalMaterials from "./pages/learning_portal/learningPortalMaterials.jsx";
 import LearningPortalAssessments from "./pages/learning_portal/learningPortalAssesments.jsx";
@@ -39,7 +37,6 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/home" element={<HomeLogon />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
@@ -53,10 +50,7 @@ function App() {
         <Route path="/createteam" element={<Createteam />} />
         <Route path="/teamprofile" element={<Teamprof />} />
         <Route path="/settings" element={<Setting />} />
-        <Route
-          path="/learningPortalLogin"
-          element={<LearningPortalLoginPage />}
-        />
+  
         <Route
           path="/learningPortalHome"
           element={<LearningPortalHomePage />}
@@ -69,10 +63,7 @@ function App() {
           path="/learningPortalMaterials"
           element={<LearningPortalMaterials />}
         />
-        <Route
-          path="/learningPortalSignup"
-          element={<LearningPortalSignup />}
-        />
+       
         <Route path="/learning/cybersecurity" element={<Introduction />} />
 
         <Route path="/schoollogin" element={<Schoollogin />} />

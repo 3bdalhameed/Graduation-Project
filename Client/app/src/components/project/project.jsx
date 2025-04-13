@@ -16,7 +16,7 @@ function ProjectSection() {
   const portals = [
     { src: Competition, title: "CTF Portal", description: "Join capture the flag competitions and track your progress", path: "/login", color: "blue", icon: "🚩" },
     { src: Competition, title: "School Portal", description: "Access administrative tools, analytics, and educational resources", path: "/", color: "purple", icon: "🏫" },
-    { src: Competition, title: "Learning Portal", description: "Structured learning paths and collaborative educational content", path:"/learningPortalLogin", color: "green", icon: "📚" },
+    { src: Competition, title: "Learning Portal", description: "Structured learning paths and collaborative educational content", path:"/login", color: "green", icon: "📚" },
   ];
   return (
     <section className="relative py-24 overflow-hidden">
