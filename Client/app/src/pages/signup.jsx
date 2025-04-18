@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import Navbar from "../../components/Navbar/navbar";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaEnvelope, FaLock, FaShieldAlt } from "react-icons/fa";
-import { signup } from "../../api/auth";
+import { signupUser } from "../api/signup";
 
 function SignUp() {
   const [username, setUsername] = useState("");
@@ -27,18 +26,17 @@ function SignUp() {
     }
 
     try {
-      // Using API function instead of direct fetch
-      await signup({ 
-        username, 
-        password, 
-        email: gmail 
-      });
+      const result = await signupUser(username, password, gmail);
       
-      setSuccess("OTP sent to your email. Please verify.");
-      navigate("/verify-otp", { state: { email: gmail, username, password } });
+      if (result.success) {
+        setSuccess("OTP sent to your email. Please verify.");
+        navigate("/verify-otp", { state: { email: gmail, username, password } });
+      } else {
+        setError(result.error);
+      }
     } catch (error) {
       console.error("Error:", error);
-      setError(error.message || "An error occurred. Please try again later.");
+      setError("An error occurred. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -73,11 +71,6 @@ function SignUp() {
 
   return (
     <>
-      {/* Fixed Navbar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-md">
-        <Navbar />
-      </div>
-
       {/* Main SignUp Section - Full height with proper spacing */}
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 py-20 px-4">
         <div className="w-full max-w-md mt-16 md:mt-12">

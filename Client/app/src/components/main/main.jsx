@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from "react";
-import React, { useEffect, useRef } from "react";
 import hacker from "../../pages/img/hacker.png";
 import Button from "../encryptbutton.jsx";
 
@@ -64,7 +63,7 @@ function MainSection() {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden pt-20">
+    <section className="relative min-h-screen flex items-center overflow-hidden ">
       <div className="absolute inset-0 -z-10">
         <canvas ref={canvasRef} aria-hidden="true" className="w-full h-full" />
       </div>

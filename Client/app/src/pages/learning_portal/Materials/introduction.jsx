@@ -1,13 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../../../components/learning_Navbar_logon/navbar";
 
 export default function IntroductionPage() {
   const navigate = useNavigate();
 
   return (
     <>
-      <Navbar />
       <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center p-8">
         <div className="max-w-4xl bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg text-center">
           

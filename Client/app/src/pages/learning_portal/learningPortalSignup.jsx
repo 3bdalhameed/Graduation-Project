@@ -1,54 +1,44 @@
 import React, { useState } from "react";
-import Navbar from "../../components/Navbar/navbar";
 import { useNavigate } from "react-router-dom";
+import { signup } from "../../api/auth";
 
-function SignUp() {
+function LearningPortalSignup() {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [gmail, setGmail] = useState("");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const navigate = useNavigate();
-  const handleSignup = async (event) => {
-    event.preventDefault();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
     setError("");
-    setSuccess("");
 
     if (password !== confirmPassword) {
       setError("Passwords do not match");
+      setLoading(false);
       return;
     }
 
     try {
-      const response = await fetch("http://localhost:8000/api/signup/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password, email: gmail }),
-      });
-
-      if (response.ok) {
-        setSuccess("OTP sent to your email. Please verify.");
-        navigate("/verify-otp", { state: { email: gmail, username, password } });
-      } else {
-        const errorData = await response.json();
-        setError(errorData.error || "SignUp failed. Please try again.");
-      }
+      // Use the API function instead of direct fetch call
+      await signup({ username, email, password });
+      navigate("/login");
     } catch (error) {
       console.error("Error:", error);
-      setError("An error occurred. Please try again.");
+      setError(
+        error.message ||
+          "An error occurred during registration. Please try again."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
-      {/* Fixed Navbar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 shadow-md">
-        <Navbar />
-      </div>
-
       {/* Main SignUp Section */}
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-500 via-indigo-600 to-blue-900 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700">
         <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-2xl w-full max-w-md">
@@ -64,13 +54,8 @@ function SignUp() {
               {error}
             </p>
           )}
-          {success && (
-            <p className="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 p-3 rounded mb-4">
-              {success}
-            </p>
-          )}
 
-          <form className="space-y-6" onSubmit={handleSignup}>
+          <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Username Input */}
             <div>
               <label
@@ -90,7 +75,7 @@ function SignUp() {
               />
             </div>
 
-            {/* Gmail Input */}
+            {/* Email Input */}
             <div>
               <label
                 htmlFor="email"
@@ -102,8 +87,8 @@ function SignUp() {
                 type="email"
                 id="email"
                 placeholder="Enter your email"
-                value={gmail}
-                onChange={(e) => setGmail(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
                 required
               />
@@ -151,8 +136,9 @@ function SignUp() {
             <button
               type="submit"
               className="w-full py-3 px-4 rounded-lg text-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition duration-300 bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500"
+              disabled={loading}
             >
-              Sign Up
+              {loading ? "Signing Up..." : "Sign Up"}
             </button>
           </form>
 
@@ -172,4 +158,4 @@ function SignUp() {
   );
 }
 
-export default SignUp;
+export default LearningPortalSignup;

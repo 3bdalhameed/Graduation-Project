@@ -8,7 +8,8 @@ from .views import (
     TeamProfile, GetTeamsView, get_csrf_token,
     SolvedChallengesView, GetUserRoleView,
     DeleteChallengeView, ChallengeEditView,
-    ScoreboardAPIView
+    ScoreboardAPIView, RoleLoginView,
+    AdminCreateUserView,
 )
 from rest_framework_simplejwt import views as jwt_views
 
@@ -38,4 +39,8 @@ urlpatterns = [
     path('challenge/<int:challenge_id>/edit/', ChallengeEditView.as_view(), name='challenge-edit'),
     path("user-role/", GetUserRoleView.as_view(), name="user_role"),
     
+    
+    path("school/login/", RoleLoginView.as_view(), name="role_login"),
+    path("school/admin/create-user/", AdminCreateUserView.as_view(), name="admin_create_user"),
+
 ]

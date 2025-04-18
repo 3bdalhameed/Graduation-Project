@@ -1,6 +1,6 @@
 import React from "react";
+import { motion } from "framer-motion";
 import { FaCheckCircle } from "react-icons/fa";
-import NavBar from "../../components/Navbar_logon/navbar";
 
 function Rules() {
   const rules = [
@@ -18,7 +18,7 @@ function Rules() {
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Navbar */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-gray-800 shadow-md">
-        <NavBar />
+        {/* Removed NavBar component */}
       </div>
 
       {/* Main Content */}

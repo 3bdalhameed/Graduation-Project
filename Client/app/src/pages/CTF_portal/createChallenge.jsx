@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../../components/Navbar_logon/navbar";
+import useTokenStore from "../../stores/useTokenStore";
+import { 
+  fetchChallenges, 
+  createChallenge, 
+  updateChallenge, 
+  deleteChallenge 
+} from "../../api/challenges";
 
 const ChallengePage = () => {
   const [challenges, setChallenges] = useState([]);
@@ -14,14 +20,12 @@ const ChallengePage = () => {
   const [editedChallenge, setEditedChallenge] = useState({ title: "", description: "", category: "", points: "", flag: "" });
   const [isCreating, setIsCreating] = useState(false);
   const [newChallenge, setNewChallenge] = useState({ title: "", description: "", category: "Web Exploitation", points: "50", flag: "" });
-  const token = localStorage.getItem("access_token");
+  const token = useTokenStore((state) => state.token);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/challenge/", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((response) => response.json())
+    // Use API function instead of direct fetch
+    fetchChallenges(token)
       .then((data) => {
         setChallenges(data);
         const uniqueCategories = ["All", ...new Set(data.map(challenge => challenge.category))];
@@ -33,19 +37,10 @@ const ChallengePage = () => {
   const handleCreateChallenge = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/challenge/create/", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newChallenge),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setChallenges([...challenges, data]);
-        setIsCreating(false);
-      }
+      // Use API function instead of direct fetch
+      const data = await createChallenge(newChallenge, token);
+      setChallenges([...challenges, data]);
+      setIsCreating(false);
     } catch (error) {
       console.error("Error creating challenge:", error);
     }
@@ -54,15 +49,8 @@ const ChallengePage = () => {
   const handleEditChallenge = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/challenge/${selectedChallenge.id}/edit/`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(editedChallenge),
-      });
-      const updatedChallenge = await response.json();
+      // Use API function instead of direct fetch
+      const updatedChallenge = await updateChallenge(selectedChallenge.id, editedChallenge, token);
       setChallenges(challenges.map(ch => (ch.id === updatedChallenge.id ? updatedChallenge : ch)));
       setSelectedChallenge(updatedChallenge);
       setIsEditing(false);
@@ -73,10 +61,8 @@ const ChallengePage = () => {
 
   const handleDeleteChallenge = async () => {
     try {
-      await fetch(`http://127.0.0.1:8000/api/challenge/${selectedChallenge.id}/delete/`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      // Use API function instead of direct fetch
+      await deleteChallenge(selectedChallenge.id, token);
       setChallenges(challenges.filter(ch => ch.id !== selectedChallenge.id));
       setSelectedChallenge(null);
     } catch (error) {
@@ -87,7 +73,6 @@ const ChallengePage = () => {
 
   return (
     <>
-      <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-100 dark:from-gray-900 dark:to-gray-800 pt-24 px-4">
         <div className="flex flex-col items-center">
           <button
@@ -141,26 +126,26 @@ const ChallengePage = () => {
             <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-6">
               ✍️ Create Challenge
             </h2>
-            <form onSubmit={handleEditChallenge} className="space-y-4">
+            <form onSubmit={handleCreateChallenge} className="space-y-4">
             <input
               type="text"
               placeholder="Title"
-              value={editedChallenge.title}
-              onChange={(e) => setEditedChallenge({ ...editedChallenge, title: e.target.value })}
+              value={newChallenge.title}
+              onChange={(e) => setNewChallenge({ ...newChallenge, title: e.target.value })}
               className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
             />
 
             <textarea
               placeholder="Description"
-              value={editedChallenge.description}
-              onChange={(e) => setEditedChallenge({ ...editedChallenge, description: e.target.value })}
+              value={newChallenge.description}
+              onChange={(e) => setNewChallenge({ ...newChallenge, description: e.target.value })}
               className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
               rows="3"
             />
 
             <select
-              value={editedChallenge.category}
-              onChange={(e) => setEditedChallenge({ ...editedChallenge, category: e.target.value })}
+              value={newChallenge.category}
+              onChange={(e) => setNewChallenge({ ...newChallenge, category: e.target.value })}
               className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
             >
               <option>Web Exploitation</option>
@@ -174,21 +159,21 @@ const ChallengePage = () => {
             <input
               type="number"
               placeholder="Points"
-              value={editedChallenge.points}
-              onChange={(e) => setEditedChallenge({ ...editedChallenge, points: e.target.value })}
+              value={newChallenge.points}
+              onChange={(e) => setNewChallenge({ ...newChallenge, points: e.target.value })}
               className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
             />
 
             <input
               type="text"
               placeholder="Flag"
-              value={editedChallenge.flag}
-              onChange={(e) => setEditedChallenge({ ...editedChallenge, flag: e.target.value })}
+              value={newChallenge.flag}
+              onChange={(e) => setNewChallenge({ ...newChallenge, flag: e.target.value })}
               className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
             />
 
             <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl font-semibold">
-              💾 Save Changes
+              💾 Save Challenge
             </button>
             <div className="flex justify-between mt-4 gap-2">
             <button

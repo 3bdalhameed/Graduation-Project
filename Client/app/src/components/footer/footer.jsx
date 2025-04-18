@@ -44,7 +44,6 @@ function FooterSection() {
               <li><a href="/" className="text-gray-300 hover:text-blue-400 transition-colors duration-300">Home</a></li>
               <li><a href="/about" className="text-gray-300 hover:text-blue-400 transition-colors duration-300">About Us</a></li>
               <li><a href="/login" className="text-gray-300 hover:text-blue-400 transition-colors duration-300">CTF Portal</a></li>
-              <li><a href="/learningPortalLogin" className="text-gray-300 hover:text-blue-400 transition-colors duration-300">Learning Portal</a></li>
               <li><a href="/login" className="text-gray-300 hover:text-blue-400 transition-colors duration-300">School Portal</a></li>
             </ul>
           </div>

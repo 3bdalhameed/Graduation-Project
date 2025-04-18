@@ -9,19 +9,21 @@ const DarkModeToggle = () => {
     <button
       onClick={toggleDarkMode}
       className="p-2 rounded-full transition-colors duration-200 
-                hover:bg-gray-100 dark:hover:bg-gray-800"
+                focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
       aria-label="Toggle dark mode"
     >
-      <div className="relative w-10 h-6 bg-gray-300 dark:bg-gray-600 rounded-full">
+      <div className="relative w-12 h-6 bg-gradient-to-r from-blue-100 to-blue-200 dark:from-indigo-900 dark:to-blue-900 rounded-full shadow-inner">
         <div
-          className={`absolute w-5 h-5 bg-white dark:bg-gray-800 rounded-full shadow-md 
-          transform duration-300 flex items-center justify-center
-          ${darkMode ? "translate-x-5" : "translate-x-0.5"} top-0.5`}
+          className={`absolute w-6 h-6 rounded-full shadow-lg 
+                    flex items-center justify-center transition-transform duration-300 ease-in-out
+                    ${darkMode 
+                      ? "bg-indigo-700 translate-x-6" 
+                      : "bg-yellow-400 translate-x-0"} top-0`}
         >
           {darkMode ? (
-            <FiMoon className="text-blue-400 text-xs" />
+            <FiMoon className="text-white text-xs" />
           ) : (
-            <FiSun className="text-yellow-500 text-xs" />
+            <FiSun className="text-yellow-700 text-xs" />
           )}
         </div>
       </div>
