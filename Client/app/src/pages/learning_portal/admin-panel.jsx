@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 const AdminAssessmentsPage = () => {
   const [assessments, setAssessments] = useState([]);
   const [materials, setMaterials] = useState([]);
+  const [solved, setSolved] = useState([]);
   const [selectedAssessment, setSelectedAssessment] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -25,6 +26,9 @@ const AdminAssessmentsPage = () => {
       .catch((err) => console.error("Failed to load assessments", err));
   }, [token]);
 
+  useEffect(() => {
+    
+  })
   const handleDelete = async (id) => {
     try {
       await fetch(`http://127.0.0.1:8000/api/assessments/${id}/delete/`, {

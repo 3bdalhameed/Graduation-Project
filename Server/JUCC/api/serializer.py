@@ -159,3 +159,16 @@ class AssessmentSerializer(serializers.ModelSerializer):
         for question_data in questions_data:
             Question.objects.create(assessment=assessment, **question_data)
         return assessment
+
+from rest_framework import serializers
+from .models import SolvedAssessment
+
+class SolvedAssessmentSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    assessment_name = serializers.CharField(source='assessment.name', read_only=True)
+
+    class Meta:
+        model = SolvedAssessment
+        fields = ['id', 'user', 'username', 'assessment', 'assessment_name', 'score', 'submitted_at']
+
+

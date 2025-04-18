@@ -15,6 +15,7 @@ from .views import (
     AssessmentUpdateView, AssessmentDeleteView,
     LearningMaterialListCreateView, 
     LearningMaterialRetrieveUpdateDestroyView,
+    SolvedAssessmentListCreateAPIView,
     
 )
 from rest_framework_simplejwt import views as jwt_views
@@ -62,4 +63,5 @@ urlpatterns = [
     path('assessments/<int:pk>/', AssessmentDetailView.as_view(), name='assessment-detail'),
     path('assessments/<int:pk>/edit/', AssessmentUpdateView.as_view(), name='assessment-update'),
     path('assessments/<int:pk>/delete/', AssessmentDeleteView.as_view(), name='assessment-delete'),
+    path("solved-assessments/", SolvedAssessmentListCreateAPIView.as_view(), name="solved-assessments"),
 ]

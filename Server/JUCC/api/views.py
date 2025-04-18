@@ -651,4 +651,14 @@ class AssessmentDeleteView(generics.DestroyAPIView):
     serializer_class = AssessmentSerializer
     permission_classes = [permissions.IsAuthenticated]
     
+from rest_framework import generics, permissions
+from .serializer import SolvedAssessmentSerializer
+
+
+class SolvedAssessmentListCreateAPIView(generics.CreateAPIView):
+    serializer_class = SolvedAssessmentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 

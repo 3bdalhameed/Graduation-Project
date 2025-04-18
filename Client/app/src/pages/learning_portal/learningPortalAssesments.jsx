@@ -47,15 +47,43 @@ export default function Assessments() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     let correctAnswers = 0;
     selectedAssessment.questions.forEach((q, index) => {
       if (selectedAnswers[index] === q.answer) {
         correctAnswers++;
       }
     });
+  
     setScore(correctAnswers);
+  
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/solved-assessments/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+        body: JSON.stringify({
+          assessment: selectedAssessment.id,       // ForeignKey or ID reference
+          assessment_name: selectedAssessment.name, // Added name as a string
+          score: correctAnswers,
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Backend returned error:", errorData);
+        throw new Error("Failed to save solved assessment");
+      }
+  
+      const data = await response.json();
+      console.log("✅ Solved assessment saved:", data);
+    } catch (err) {
+      console.error("❌ Error submitting result:", err.message);
+    }
   };
+  
 
   const applyFilters = (challenges) => {
     return challenges.filter((challenge) => {
@@ -66,22 +94,7 @@ export default function Assessments() {
       return matchesCategory && matchesDifficulty;
     });
   };
-
   const filteredAssessments = applyFilters(assessments);
-
-  const handleMcqChange = (index, field, value) => {
-    const updated = [...mcqList];
-    if (field === "question" || field === "answer") {
-      updated[index][field] = value;
-    } else {
-      updated[index].options[field] = value;
-    }
-    setMcqList(updated);
-  };
-
-  const addMcq = () => {
-    setMcqList([...mcqList, { question: "", options: ["", "", "", ""], answer: "" }]);
-  };
 
   return (
     <>
@@ -166,15 +179,15 @@ export default function Assessments() {
                   category,
                   difficulty,
                   questions: mcqList.map((q) => {
-  return {
-    question: q.question,
-    option1: q.options[0] || "",
-    option2: q.options[1] || "",
-    option3: q.options[2] || "",
-    option4: q.options[3] || "",
-    answer: q.answer,
-  };
-}),
+                  return {
+                    question: q.question,
+                    option1: q.options[0] || "",
+                    option2: q.options[1] || "",
+                    option3: q.options[2] || "",
+                    option4: q.options[3] || "",
+                    answer: q.answer,
+                  };
+                }),
                 };
 
                 fetch("http://127.0.0.1:8000/api/assessments/", {
