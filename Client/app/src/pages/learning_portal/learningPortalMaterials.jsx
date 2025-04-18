@@ -1,22 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/learning_Navbar_logon/navbar";
-
-const learningMaterials = [
-  { id: 1, title: "What is Cybersecurity?", category: "Introduction", description: "Learn the basics of cybersecurity and its importance.", link: "/learning/cybersecurity" },
-  { id: 2, title: "CTF (Capture The Flag) Introduction", category: "Introduction", description: "Explore the fundamentals of CTF competitions and challenges.", link: "/learning/ctf-intro" },
-  { id: 3, title: "Web Exploitation", category: "Web Security", description: "Learn how to analyze and exploit vulnerabilities in web applications.", link: "/learning/web-exploitation" },
-  { id: 4, title: "Forensics", category: "Digital Forensics", description: "Investigate digital artifacts and uncover hidden data.", link: "/learning/forensics" },
-  { id: 5, title: "Cryptography", category: "Crypto", description: "Understand encryption, decryption, and cryptographic attacks.", link: "/learning/cryptography" },
-  { id: 6, title: "Reverse Engineering", category: "Reverse Engineering", description: "Decompile and analyze binaries to understand program logic.", link: "/learning/reverse-engineering" },
-  { id: 7, title: "Pwn (Binary Exploitation)", category: "Binary Exploitation", description: "Exploit vulnerabilities in binary programs to gain control.", link: "/learning/pwn" },
-  { id: 8, title: "SQL Injection", category: "Web Security", description: "Learn how to exploit databases using SQL injection techniques.", link: "/learning/sql-injection" },
-  { id: 9, title: "XSS (Cross-Site Scripting)", category: "Web Security", description: "Understand how attackers inject scripts into web pages.", link: "/learning/xss" },
-];
 
 export default function LearningMaterials() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [materials, setMaterials] = useState([]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    fetch("http://127.0.0.1:8000/api/learning-materials/", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setMaterials(data))
+      .catch((err) => console.error("Failed to fetch materials", err));
+  }, []);
 
   const categories = [
     "All",
@@ -29,14 +30,13 @@ export default function LearningMaterials() {
   ];
 
   const filteredMaterials = selectedCategory === "All"
-    ? learningMaterials
-    : learningMaterials.filter((material) => material.category === selectedCategory);
+    ? materials
+    : materials.filter((material) => material.category === selectedCategory);
 
   return (
     <>
       <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-100 dark:from-gray-900 dark:to-gray-800 flex">
-        {/* Sidebar Filter */}
         <aside className="w-64 min-h-screen bg-white dark:bg-gray-800 p-6 shadow-xl pt-24">
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 border-b pb-2 border-blue-500">Categories</h2>
           <div className="space-y-3">
@@ -56,7 +56,6 @@ export default function LearningMaterials() {
           </div>
         </aside>
 
-        {/* Main Content */}
         <main className="flex-1 p-10 pt-24">
           <h1 className="text-4xl font-extrabold text-center text-gray-800 dark:text-white mb-12 drop-shadow-md">
             📘 Cybersecurity & CTF Learning Hub

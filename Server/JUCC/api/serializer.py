@@ -129,6 +129,14 @@ class CourseSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_by', 'created_at']
 
 
+from rest_framework import serializers
+from .models import LearningMaterial
+
+class LearningMaterialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LearningMaterial
+        fields = '__all__'
+
 
 from rest_framework import serializers
 from .models import Assessment, Question

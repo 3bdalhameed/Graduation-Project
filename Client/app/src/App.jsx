@@ -29,6 +29,7 @@ import LearningPortalMaterials from "./pages/learning_portal/learningPortalMater
 import LearningPortalAssessments from "./pages/learning_portal/learningPortalAssesments.jsx";
 import LearningPortalSignup from "./pages/learning_portal/learningPortalSignup.jsx";
 import Introduction from "./pages/learning_portal/Materials/introduction.jsx";
+import AdminPanel from "./pages/learning_portal/admin-panel.jsx"
 import "./pages/style.css";
 
 // School Portal
@@ -67,6 +68,7 @@ function App() {
           <Route path="/learningPortalMaterials" element={<LearningPortalMaterials />} />
           <Route path="/learningPortalSignup" element={<LearningPortalSignup />} />
           <Route path="/learning/cybersecurity" element={<Introduction />} />
+          <Route path="/learning/admin" element={<AdminPanel />} /> 
 
 
           <Route path="/schoollogin" element={<Schoollogin />} />          

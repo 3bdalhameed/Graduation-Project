@@ -12,6 +12,9 @@ from .views import (
     AddCourseView, SolvedChallengeLogsView,
     UserListView, UserProfileView, TeamDetailView,
     AssessmentDetailView, AssessmentListCreateView,
+    AssessmentUpdateView, AssessmentDeleteView,
+    LearningMaterialListCreateView, 
+    LearningMaterialRetrieveUpdateDestroyView,
     
 )
 from rest_framework_simplejwt import views as jwt_views
@@ -52,6 +55,11 @@ urlpatterns = [
     path('courses/add/', AddCourseView.as_view(), name='add_course'),
     
     
-    path('assessments/', AssessmentListCreateView.as_view(), name='assessment-list'),
+    path("learning-materials/", LearningMaterialListCreateView.as_view(), name="learning-list-create"),
+    path("learning-materials/<int:pk>/", LearningMaterialRetrieveUpdateDestroyView.as_view(), name="learning-detail-edit-delete"),
+    
+    path('assessments/', AssessmentListCreateView.as_view(), name='assessment-list-create'),
     path('assessments/<int:pk>/', AssessmentDetailView.as_view(), name='assessment-detail'),
+    path('assessments/<int:pk>/edit/', AssessmentUpdateView.as_view(), name='assessment-update'),
+    path('assessments/<int:pk>/delete/', AssessmentDeleteView.as_view(), name='assessment-delete'),
 ]

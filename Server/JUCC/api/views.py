@@ -88,8 +88,6 @@ class UserProfileView(generics.RetrieveAPIView):
         return self.get_queryset().get(username=username)
 
 
-
-
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
@@ -129,6 +127,7 @@ class GetUserRoleView(APIView):
         role = "User"
         if hasattr(request.user, 'userrole'):
             role = request.user.userrole.role
+        print(role)
         return Response({"role": role}, status=HTTP_200_OK)
 
 ###############################################################################################################################################
@@ -608,13 +607,31 @@ class AddCourseView(APIView):
 ###############################################################################################################################################
 
 from rest_framework import generics, permissions
+from .models import LearningMaterial
+from .serializer import LearningMaterialSerializer
+
+class LearningMaterialListCreateView(generics.ListCreateAPIView):
+    queryset = LearningMaterial.objects.all()
+    serializer_class = LearningMaterialSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+class LearningMaterialRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = LearningMaterial.objects.all()
+    serializer_class = LearningMaterialSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+
+from rest_framework import generics, permissions
 from .models import Assessment
 from .serializer import AssessmentSerializer
 
 class AssessmentListCreateView(generics.ListCreateAPIView):
     queryset = Assessment.objects.all()
     serializer_class = AssessmentSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [permissions.AllowAny]
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -622,4 +639,16 @@ class AssessmentListCreateView(generics.ListCreateAPIView):
 class AssessmentDetailView(generics.RetrieveAPIView):
     queryset = Assessment.objects.all()
     serializer_class = AssessmentSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
+
+class AssessmentUpdateView(generics.UpdateAPIView):
+    queryset = Assessment.objects.all()
+    serializer_class = AssessmentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class AssessmentDeleteView(generics.DestroyAPIView):
+    queryset = Assessment.objects.all()
+    serializer_class = AssessmentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+
