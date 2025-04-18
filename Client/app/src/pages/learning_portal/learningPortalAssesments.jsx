@@ -11,7 +11,7 @@ export default function Assessments() {
     category: "All",
     difficulty: "All",
   });
-  const [isAdmin, setIsAdmin] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [mcqList, setMcqList] = useState([
     { question: "", options: ["", "", "", ""], answer: "" },
@@ -22,6 +22,20 @@ export default function Assessments() {
       .then((res) => res.json())
       .then((data) => setAssessments(data))
       .catch((err) => console.error("Failed to fetch assessments", err));
+
+    const token = localStorage.getItem("access_token");
+    const username = localStorage.getItem("username");
+
+    if (username) {
+      fetch(`http://127.0.0.1:8000/api/profile/${username}/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.role === "Admin") setIsAdmin(true);
+        })
+        .catch((err) => console.error("Failed to fetch profile", err));
+    }
   }, []);
 
   const handleCardClick = (assessment) => {
@@ -149,7 +163,7 @@ export default function Assessments() {
           </div>
         </div>
       )}
-      {showCreateModal && (
+{isAdmin && showCreateModal && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-60 backdrop-blur-sm flex justify-center items-center">
           <div className="bg-white dark:bg-gray-900 p-8 rounded-xl shadow-2xl w-full max-w-3xl overflow-y-auto max-h-[90vh]">
             <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-white">

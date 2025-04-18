@@ -8,6 +8,7 @@ const ChallengePage = () => {
   const [solvedChallenges, setSolvedChallenges] = useState([]);
   const [selectedChallenge, setSelectedChallenge] = useState(null);
   const [flag, setFlag] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [message, setMessage] = useState(null);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
