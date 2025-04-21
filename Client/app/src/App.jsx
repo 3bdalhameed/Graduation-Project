@@ -1,6 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar/navbar.jsx";
 
+import UserProfile from "./pages/UserProfile";
+import TeamProfile from "./pages/TeamProfile.jsx";
+
+
+// Services
+import Awareness from "./pages/Services/Awareness.jsx";
+import Assessment from "./pages/Services/Assessment.jsx";
+import CyberHub from "./pages/Services/CyberHub.jsx";
+import JNCSF from "./pages/Services/JNCSF.jsx";
+
 // CTF Portal
 import SignUp from "./pages/CTF_portal/signup.jsx";
 import Home from "./pages/CTF_portal/Home.jsx";
@@ -22,8 +32,8 @@ import TicTacToe from "./pages/ticTacToe.jsx";
 import LearningPortalHomePage from "./pages/learning_portal/learningPortalHome.jsx";
 import LearningPortalMaterials from "./pages/learning_portal/learningPortalMaterials.jsx";
 import LearningPortalAssessments from "./pages/learning_portal/learningPortalAssesments.jsx";
-import LearningPortalSignup from "./pages/learning_portal/learningPortalSignup.jsx";
 import Introduction from "./pages/learning_portal/Materials/introduction.jsx";
+import AdminPanel from "./pages/learning_portal/admin-panel.jsx"
 import "./pages/style.css";
 
 // School Portal
@@ -36,6 +46,16 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
+        <Route path="/profile/:username" element={<UserProfile />} />
+        <Route path="/teams/:teamId" element={<TeamProfile />} />
+
+
+        <Route path="/awarenessteam" element={<Awareness />} />
+        <Route path="/assessmentteam" element={<Assessment />} />
+        <Route path="/JNCSFteam" element={<JNCSF />} />
+        <Route path="/cyberhubteam" element={<CyberHub />} />
+
+
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
@@ -63,8 +83,9 @@ function App() {
           path="/learningPortalMaterials"
           element={<LearningPortalMaterials />}
         />
-       
         <Route path="/learning/cybersecurity" element={<Introduction />} />
+        <Route path="/learning/admin" element={<AdminPanel />} /> 
+
 
         <Route path="/schoollogin" element={<Schoollogin />} />
         <Route path="/schoolmain" element={<Schoolmain />} />

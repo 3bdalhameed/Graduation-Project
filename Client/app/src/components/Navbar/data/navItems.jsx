@@ -42,20 +42,7 @@ export const navItems = [
         requiresAuth: true,
         description: "Test your knowledge and skills"
       },
-      {
-        label: "Login",
-        icon: <FaSignInAlt className="mr-2" />,
-        href: "/Login",
-        requiresAuth: false,
-        description: "Sign in to your account"
-      },
-      {
-        label: "Sign Up",
-        icon: <FaUserPlus className="mr-2" />,
-        href: "/Signup",
-        requiresAuth: false,
-        description: "Create a new account"
-      },
+
     ],
   },
   {
@@ -150,20 +137,6 @@ export const navItems = [
         href: "/users",
         requiresAuth: true,
         description: "Browse community members"
-      },
-      {
-        label: "Login",
-        icon: <FaSignInAlt className="mr-2" />,
-        href: "/login",
-        requiresAuth: false,
-        description: "Sign in to participate"
-      },
-      {
-        label: "Sign Up",
-        icon: <FaUserPlus className="mr-2" />,
-        href: "/signup",
-        requiresAuth: false,
-        description: "Join the CTF community"
       },
     ],
   },

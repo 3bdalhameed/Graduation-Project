@@ -10,14 +10,6 @@ function PortalCard({ portal, index }) {
           hoverGradient: "group-hover:from-blue-800 group-hover:to-blue-600",
           hoverBorder: "group-hover:border-blue-500/60 dark:group-hover:border-blue-400/30"
         },
-        purple: {
-          text: "text-purple-700 dark:text-purple-400",
-          bg: "bg-purple-100 dark:bg-purple-900/20",
-          border: "border-purple-200 dark:border-purple-800",
-          gradient: "from-purple-700 to-purple-500",
-          hoverGradient: "group-hover:from-purple-800 group-hover:to-purple-600",
-          hoverBorder: "group-hover:border-purple-500/60 dark:group-hover:border-purple-400/30"
-        },
         green: {
           text: "text-green-700 dark:text-green-400",
           bg: "bg-green-100 dark:bg-green-900/20",
@@ -25,7 +17,15 @@ function PortalCard({ portal, index }) {
           gradient: "from-green-700 to-green-500",
           hoverGradient: "group-hover:from-green-800 group-hover:to-green-600",
           hoverBorder: "group-hover:border-green-500/60 dark:group-hover:border-green-400/30"
-        }
+        },
+        purple: {
+          text: "text-yellow-700 dark:text-yellow-400",
+          bg: "bg-yellow-100 dark:bg-yellow-900/20",
+          border: "border-yellow-200 dark:border-yellow-800",
+          gradient: "from-yellow-700 to-yellow-500",
+          hoverGradient: "group-hover:from-yellow-800 group-hover:to-yellow-600",
+          hoverBorder: "group-hover:border-yellow-500/60 dark:group-hover:border-yellow-400/30"
+        },
       };
       
       const colors = colorConfig[portal.color];

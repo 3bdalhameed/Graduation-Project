@@ -2,21 +2,33 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Challenge, Team, TeamMember
 
+from django.contrib.auth.models import User
+from rest_framework import serializers
+
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True, min_length=8)
+
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'email']
-        extra_kwargs = {'password': {'write_only': True}} # -> Hide password 
+        fields = ['id', 'username', 'email', 'password']
+        extra_kwargs = {
+            'email': {'required': True},
+        }
 
     def create(self, validated_data):
         user = User(
-            username = validated_data['username'],
-            email = validated_data['email']
+            username=validated_data['username'],
+            email=validated_data['email']
         )
-        user.set_password(validated_data['password']) # Hash password
+        user.set_password(validated_data['password'])  # Securely hash the password
         user.save()
         return user
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'date_joined']
+        
 #########################################################################################################
 
 from rest_framework import serializers
@@ -59,6 +71,16 @@ class ChallengeSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'description', 'created_by', 'created_at', 'category', 'points', 'flag']
         
         
+from .models import SolvedChallenge
+class SolvedChallengeSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username')
+    challenge_title = serializers.CharField(source='challenge.title')
+
+    class Meta:
+        model = SolvedChallenge
+        fields = ['id', 'username', 'challenge_title', 'solved_at']
+
+        
 #########################################################################################################
         
 from rest_framework import serializers
@@ -95,3 +117,86 @@ class RoleLoginSerializer(serializers.Serializer):
 
         data["user"] = user
         return data
+
+
+from rest_framework import serializers
+from .models import Course
+
+class CourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ['id', 'name', 'description', 'created_by', 'created_at']
+        read_only_fields = ['id', 'created_by', 'created_at']
+
+
+from rest_framework import serializers
+from .models import LearningMaterial
+class LearningMaterialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LearningMaterial
+        fields = ['id', 'title', 'category', 'description', 'content', 'link'] 
+        read_only_fields = ['id']
+
+        
+
+
+
+from rest_framework import serializers
+from .models import Assessment, Question
+
+class QuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = ['question', 'option1', 'option2', 'option3', 'option4', 'answer']
+        
+class AssessmentSerializer(serializers.ModelSerializer):
+    questions = QuestionSerializer(many=True)
+
+    class Meta:
+        model = Assessment
+        fields = ['id', 'name', 'category', 'difficulty', 'type', 'questions']
+
+    def create(self, validated_data):
+        questions_data = validated_data.pop('questions')
+        assessment = Assessment.objects.create(**validated_data)
+
+        for question_data in questions_data:
+            required_fields = ["question", "option1", "option2", "option3", "option4", "answer"]
+            for field in required_fields:
+                if not question_data.get(field):
+                    raise serializers.ValidationError({field: f"'{field}' cannot be empty."})
+
+            Question.objects.create(assessment=assessment, **question_data)
+
+        return assessment
+    def update(self, instance, validated_data):
+        questions_data = validated_data.pop('questions', [])
+
+        instance.name = validated_data.get('name', instance.name)
+        instance.category = validated_data.get('category', instance.category)
+        instance.difficulty = validated_data.get('difficulty', instance.difficulty)
+        instance.type = validated_data.get('type', instance.type)
+        instance.save()
+
+        if questions_data:
+            instance.questions.all().delete()  # or update them individually
+            for question_data in questions_data:
+                Question.objects.create(assessment=instance, **question_data)
+
+        return instance
+
+
+from rest_framework import serializers
+from .models import SolvedAssessment
+
+class SolvedAssessmentSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    assessment_name = serializers.CharField(source='assessment.name', read_only=True)
+    assessment = serializers.PrimaryKeyRelatedField(queryset=Assessment.objects.all())  # Add this line
+
+    class Meta:
+        model = SolvedAssessment
+        fields = ['username', 'assessment_name', 'assessment', 'score']  # Include assessment
+
+
+

@@ -22,7 +22,7 @@ function Login() {
     try {
       const data = await login(username, password);
       setToken(data.access_token);
-      navigate("/createteam");
+      navigate("/");
     } catch (error) {
       console.error("Error:", error);
       setError(error.message || "Network error. Please try again later.");

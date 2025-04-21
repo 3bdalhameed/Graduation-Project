@@ -112,3 +112,79 @@ class UserSchoolRole(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.role}"
+
+
+from django.db import models
+from django.contrib.auth.models import User
+
+class Course(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="courses")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+
+from django.db import models
+from django.contrib.auth.models import User
+
+
+class LearningMaterial(models.Model):
+    title = models.CharField(max_length=200)
+    category = models.CharField(max_length=100)
+    description = models.TextField()
+    content = models.TextField(default='')  # ⬅️ Add this line
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    link = models.URLField(max_length=500, null=True, blank=True)
+
+    def __str__(self):
+        return self.title
+
+
+
+from django.db import models
+from django.contrib.auth.models import User
+
+class Assessment(models.Model):
+    name = models.CharField(max_length=255)
+    category = models.CharField(max_length=100)
+    difficulty = models.CharField(max_length=20)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    type = models.CharField(max_length=20, default='mcq')  # extendable for future types
+
+    def __str__(self):
+        return self.name
+
+
+from django.db import models
+from django.contrib.auth.models import User
+from .models import Assessment  # import your Assessment model
+
+class SolvedAssessment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
+    score = models.IntegerField()
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    
+
+
+    def __str__(self):
+        return f"{self.user.username} - {self.assessment.name}"
+
+
+class Question(models.Model):
+    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name='questions')
+    question = models.TextField()
+    option1 = models.CharField(max_length=255, default="")
+    option2 = models.CharField(max_length=255, default="")
+    option3 = models.CharField(max_length=255, default="")
+    option4 = models.CharField(max_length=255, default="")
+    answer = models.CharField(max_length=255, default="")
+
+
+    def __str__(self):
+        return self.question
+
+

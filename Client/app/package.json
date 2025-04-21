@@ -17,6 +17,7 @@
     "framer-motion": "^11.16.1",
     "gsap": "^3.12.7",
     "lucide-react": "^0.487.0",
+    "jwt-decode": "^4.0.0",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.0.1",
     "react-dom": "^18.3.1",

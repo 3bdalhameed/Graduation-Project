@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fetchUsers } from "../../api/users";
+import { Link } from "react-router-dom";
 
 function UsersPage() {
   const [users, setUsers] = useState([]);
@@ -47,7 +48,14 @@ function UsersPage() {
                       index % 2 === 0 ? "bg-gray-900" : "bg-gray-800"
                     } hover:bg-gray-700`}
                   >
-                    <td className="px-6 py-4">{user.username}</td>
+                    <td className="px-6 py-4">
+                      <Link
+                        to={`/profile/${user.username}`}
+                        className="text-blue-400 hover:text-blue-300 underline"
+                      >
+                        {user.username}
+                      </Link>
+                    </td>
                     <td className="px-6 py-4">
                       {new Date(user.date_joined).toLocaleString()}
                     </td>
@@ -55,7 +63,7 @@ function UsersPage() {
                 ))}
                 {users.length === 0 && (
                   <tr>
-                    <td colSpan="3" className="text-center py-4">
+                    <td colSpan="2" className="text-center py-4">
                       No users found
                     </td>
                   </tr>

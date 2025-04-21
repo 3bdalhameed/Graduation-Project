@@ -17,13 +17,19 @@ export const login = async (username, password) => {
     body: JSON.stringify({ username, password }),
   });
   
-  const data = await response.json();
   
-  if (!response.ok) {
-    throw new Error(data.detail || "Invalid username or password");
+  
+  if (response.ok) {
+    const data = await response.json();
+    console.log("Access Token:", data.access_token); // Log the token
+    localStorage.setItem("access_token", data.access_token); // Save access token
+    return data;
+  } else {
+    alert("Login failed. Please check your credentials.");
+    return null;
   }
   
-  return data;
+  
 };
 
 /**
@@ -96,3 +102,4 @@ export const schoolLogin = async (username, password) => {
     throw error;
   }
 };
+

@@ -1,22 +1,25 @@
 import React from "react";
-import Awareness from "../../pages/img/Awareness.png";
-import Competition from "../../pages/img/Competition.png";
-import Assessment from "../../pages/img/Assessment.png";
-import Media from "../../pages/img/Media.png";
+import Awarenessimg from "../../pages/img/JNCSF.png";
+import Competitionimg from "../../pages/img/CyberHub.png";
+import Assessmentimg from "../../pages/img/Assessment.png";
+import Mediaimg from "../../pages/img/Awareness.png";
 import ServiceCard from "./ServiceCard";
 import PortalCard from "./PortalCard";
 
+
+
 function ProjectSection() {
   const services = [
-    { src: Awareness, title: "", description: "Access comprehensive learning materials and tutorials" },
-    { src: Competition, title: "", description: "Sharpen your skills through interactive exercises" },
-    { src: Assessment, title: "", description: "Join challenges and competitions to test your abilities" },
-    { src: Media, title: "", description: "Engage in gamified cybersecurity scenarios" },
+    { src: Awarenessimg, title: "JNCSF", description: "Access comprehensive learning materials and tutorials", link: "/JNCSFteam" },
+    { src: Competitionimg, title: "CyberHub", description: "Sharpen your skills through interactive exercises", link: "/cyberhubteam" },
+    { src: Assessmentimg, title: "Assessment", description: "Join challenges and competitions to test your abilities", link: "/assessmentteam" },
+    { src: Mediaimg, title: "Awareness", description: "Engage in gamified cybersecurity scenarios", link: "/awarenessteam" },
   ];
+  
   const portals = [
-    { src: Competition, title: "CTF Portal", description: "Join capture the flag competitions and track your progress", path: "/login", color: "blue", icon: "🚩" },
-    { src: Competition, title: "School Portal", description: "Access administrative tools, analytics, and educational resources", path: "/", color: "purple", icon: "🏫" },
-    { src: Competition, title: "Learning Portal", description: "Structured learning paths and collaborative educational content", path:"/login", color: "green", icon: "📚" },
+    { src: Competitionimg, title: "Learning Portal", description: "Structured learning paths and collaborative educational content", path:"/login", color: "green", icon: "📚" },
+    { src: Competitionimg, title: "School Portal", description: "Access administrative tools, analytics, and educational resources", path: "/", color: "purple", icon: "🏫" },
+    { src: Competitionimg, title: "CTF Portal", description: "Join capture the flag competitions and track your progress", path: "/login", color: "blue", icon: "🚩" },
   ];
   return (
     <section className="relative py-24 overflow-hidden">

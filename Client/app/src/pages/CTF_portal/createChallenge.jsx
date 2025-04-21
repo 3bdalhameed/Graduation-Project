@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
 import useTokenStore from "../../stores/useTokenStore";
 import { 
   fetchChallenges, 
@@ -13,6 +14,7 @@ const ChallengePage = () => {
   const [solvedChallenges, setSolvedChallenges] = useState([]);
   const [selectedChallenge, setSelectedChallenge] = useState(null);
   const [flag, setFlag] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [message, setMessage] = useState(null);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -79,14 +81,14 @@ const ChallengePage = () => {
             onClick={() => setIsCreating(true)}
             className="mb-8 bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-xl text-lg font-semibold transition"
           >
-             Create New Challenge
+            Create New Challenge
           </button>
-  
+
           <div className="w-full max-w-6xl">
             <h2 className="text-4xl font-extrabold text-center text-gray-800 dark:text-white mb-8">
-              🧩 Challenges
+              🧙‍♂️ Challenges
             </h2>
-  
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {challenges.map((challenge) => (
                 <div
@@ -96,19 +98,19 @@ const ChallengePage = () => {
                       ? "bg-green-100 dark:bg-green-700"
                       : "bg-white dark:bg-gray-800"
                     }`}
-                    onClick={() => {
-                      setSelectedChallenge(challenge);
-                      setFlag("");
-                      setMessage(null);
-                      setIsEditing(false);
-                      setEditedChallenge({
-                        title: challenge.title,
-                        description: challenge.description,
-                        category: challenge.category,
-                        points: challenge.points,
-                        flag: challenge.flag,
-                      });
-                    }}
+                  onClick={() => {
+                    setSelectedChallenge(challenge);
+                    setFlag("");
+                    setMessage(null);
+                    setIsEditing(false);
+                    setEditedChallenge({
+                      title: challenge.title,
+                      description: challenge.description,
+                      category: challenge.category,
+                      points: challenge.points,
+                      flag: challenge.flag,
+                    });
+                  }}
                 >
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white">{challenge.title}</h3>
                   <p className="text-sm mt-2 text-gray-600 dark:text-gray-300">{challenge.category}</p>
@@ -119,7 +121,6 @@ const ChallengePage = () => {
         </div>
       </div>
   
-      {/* Modal - Create */}
       {isCreating && (
         <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl w-[95%] max-w-md shadow-2xl">
@@ -135,13 +136,19 @@ const ChallengePage = () => {
               className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
             />
 
-            <textarea
-              placeholder="Description"
-              value={newChallenge.description}
-              onChange={(e) => setNewChallenge({ ...newChallenge, description: e.target.value })}
-              className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
-              rows="3"
-            />
+            <div className="grid md:grid-cols-2 gap-4">
+              <textarea
+                placeholder="Description"
+                value={newChallenge.description}
+                onChange={(e) => setNewChallenge({ ...newChallenge, description: e.target.value })}
+                className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
+              />
+
+              <div className="p-3 rounded-xl bg-white dark:bg-gray-800 border overflow-y-auto prose dark:prose-invert">
+                <h3 className="font-semibold mb-2 text-gray-700 dark:text-gray-300">Preview</h3>
+                <ReactMarkdown>{newChallenge.description}</ReactMarkdown>
+              </div>
+            </div>
 
             <select
               value={newChallenge.category}
@@ -153,6 +160,7 @@ const ChallengePage = () => {
               <option>Cryptography</option>
               <option>Digital Forensics</option>
               <option>OSINT</option>
+              <option>General</option>
               <option>Miscellaneous</option>
             </select>
 
@@ -194,34 +202,44 @@ const ChallengePage = () => {
             </button>
             </div>
           </form>
-
-          </div>
         </div>
-      )}
+      </div>
+    )}
+
   
       {/* Modal - Edit */}
       {selectedChallenge && (
         <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex justify-center items-center z-50">
-          <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl w-[95%] max-w-md shadow-2xl">
+          <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl w-[95%] max-w-6xl shadow-2xl">
             <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-6">
               ✏️ Edit Challenge
             </h2>
             <form onSubmit={handleEditChallenge} className="space-y-4">
-              <input
-                type="text"
-                placeholder="Title"
-                value={editedChallenge.title}
-                onChange={(e) => setEditedChallenge({ ...editedChallenge, title: e.target.value })}
-                className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
-              />
+            <input
+              type="text"
+              placeholder="Title"
+              value={editedChallenge.title}
+              onChange={(e) => setEditedChallenge({ ...editedChallenge, title: e.target.value })}
+              className="w-full p-2 rounded mb-2"
+            />
+              <div className="grid md:grid-cols-2 gap-4">
+                <textarea
+                  placeholder="Description (Markdown supported)"
+                  value={editedChallenge.description}
+                  onChange={(e) =>
+                    setEditedChallenge({ ...editedChallenge, description: e.target.value })
+                  }
+                  className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
+                  rows="10"
+                />
 
-              <textarea
-                placeholder="Description"
-                value={editedChallenge.description}
-                onChange={(e) => setEditedChallenge({ ...editedChallenge, description: e.target.value })}
-                className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
-                rows="3"
-              />
+                <div className="p-3 rounded-xl bg-white dark:bg-gray-800 border overflow-y-auto prose dark:prose-invert">
+                  <h3 className="font-semibold mb-2 text-gray-700 dark:text-gray-300">Preview</h3>
+                  <ReactMarkdown>
+                    {editedChallenge.description}
+                  </ReactMarkdown>
+                </div>
+              </div>
 
               <select
                 value={editedChallenge.category}
@@ -233,15 +251,17 @@ const ChallengePage = () => {
                 <option>Cryptography</option>
                 <option>Digital Forensics</option>
                 <option>OSINT</option>
+                <option>General</option>
                 <option>Miscellaneous</option>
               </select>
+
 
               <input
                 type="number"
                 placeholder="Points"
                 value={editedChallenge.points}
                 onChange={(e) => setEditedChallenge({ ...editedChallenge, points: e.target.value })}
-                className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
+                className="w-full p-2 rounded mb-2"
               />
 
               <input
@@ -249,9 +269,8 @@ const ChallengePage = () => {
                 placeholder="Flag"
                 value={editedChallenge.flag}
                 onChange={(e) => setEditedChallenge({ ...editedChallenge, flag: e.target.value })}
-                className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
+                className="w-full p-2 rounded mb-2"
               />
-
               <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl font-semibold">
                 💾 Save Changes
               </button>

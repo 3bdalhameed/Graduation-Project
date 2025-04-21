@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function ServiceCard({ service, index }) {
   return (
@@ -36,15 +37,14 @@ function ServiceCard({ service, index }) {
         </div>
 
         <div className="flex justify-between items-center">
-          <a
-            href="#"
-            className="inline-flex items-center space-x-1 text-blue-700 dark:text-blue-400 font-medium group-hover:underline transition-all"
-          >
+        <Link to={service.link}>
+            <div className="inline-flex items-center space-x-1 text-blue-700 dark:text-blue-400 font-medium group-hover:underline transition-all">
             <span>Explore</span>
             <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
             </svg>
-          </a>
+          </div>
+        </Link>
 
           <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-200 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">
             {index + 1}

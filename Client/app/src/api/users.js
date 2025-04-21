@@ -21,20 +21,35 @@ export const fetchUsers = async () => {
  * @param {string} token - JWT authentication token
  * @returns {Promise} Promise resolving when the user is logged out
  */
-export const logout = async (token) => {
-  const response = await fetch(`${API_BASE_URL}/logout/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...getAuthHeader(token),
-    },
-  });
-  
-  if (!response.ok) {
-    throw new Error("Failed to logout");
+export const logout = async (setIsLoggedin, navigate) => {
+  const refreshToken = localStorage.getItem("refresh_token");
+
+  // Clear tokens from storage
+  localStorage.removeItem("access_token");
+  if (refreshToken) {
+    localStorage.removeItem("refresh_token");
   }
-  
-  return response.json();
+
+  // Update login state
+  setIsLoggedin(false);
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/logout/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh: refreshToken }),
+    });
+
+    if (response.ok) {
+      console.log("Logout successful");
+    } else {
+      console.error("Failed to logout:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Error during logout:", error);
+  }
+
+  navigate("/");
 };
 
 /**

@@ -55,6 +55,39 @@ def get_csrf_token(request):
 
 ###############################################################################################################################################
 
+
+
+from django.contrib.auth.models import User
+from rest_framework import generics
+from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.response import Response
+from rest_framework import status
+from .serializer import UserSerializer, UserProfileSerializer
+
+class UserListView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+    
+from .models import Team
+from .serializer import TeamSerializer
+class TeamDetailView(generics.RetrieveAPIView):
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
+    permission_classes = [AllowAny]  
+    
+class UserProfileView(generics.RetrieveAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return User.objects.all()
+
+    def get_object(self):
+        username = self.kwargs['username']
+        return self.get_queryset().get(username=username)
+
+
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
@@ -66,6 +99,7 @@ class LoginView(APIView):
         
         if user:
             tokens = RefreshToken.for_user(user)
+            print(tokens)
             return Response({
                 "access_token": str(tokens.access_token),
                 "refresh_token": str(tokens),
@@ -74,16 +108,17 @@ class LoginView(APIView):
 
 ###############################################################################################################################################
 
-class LogoutView(APIView):     
-    permission_classes = (IsAuthenticated,)
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
-          try:
-              refresh_token = request.data["refresh_token"]
-              token = RefreshToken(refresh_token)
-              token.blacklist()
-              return Response(status=HTTP_205_RESET_CONTENT)
-          except Exception as e:               
-              return Response(status=HTTP_400_BAD_REQUEST)
+        try:
+            refresh_token = request.data["refresh"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
           
 ###############################################################################################################################################
           
@@ -94,6 +129,7 @@ class GetUserRoleView(APIView):
         role = "User"
         if hasattr(request.user, 'userrole'):
             role = request.user.userrole.role
+        print(role)
         return Response({"role": role}, status=HTTP_200_OK)
 
 ###############################################################################################################################################
@@ -298,6 +334,21 @@ class SolvedChallengesView(APIView):
         )
         serializer = ChallengeSerializer(solved_challenges, many=True)
         return Response(serializer.data, status=HTTP_200_OK)
+    
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser
+from .models import SolvedChallenge
+from .serializer import SolvedChallengeSerializer
+
+class SolvedChallengeLogsView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        logs = SolvedChallenge.objects.select_related('user', 'challenge').all().order_by('-solved_at')
+        serializer = SolvedChallengeSerializer(logs, many=True)
+        return Response(serializer.data)
+
 
         
 ###############################################################################################################################################
@@ -313,22 +364,31 @@ class UsersListView(View):
 
 ###############################################################################################################################################
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
+from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+
 class ValidateTokenView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
         token = request.data.get("token")
+        print("🔐 Received token:", token)
 
         if not token:
-            return Response({"error": "Token is required"}, status=400)
+            return Response({"valid": False, "error": "No token provided"}, status=400)
 
         try:
             access_token = AccessToken(token)
-            return Response({"valid": True, "payload": access_token.payload}, status=200)
-        except InvalidToken:
-            return Response({"valid": False, "error": "Invalid or expired token"}, status=400)
-        except TokenError as e:
-            return Response({"valid": False, "error": str(e)}, status=400)
+            return Response({"valid": True, "user_id": access_token['user_id']}, status=200)
+        except Exception as e:
+            print("❌ Token error:", str(e))
+            return Response({"valid": False, "error": str(e)}, status=401)
+
+
 
 
 ###############################################################################################################################################
@@ -508,7 +568,6 @@ class TeamProfile(APIView):
         
 ###############################################################################################################################################
         
-# views.py
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -538,26 +597,80 @@ class AdminCreateUserView(APIView):
 
 ###############################################################################################################################################
 
-class RoleLoginView(APIView):
-    permission_classes = [AllowAny]
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
+from .models import Course
+from .serializer import CourseSerializer
+
+class AddCourseView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-        role = request.data.get('role')
-        
-        user = authenticate(username=username, password=password)
-        
-        if not user:
-            return Response({"error": "Invalid credentials"}, status=400)
-            
-        # Check if user has the requested role
-        if hasattr(user, 'userrole') and user.userrole.role == role:
-            tokens = RefreshToken.for_user(user)
-            return Response({
-                "access_token": str(tokens.access_token),
-                "refresh_token": str(tokens),
-                "role": role
-            }, status=200)
-        else:
-            return Response({"error": f"User does not have {role} privileges"}, status=403)
+        serializer = CourseSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(created_by=request.user)
+            return Response(serializer.data, status=HTTP_201_CREATED)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+
+###############################################################################################################################################
+
+from rest_framework import generics, permissions
+from .models import LearningMaterial
+from .serializer import LearningMaterialSerializer
+
+class LearningMaterialListCreateView(generics.ListCreateAPIView):
+    queryset = LearningMaterial.objects.all()
+    serializer_class = LearningMaterialSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+class LearningMaterialRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = LearningMaterial.objects.all()
+    serializer_class = LearningMaterialSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+from rest_framework import generics, permissions
+from .models import Assessment
+from .serializer import AssessmentSerializer
+
+class AssessmentListCreateView(generics.ListCreateAPIView):
+    queryset = Assessment.objects.all()
+    serializer_class = AssessmentSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+class AssessmentDetailView(generics.RetrieveAPIView):
+    queryset = Assessment.objects.all()
+    serializer_class = AssessmentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class AssessmentUpdateView(generics.UpdateAPIView):
+    queryset = Assessment.objects.all()
+    serializer_class = AssessmentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class AssessmentDeleteView(generics.DestroyAPIView):
+    queryset = Assessment.objects.all()
+    serializer_class = AssessmentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+from rest_framework import generics, permissions
+from .serializer import SolvedAssessmentSerializer
+
+
+class SolvedAssessmentListCreateAPIView(generics.CreateAPIView):
+    serializer_class = SolvedAssessmentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+

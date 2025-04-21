@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
+import { motion } from "framer-motion";
 import useTokenStore from "../../stores/useTokenStore";
 import { fetchChallenges, fetchSolvedChallenges, submitFlag } from "../../api/challenges";
+
+
 
 const ChallengePage = () => {
   const [challenges, setChallenges] = useState([]);
@@ -14,9 +18,7 @@ const ChallengePage = () => {
   const token = useTokenStore((state) => state.token);
   const navigate = useNavigate();
 
-  // Fetch all challenges
   useEffect(() => {
-    // Using API functions instead of direct fetch calls
     fetchChallenges(token)
       .then((data) => {
         setChallenges(data);
@@ -28,28 +30,18 @@ const ChallengePage = () => {
       })
       .catch((error) => console.error("Error fetching challenges:", error));
 
-    // Fetch solved challenges
     fetchSolvedChallenges(token)
-      .then((data) =>
-        setSolvedChallenges(data.map((challenge) => challenge.id))
-      )
-      .catch((error) =>
-        console.error("Error fetching solved challenges:", error)
-      );
+      .then((data) => setSolvedChallenges(data.map((challenge) => challenge.id)))
+      .catch((error) => console.error("Error fetching solved challenges:", error));
   }, [token]);
 
-  // Handle flag submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(null);
-
     if (!selectedChallenge) return;
 
     try {
-      // Using API function instead of direct fetch
       const data = await submitFlag(selectedChallenge.id, flag, token);
-      
-      // Check if response was successful based on data
       if (data && !data.error) {
         setMessage(data.message);
         setSolvedChallenges([...solvedChallenges, selectedChallenge.id]);
@@ -61,110 +53,95 @@ const ChallengePage = () => {
     }
   };
 
-  // Filter challenges based on selection
   const filteredChallenges =
     selectedCategory === "All"
       ? challenges
-      : challenges.filter(
-          (challenge) => challenge.category === selectedCategory
-        );
+      : challenges.filter((challenge) => challenge.category === selectedCategory);
 
-  return (
-    <>
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 pt-24 flex">
-        {/* Sidebar for category filter */}
-        <div className="w-64 p-4 bg-white dark:bg-gray-800 shadow-lg">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-            Filters
-          </h3>
-          <ul>
-            {categories.map((category) => (
-              <li
-                key={category}
-                className={`cursor-pointer p-2 rounded-lg ${
-                  selectedCategory === category
-                    ? "bg-blue-500 text-white"
-                    : "text-gray-800 dark:text-white"
-                }`}
-                onClick={() => setSelectedCategory(category)}
-              >
-                {category}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Main Content */}
-        <div className="flex-1 p-8">
-          <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">
-            Challenges
-          </h2>
-
-          {/* Challenges List */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {filteredChallenges.map((challenge) => (
-              <div
-                key={challenge.id}
-                className={`p-6 ${
-                  solvedChallenges.includes(challenge.id)
-                    ? "bg-green-200 dark:bg-green-700"
-                    : "bg-white dark:bg-gray-700"
-                } rounded-lg shadow-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-300`}
-                onClick={() => {
-                  setSelectedChallenge(challenge);
-                  setFlag("");
-                  setMessage(null);
-                }}
-              >
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  {challenge.title}
-                </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
-                  {challenge.category}
-                </p>
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 dark:from-gray-900 dark:to-gray-800 pt-24 flex">
+            <aside className="w-64 p-6 bg-white dark:bg-gray-900 shadow-xl rounded-r-3xl">
+              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Categories</h3>
+              <ul className="space-y-2">
+                {categories.map((category) => (
+                  <li
+                    key={category}
+                    className={`px-4 py-2 rounded-xl cursor-pointer transition-all duration-200 font-medium text-sm shadow-sm
+                      ${selectedCategory === category
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"}`}
+                    onClick={() => setSelectedCategory(category)}
+                  >
+                    {category}
+                  </li>
+                ))}
+              </ul>
+            </aside>
+      
+            <main className="flex-1 p-10">
+              <h2 className="text-4xl font-bold text-gray-800 dark:text-white text-center mb-10">CTF Challenges</h2>
+      
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredChallenges.map((challenge) => (
+                  <motion.div
+                    key={challenge.id}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                    whileHover={{ y: -5 }}
+                    onClick={() => {
+                      setSelectedChallenge(challenge);
+                      setFlag("");
+                      setMessage(null);
+                    }}
+                    className={`rounded-2xl p-6 shadow-lg cursor-pointer transition-transform duration-300 border hover:shadow-xl
+                      ${solvedChallenges.includes(challenge.id)
+                        ? "bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800"
+                        : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"}`}
+                  >
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{challenge.title}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-300">{challenge.category}</p>
+                  </motion.div>
+                ))}
               </div>
-            ))}
+            </main>
+      
+            {selectedChallenge && (
+              <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+                <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-2xl w-11/12 max-w-lg">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                    {selectedChallenge.title}
+                  </h3>
+                  <div className="prose dark:prose-invert mb-4">
+                    <ReactMarkdown>{selectedChallenge.description}</ReactMarkdown>
+                  </div>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <input
+                      type="text"
+                      placeholder="Enter flag..."
+                      value={flag}
+                      onChange={(e) => setFlag(e.target.value)}
+                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white"
+                    />
+                    <button
+                      type="submit"
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg shadow-md"
+                    >
+                      Submit
+                    </button>
+                  </form>
+                  {message && <p className="text-center mt-4 text-green-500 dark:text-green-400">{message}</p>}
+                  <button
+                    onClick={() => setSelectedChallenge(null)}
+                    className="mt-6 w-full text-sm text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-100"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      </div>
-
-      {/* Modal for Challenge Details */}
-      {selectedChallenge && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-5/12 shadow-lg">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {selectedChallenge.title}
-            </h2>
-            <p className="text-gray-700 dark:text-gray-300 mt-2">
-              {selectedChallenge.description}
-            </p>
-            <form onSubmit={handleSubmit} className="mt-4 space-y-3">
-              <input
-                type="text"
-                value={flag}
-                onChange={(e) => setFlag(e.target.value)}
-                placeholder="Enter the flag"
-                className="w-full p-2 rounded-lg bg-gray-200 dark:bg-gray-700 dark:text-white border border-gray-300"
-              />
-              <button
-                type="submit"
-                className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 rounded-lg text-lg font-semibold transition duration-300"
-              >
-                Submit Flag
-              </button>
-            </form>
-            {message && <p className="text-green-500 mt-2">{message}</p>}
-            <button
-              onClick={() => setSelectedChallenge(null)}
-              className="mt-4 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-    </>
-  );
+        );
 };
 
 export default ChallengePage;
