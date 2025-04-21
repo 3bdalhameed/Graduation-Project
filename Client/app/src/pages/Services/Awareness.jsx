@@ -1,14 +1,34 @@
 import React from "react";
 import Navbar from "../../components/Navbar/navbar";
 import Footer from "../../components/footer/footer";
-import Abd from "../img/1.png";
-import Omar from "../img/7.png";
+import Banan from "../img/2.png";
+import Farah from "../img/4_1.png";
 
 const AboutUs = () => {
-  const mission = [
+  const services = [
     {
-      title: "🔍 JCCT (Jordan Cybersecurity Compliance Tool)",
-      description: "JCCT helps local organizations align with the Jordanian National Cybersecurity Framework (JNCSF). It provides visibility into their compliance status, highlights areas needing improvement, and guides them in strengthening their cybersecurity posture."
+      title: "🎨 Graphic Design",
+      description: "Custom posters, infographics, and roll-ups tailored for cybersecurity events and campaigns."
+    },
+    {
+      title: "🎮 Game Development",
+      description: "Educational games that raise awareness and teach cybersecurity concepts in a fun and interactive way."
+    },
+    {
+      title: "🎥 Multimedia Production",
+      description: "Videos and animations that simplify complex cybersecurity topics for all audiences."
+    },
+    {
+      title: "🤖 Chatbot Development",
+      description: "AskJuCC – a smart chatbot integrated into the JUCC platform that provides instant answers to cybersecurity-related questions."
+    },
+    {
+      title: "✍️ Content Writing",
+      description: "High-quality awareness content aligned with international standards."
+    },
+    {
+      title: "🔬 Research and Content Creation",
+      description: "Awareness materials based on trusted global sources such as CISA and NCSC."
     }
   ];
 
@@ -28,22 +48,22 @@ const AboutUs = () => {
             About Us
           </h1>
 
-          <p className="text-lg md:text-xl bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-12 border border-gray-200 dark:border-gray-700">
-            Yazeed and Shahed — two senior cybersecurity students passionate about making a real impact in the field. We're all about turning what we learn into practical solutions that actually solve problems. Our goal is to contribute to the growth of cybersecurity in Jordan by coming up with creative, effective ways to tackle the challenges organizations face every day.
-          </p>
+          <div className="text-lg md:text-xl mb-10 leading-relaxed bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-12 border border-gray-200 dark:border-gray-700">
+            Because cybersecurity is not just a field but a passion in our daily lives, we turn everything we love—like game design, graphic design, AI, content creation, and research—into powerful tools for cybersecurity awareness.
+          </div>
 
           <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-12 border border-gray-200 dark:border-gray-700">
-            <h2 className="text-3xl font-semibold mb-8 text-blue-700 dark:text-blue-400 text-center">Our Service</h2>
-            <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-              {mission.map((item, index) => (
+            <h2 className="text-3xl font-semibold mb-8 text-blue-700 dark:text-blue-400 text-center">Our Services</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {services.map((service, index) => (
                 <div
                   key={index}
-                  className="bg-gray-100 dark:bg-gray-800 p-6 rounded-xl shadow-md hover:shadow-lg transition-all text-left text-center"
+                  className="bg-gray-100 dark:bg-gray-800 p-6 rounded-xl shadow-md hover:shadow-lg transition-all"
                 >
                   <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
-                    {item.title}
+                    {service.title}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">{item.description}</p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">{service.description}</p>
                 </div>
               ))}
             </div>
@@ -52,7 +72,7 @@ const AboutUs = () => {
           <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
             <h2 className="text-3xl font-semibold mb-8 text-indigo-700 dark:text-indigo-400 text-center">Meet the Team</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              {[{ name: "Yazeed", role: "Co-Founder", img: Abd }, { name: "Shahed", role: "Co-Founder", img: Omar }].map((member, index) => (
+              {[{ name: "Banan Khanfar", role: "Developer", img: Banan }, { name: "Farah Qamhawi", role: "Developer", img: Farah }].map((member, index) => (
                 <div
                   key={index}
                   className="bg-gray-100 dark:bg-gray-800 p-6 rounded-xl shadow-md hover:shadow-xl transition-all text-center"

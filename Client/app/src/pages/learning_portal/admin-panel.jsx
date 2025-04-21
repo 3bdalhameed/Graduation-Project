@@ -9,6 +9,14 @@ import {
 } from "../../api/assessments";
 import useTokenStore from "../../stores/useTokenStore";
 
+import {
+  fetchMaterials,
+  createMaterial,
+  updateMaterial,
+  deleteMaterial,
+} from "../../api/materials";
+
+
 
 const AdminAssessmentsPage = () => {
   const [assessments, setAssessments] = useState([]);
@@ -33,6 +41,12 @@ const AdminAssessmentsPage = () => {
         console.error("Failed to fetch assessments:", err);
         setAssessments([]);
       });
+    fetchMaterials(token)
+    .then(setMaterials)
+    .catch((err) => {
+      console.error("Faild to fetch materials:", err);
+      setMaterials([]);
+    }); 
   }, [token]);
 
   
@@ -95,44 +109,56 @@ const handleDelete = async (id) => {
       { question: "", options: ["", "", "", ""], answer: "" }
     ]);
   };
-  const handleSubmitMaterial = async (e) => {
-    e.preventDefault();
-  
-    const method = isEditingMaterial ? "PUT" : "POST";
-    const url = isEditingMaterial
-      ? `http://127.0.0.1:8000/api/learning-materials/${selectedMaterial.id}/`
-      : "http://127.0.0.1:8000/api/learning-materials/";
-  
-    try {
-      const response = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(materialForm),
-      });
-  
-      if (!response.ok) throw new Error("Failed to save material");
-  
-      const data = await response.json();
-  
-      if (isEditingMaterial) {
-        setMaterials((prev) =>
-          prev.map((m) => (m.id === data.id ? data : m))
-        );
-      } else {
-        setMaterials((prev) => [...prev, data]);
-      }
-  
-      setIsEditingMaterial(false);
-      setIsCreatingMaterial(false);
-      setSelectedMaterial(null);
-    } catch (error) {
-      console.error("Error saving material:", error);
-      alert("An error occurred while saving the material.");
-    }
-  };
+
+
+const handleSubmitMaterial = async (e) => {
+  e.preventDefault();
+
+  try {
+    const data = isEditingMaterial
+      ? await updateMaterial(selectedMaterial.id, materialForm, token)
+      : await createMaterial(materialForm, token);
+
+    setMaterials((prev) =>
+      isEditingMaterial
+        ? prev.map((m) => (m.id === data.id ? data : m))
+        : [...prev, data]
+    );
+
+    setIsEditingMaterial(false);
+    setIsCreatingMaterial(false);
+    setSelectedMaterial(null);
+  } catch (error) {
+    console.error("Error saving material:", error);
+    alert("An error occurred while saving the material.");
+  }
+};
+
+const handleDeleteMaterial = async (id) => {
+  try {
+    await deleteMaterial(id, token);
+    setMaterials((prev) => prev.filter((m) => m.id !== id));
+  } catch (err) {
+    console.error("Failed to delete material:", err);
+    alert("An error occurred while deleting the material.");
+  }
+};
+
+const handleEditMaterial = (material) => {
+  setSelectedMaterial(material);
+  setMaterialForm({
+    title: material.title || "",
+    category: material.category || "",
+    description: material.description || "",
+    content: material.content || "",
+    link: material.link || "",
+  });
+  setIsEditingMaterial(true);
+};
+
+
+
+
   const handleMcqChange = (questionIndex, field, value) => {
     setMcqList((prevMcqs) =>
       prevMcqs.map((mcq, i) => {

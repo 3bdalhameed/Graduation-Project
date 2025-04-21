@@ -1,6 +1,6 @@
 import styles from "../styles/navbar.module.css";
-import logo from "../../../pages/img/JuCC_logo.png";
-import logo2 from "../../../pages/img/JuCC_logo-11.png";
+import logo2 from "../../../pages/img/JuCC_dark.png";
+import logo from "../../../pages/img/JuCC_light.png";
 import { useTheme } from "../../../context/ThemeContext";
 
 const Logo = () => {

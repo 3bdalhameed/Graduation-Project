@@ -1,8 +1,8 @@
 import React from "react";
-import Awarenessimg from "../../pages/img/JNCSF.png";
-import Competitionimg from "../../pages/img/CyberHub.png";
-import Assessmentimg from "../../pages/img/Assessment.png";
-import Mediaimg from "../../pages/img/Awareness.png";
+import Awarenessimg from "../../pages/img/JCCT.png";
+import Competitionimg from "../../pages/img/JuCC_cyberhub.png";
+import Assessmentimg from "../../pages/img/JuCC_Assessment.png";
+import Mediaimg from "../../pages/img/JuCC_media&awareness.png";
 import ServiceCard from "./ServiceCard";
 import PortalCard from "./PortalCard";
 

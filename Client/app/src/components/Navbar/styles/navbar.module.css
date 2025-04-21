@@ -27,7 +27,7 @@
 }
 
 .logo {
-  @apply h-9 w-auto transition-transform duration-300;
+  @apply h-12 w-auto transition-transform duration-300;
 }
 
 /* Burger Menu */

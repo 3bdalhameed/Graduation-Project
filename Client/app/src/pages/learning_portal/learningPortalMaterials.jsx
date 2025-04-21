@@ -1,4 +1,3 @@
-// Enhanced LearningMaterials component with improved assessment-style popup layout
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar/navbar";
 import { motion, AnimatePresence } from "framer-motion";
@@ -102,20 +101,21 @@ export default function LearningMaterials() {
                   return (
                     <motion.div
                       key={material.id}
-                      initial={{ opacity: 0, scale: 0.9 }}
+                      initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.3 }}
                       whileHover={{ y: -5 }}
                       className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer group"
                       onClick={() => setSelectedMaterial(material)}
                     >
+                      {/* Top accent line */}
+                      <div className={`h-1.5 bg-gradient-to-r from-${categoryData.color}-400 to-${categoryData.color}-600`} />
+                      
                       <div className="p-6">
                         <div className="flex items-center justify-between mb-4">
-                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
-                            {material.category}
-                          </span>
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-${categoryData.color}-700 dark:text-${categoryData.color}-300`}>
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${categoryData.color}-100 dark:bg-${categoryData.color}-900/30 text-${categoryData.color}-700 dark:text-${categoryData.color}-300`}>
                             <span className="mr-1">{categoryData.icon}</span>
+                            {material.category}
                           </span>
                         </div>
 
@@ -139,6 +139,7 @@ export default function LearningMaterials() {
           </main>
         </div>
 
+        {/* Popup view */}
         <AnimatePresence>
           {selectedMaterial && (
             <motion.div

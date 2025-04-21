@@ -1,6 +1,6 @@
 import React from "react";
 import { FaFacebook, FaInstagram, FaTwitter, FaLinkedin, FaGithub, FaMapMarkerAlt, FaEnvelope, FaPhone } from "react-icons/fa";
-import logo from "../../pages/img/JuCC_logo.png";
+import logo from "../../pages/img/JuCC_light.png";
 
 function FooterSection() {
   return (
@@ -10,7 +10,7 @@ function FooterSection() {
           {/* About Us */}
           <div>
             <div className="mb-6 flex items-center">
-              <img src={logo} alt="JUCC Logo" className="h-10 w-auto mr-2" />
+              <img src={logo} alt="JUCC Logo" className="h-12 w-14 mr-2" />
               <h3 className="text-2xl font-bold text-white">JuCC</h3>
             </div>
             <p className="text-gray-300 mb-6">

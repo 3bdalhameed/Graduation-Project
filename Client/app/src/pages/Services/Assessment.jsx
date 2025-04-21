@@ -3,28 +3,17 @@ import Navbar from "../../components/Navbar/navbar";
 import Footer from "../../components/footer/footer";
 import Farah from "../img/6.png";
 import Lana from "../img/8.png";
-import MethodologyGraph from "../img/methodology-graph.png"; // Make sure this file is in your public/img or src/img folder
+
+// White-style images
+import WhiteRolesImage from "../img/assess.png";
+import WhiteCycleImage from "../img/Untitled.png";
 
 const AboutUs = () => {
-  const methodology = [
-    {
-      title: "📥 Pre-Assessment",
-      description: "Evaluate current awareness levels to personalize training."
-    },
-    {
-      title: "🎓 Training",
-      description: "Interactive and relevant sessions focused on real-world threats."
-    },
-    {
-      title: "📝 Post-Assessment",
-      description: "Measure knowledge improvement and identify gaps."
-    },
-  ];
-
   return (
     <>
       <Navbar />
       <div className="relative min-h-screen overflow-hidden pt-24 pb-12">
+        {/* Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-900 dark:to-indigo-950 -z-10">
           <div className="absolute inset-0 bg-grid bg-[length:30px_30px] opacity-[0.03] dark:opacity-[0.02]" />
           <div className="absolute top-1/4 -left-20 w-80 h-80 bg-blue-200/20 dark:bg-blue-900/10 rounded-full blur-3xl" />
@@ -33,45 +22,44 @@ const AboutUs = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-6">
+          {/* About Us */}
           <div className="text-center mb-16">
             <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 mb-6">
               About Us
             </h1>
             <p className="text-lg md:text-xl bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-12 border border-gray-200 dark:border-gray-700">
-              We are the JUCC Assessment and Training Team. Our mission is to turn everyone at the University of Jordan into a strong first line of defense through hands-on assessments and fun, impactful trainings.
-            </p>
-          </div>
-
-          <section className="mb-20">
-            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-12 border border-gray-200 dark:border-gray-700">
-              <h2 className="text-3xl font-bold text-center text-blue-700 dark:text-blue-400 mb-10">Our Methodology</h2>
-              <div className="flex justify-center mb-10">
+              We are the JUCC Assessment and Training Team — the core of cybersecurity growth at the University of Jordan.
+              Our mission is to help students, staff, and faculty build smarter habits that protect our digital community. By diagnosing, training, and measuring progress, we turn cybersecurity from a weakness into a shared strength.
+              <div className="flex justify-center pt-4">
                 <img
-                  src={MethodologyGraph}
-                  alt="Methodology Graph"
-                  className="rounded-xl shadow-md w-full max-w-2xl"
+                  src={WhiteCycleImage}
+                  alt="White Methodology Cycle"
+                  className="rounded-xl shadow-md w-full max-w-3xl"
                 />
               </div>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {methodology.map((step, index) => (
-                  <div
-                    key={index}
-                    className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md hover:shadow-lg border border-gray-200 dark:border-gray-700 transition"
-                  >
-                    <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-3">
-                      {step.title}
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                      {step.description}
-                    </p>
-                  </div>
-                ))}
+            </p>
+            
+          </div>
+
+          {/* Methodology */}
+          <section className="mb-20">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
+              <h2 className="text-3xl font-bold text-center text-blue-700 dark:text-blue-400 mb-10">Our Methodology</h2>
+              <div className="flex justify-center">
+                <img
+                  src={WhiteRolesImage}
+                  alt="White Role Structure"
+                  className="rounded-xl shadow-md w-full max-w-3xl"
+                />
               </div>
             </div>
           </section>
 
+
+
+          {/* Team Members */}
           <section>
-            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-12 border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
               <h2 className="text-3xl font-bold text-center text-indigo-700 dark:text-indigo-400 mb-10">Meet the Team</h2>
               <div className="grid sm:grid-cols-2 gap-8">
                 {[{ name: "Farah Hammudeh", role: "Team Member", img: Farah }, { name: "Lana Barakat", role: "Team Member", img: Lana }].map((member, index) => (
