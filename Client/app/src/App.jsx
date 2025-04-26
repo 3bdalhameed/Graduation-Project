@@ -9,6 +9,7 @@ import Login from "./pages/CTF_portal/login.jsx";
 import UserProfile from "./pages/UserProfile";
 import TeamProfile from "./pages/TeamProfile.jsx";
 import Adminlogs from "./pages/adminlogs.jsx";
+import Chatbot from "./pages/chatbot.jsx";
 
 
 import VerifyOTP from "./pages/VerifyOTP.jsx";
@@ -61,6 +62,7 @@ function App() {
         <Route path="/profile/:username" element={<UserProfile />} />
         <Route path="/teams/:teamId" element={<TeamProfile />} />
         <Route path="/adminlogs" element={<Adminlogs />} />
+        <Route path="/chatbot" element={<Chatbot />} />
 
 
         <Route path="/awarenessteam" element={<Awareness />} />
