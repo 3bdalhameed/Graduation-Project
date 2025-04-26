@@ -123,7 +123,7 @@ const ChallengePage = () => {
   
       {isCreating && (
         <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex justify-center items-center z-50">
-          <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl w-[95%] max-w-3xl shadow-2xl">
+          <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl w-[95%] max-w-5xl shadow-2xl">
             <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-6">
               ✍️ Create Challenge
             </h2>
@@ -136,7 +136,7 @@ const ChallengePage = () => {
               className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
             />
 
-            <div className="grid md:grid-cols-2 gap-4">
+            
               <textarea
                 placeholder="Description"
                 value={newChallenge.description}
@@ -144,11 +144,10 @@ const ChallengePage = () => {
                 className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border"
               />
 
-              <div className="p-3 rounded-xl bg-white dark:bg-gray-800 border overflow-y-auto prose dark:prose-invert">
+              <div className="p-3 rounded-xl bg-white dark:bg-gray-800 border overflow-y-auto prose dark:prose-invert max-w-5xl">
                 <h3 className="font-semibold mb-2 text-gray-700 dark:text-gray-300">Preview</h3>
                 <ReactMarkdown>{newChallenge.description}</ReactMarkdown>
               </div>
-            </div>
 
             <select
               value={newChallenge.category}
@@ -222,7 +221,6 @@ const ChallengePage = () => {
               onChange={(e) => setEditedChallenge({ ...editedChallenge, title: e.target.value })}
               className="w-full p-2 rounded mb-2 bg-opacity-60 dark:bg-gray-700"
             />
-              <div className="grid md:grid-cols-2 gap-4">
                 <textarea
                   placeholder="Description (Markdown supported)"
                   value={editedChallenge.description}
@@ -239,7 +237,6 @@ const ChallengePage = () => {
                     {editedChallenge.description}
                   </ReactMarkdown>
                 </div>
-              </div>
 
               <select
                 value={editedChallenge.category}

@@ -35,24 +35,28 @@ import Shahed from "../img/7.png";
     <>
       <Navbar />
       <div className="relative min-h-screen overflow-hidden pt-24 pb-12">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-900 dark:to-indigo-950 -z-10">
-          <div className="absolute inset-0 bg-grid bg-[length:30px_30px] opacity-[0.03] dark:opacity-[0.02]" />
-          <div className="absolute top-1/4 -left-20 w-80 h-80 bg-blue-200/20 dark:bg-blue-900/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/3 -right-20 w-72 h-72 bg-indigo-200/20 dark:bg-indigo-900/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-1/4 w-60 h-60 bg-purple-200/10 dark:bg-purple-900/5 rounded-full blur-3xl" />
-        </div>
+      <div className="absolute inset-0 bg-gradient-to-br from-green-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-900 dark:to-emerald-950 -z-10">
+        <div className="absolute inset-0 bg-grid bg-[length:30px_30px] opacity-[0.03] dark:opacity-[0.02]" />
+        <div className="absolute top-1/4 -left-20 w-80 h-80 bg-green-200/20 dark:bg-green-900/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/3 -right-20 w-72 h-72 bg-emerald-200/20 dark:bg-emerald-900/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-1/4 w-60 h-60 bg-teal-200/10 dark:bg-teal-900/5 rounded-full blur-3xl" />
+      </div>
+
 
         <div className="max-w-6xl mx-auto text-center px-6">
-          <h1 className="text-5xl font-extrabold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
-            About Us
-          </h1>
+        <h1 className="text-5xl font-extrabold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400">
+          About Us
+        </h1>
+
 
           <p className="text-lg md:text-xl bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-12 border border-gray-200 dark:border-gray-700">
             We are the Co-Founder of JCCT compliance team — two senior cybersecurity students passionate about making a real impact in the field. We're all about turning what we learn into practical solutions that actually solve problems. Our goal is to contribute to the growth of cybersecurity in Jordan by coming up with creative, effective ways to tackle the challenges organizations face every day.
           </p>
 
           <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-12 border border-gray-200 dark:border-gray-700">
-            <h2 className="text-3xl font-semibold mb-8 text-blue-700 dark:text-blue-400 text-center">Our Services</h2>
+          <h2 className="text-3xl font-semibold mb-8 text-green-700 dark:text-green-400 text-center">
+            Our Services
+          </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {services.map((item, index) => (
                 <div
@@ -82,7 +86,9 @@ import Shahed from "../img/7.png";
           </div>
 
           <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
-            <h2 className="text-3xl font-semibold mb-8 text-indigo-700 dark:text-indigo-400 text-center">Meet the Team</h2>
+          <h2 className="text-3xl font-semibold mb-8 text-emerald-700 dark:text-emerald-400 text-center">
+            Meet the Team
+          </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               {[{ name: "Yazeed", role: "Co-Founder", img: Yazeed }, { name: "Shahed", role: "Co-Founder", img: Shahed }].map((member, index) => (
                 <div

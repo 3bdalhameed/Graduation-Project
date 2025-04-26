@@ -46,6 +46,7 @@ import "./pages/style.css";
 import Schoollogin from "./pages/School_portal/SchoolLogin.jsx";
 import Schoolmain from "./pages/School_portal/SchoolMainPage.jsx";
 import Schooladmin from "./pages/School_portal/AdminUserCreatePage.jsx";
+import SchoolHome from "./pages/School_portal/SchoolHome.jsx";
 
 
 import TicTacToe from "./pages/ticTacToe.jsx";
@@ -105,6 +106,8 @@ function App() {
         <Route path="/schoollogin" element={<Schoollogin />} />
         <Route path="/schoolmain" element={<Schoolmain />} />
         <Route path="/school/createuser" element={<Schooladmin />} />
+        <Route path="/schoolhome" element={<SchoolHome />} />
+
 
         <Route path="/ticTacToe" element={<TicTacToe />} />
       </Routes>

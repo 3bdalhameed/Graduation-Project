@@ -102,6 +102,13 @@ const ChallengePage = () => {
       : challenges.filter((challenge) => challenge.category === selectedCategory)
   );
   
+  const handleBack = () => {
+    setSelectedMaterial(null);
+    setSelectedAnswers({});
+    setCurrentQuestionIndex(0);
+    setScore(null);
+  };
+  
 
         return (
           <div className="min-h-screen pt-24 flex">
@@ -161,8 +168,8 @@ const ChallengePage = () => {
               const solvedStyle = isSolved
                 ? {
                     bg: "bg-gray-200 dark:bg-gray-900/50",
-                    text: "text-green-800 dark:text-green-300 line-through",
-                    border: "border-green-300 dark:border-green-700",
+                    text: "text-black-800 dark:text-white-300 line-through",
+                    border: "border-gray-300 dark:border-gray-700",
                   }
                 : colorData;
               
@@ -183,7 +190,7 @@ const ChallengePage = () => {
                   ${solvedStyle.bg} ${solvedStyle.border}`}
                 >
 
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                  <h3 className={`text-xl font-semibold mb-2 ${solvedStyle.text}`}>
                     {challenge.title}
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-gray-300">{challenge.category}</p>
@@ -196,12 +203,18 @@ const ChallengePage = () => {
             </main>
       
             {selectedChallenge && (
-              <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-                <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-2xl w-11/12 max-w-lg">
+                  <motion.div
+                  className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex justify-center items-center z-50"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={handleBack}
+                >
+                <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-2xl w-11/12 max-w-3xl">
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                     {selectedChallenge.title}
                   </h3>
-                  <div className="prose dark:prose-invert mb-4">
+                  <div className="prose dark:prose-invert mb-4 max-w-3xl">
                     <ReactMarkdown>{selectedChallenge.description}</ReactMarkdown>
                   </div>
                   <form onSubmit={handleSubmit} className="space-y-4">
@@ -227,7 +240,7 @@ const ChallengePage = () => {
                     Cancel
                   </button>
                 </div>
-              </div>
+              </motion.div>
             )}
           </div>
         );

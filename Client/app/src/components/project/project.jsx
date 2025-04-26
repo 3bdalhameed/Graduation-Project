@@ -10,10 +10,30 @@ import PortalCard from "./PortalCard";
 
 function ProjectSection() {
   const services = [
-    { src: Awarenessimg, title: "JNCSF", description: "Access comprehensive learning materials and tutorials", link: "/JCCTteam" },
-    { src: Competitionimg, title: "CyberHub", description: "Sharpen your skills through interactive exercises", link: "/cyberhubteam" },
-    { src: Assessmentimg, title: "Assessment", description: "Join challenges and competitions to test your abilities", link: "/assessmentteam" },
-    { src: Mediaimg, title: "Awareness", description: "Engage in gamified cybersecurity scenarios", link: "/awarenessteam" },
+    { 
+      src: Awarenessimg, 
+      title: "JNCSF", 
+      description: "Learn the core of the Jordanian cybersecurity framework.", 
+      link: "/JCCTteam" 
+    },
+    { 
+      src: Competitionimg, 
+      title: "CyberHub", 
+      description: "Boost your skills with hands-on labs and challenges.", 
+      link: "/cyberhubteam" 
+    },
+    { 
+      src: Assessmentimg, 
+      title: "Assessment", 
+      description: "Test your knowledge and track your progress.", 
+      link: "/assessmentteam" 
+    },
+    { 
+      src: Mediaimg, 
+      title: "Awareness", 
+      description: "Stay sharp with interactive cybersecurity lessons.", 
+      link: "/awarenessteam" 
+    }      
   ];
   
   const portals = [

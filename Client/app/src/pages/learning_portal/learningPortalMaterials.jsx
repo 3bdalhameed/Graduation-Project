@@ -118,7 +118,6 @@ export default function LearningMaterials() {
                       className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden cursor-pointer group"
                       onClick={() => setSelectedMaterial(material)}
                     >
-                      {/* Top accent line */}
                       <div className={`h-1.5 bg-gradient-to-r from-${categoryData.color}-400 to-${categoryData.color}-600`} />
                       
                       <div className="p-6">
@@ -160,7 +159,7 @@ export default function LearningMaterials() {
               onClick={handleBack}
             >
               <motion.div
-                className="bg-white dark:bg-gray-900 p-6 rounded-xl max-w-3xl w-full shadow-2xl border dark:border-gray-700 overflow-y-auto max-h-[90vh]"
+                className="bg-white dark:bg-gray-900 p-6 rounded-xl max-w-5xl w-full shadow-2xl border dark:border-gray-700 overflow-y-auto max-h-[90vh]"
                 initial={{ y: -30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 30, opacity: 0 }}
@@ -176,12 +175,7 @@ export default function LearningMaterials() {
                   <span>📂 {selectedMaterial.category}</span>
                   {selectedMaterial.questions?.length > 0 && <span>🧠 {selectedMaterial.questions.length} Questions</span>}
                 </div>
-                <div className="w-full h-2 rounded bg-blue-100 dark:bg-blue-900/30 mb-6">
-                  <div
-                    className="h-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded"
-                    style={{ width: `${((currentQuestionIndex + 1) / (selectedMaterial.questions?.length || 1)) * 100}%` }}
-                  ></div>
-                </div>
+
                 {selectedMaterial.questions && selectedMaterial.questions.length > 0 ? (
                   <>
                     <div className="text-gray-800 dark:text-white font-semibold mb-2">
