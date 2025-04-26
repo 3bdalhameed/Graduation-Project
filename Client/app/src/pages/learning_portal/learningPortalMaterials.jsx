@@ -56,6 +56,16 @@ export default function LearningMaterials() {
     <>
       <Navbar />
       <div className="relative min-h-screen pt-20">
+        {/* Background with subtle patterns and gradients */}
+        <div className="fixed inset-0 bg-gradient-to-br from-blue-50 to-white dark:from-gray-900 dark:to-gray-950 -z-10">
+          {/* Grid background */}
+          <div className="absolute inset-0 bg-grid bg-[length:30px_30px] opacity-[0.03] dark:opacity-[0.02]"></div>
+          
+          {/* Background gradient circles for visual interest */}
+          <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-blue-100/30 dark:bg-blue-900/10 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/3 right-0 w-72 h-72 bg-indigo-100/30 dark:bg-purple-900/10 rounded-full blur-3xl"></div>
+        </div>
+        
         <div className="flex">
           <aside className="w-64 min-h-screen bg-white dark:bg-gray-800 p-6 shadow-xl">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 border-b pb-2 border-blue-500">Categories</h2>

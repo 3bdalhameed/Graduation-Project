@@ -83,9 +83,16 @@ export const navItems = [
     dropdown: true,
     dropdownItems: [
       {
+        label: "Home",
+        icon: <FaBook className="mr-2" />,
+        href: "/ctfhome",
+        requiresAuth: true,
+        description: "Start your learning journey"
+      },
+      {
         label: "Dashboard",
         icon: <FaUsers className="mr-2" />,
-        href: "/createteam",
+        href: "/dashboard",
         requiresAuth: true,
         description: "View your CTF statistics"
       },
@@ -104,25 +111,11 @@ export const navItems = [
         description: "Solve cybersecurity challenges"
       },
       {
-        label: "Teams",
-        icon: <FaUsers className="mr-2" />,
-        href: "/teams",
-        requiresAuth: true,
-        description: "View and manage teams"
-      },
-      {
         label: "Scoreboard",
         icon: <FaChartBar className="mr-2" />,
         href: "/scoreboard",
         requiresAuth: true,
         description: "Check the competition rankings"
-      },
-      {
-        label: "Settings",
-        icon: <FaUsers className="mr-2" />,
-        href: "/settings",
-        requiresAuth: true,
-        description: "Configure your account"
       },
       {
         label: "Notifications",

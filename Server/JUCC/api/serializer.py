@@ -196,7 +196,7 @@ class SolvedAssessmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SolvedAssessment
-        fields = ['username', 'assessment_name', 'assessment', 'score']  # Include assessment
+        fields = ['username', 'assessment_name', 'total_questions', 'assessment', 'score']  # Include assessment
 
 
 

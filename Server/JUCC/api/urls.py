@@ -9,19 +9,22 @@ from .views import (
     SolvedChallengesView, GetUserRoleView,
     DeleteChallengeView, ChallengeEditView,
     ScoreboardAPIView, AdminCreateUserView,
-    AddCourseView, SolvedChallengeLogsView,
+    AddCourseView, SolvedChallengesByUsernameView,
     UserListView, UserProfileView, TeamDetailView,
     AssessmentDetailView, AssessmentListCreateView,
     AssessmentUpdateView, AssessmentDeleteView,
     LearningMaterialListCreateView, 
     LearningMaterialRetrieveUpdateDestroyView,
     SolvedAssessmentListCreateAPIView,
+    CurrentUserProfileView, UserSolvedAssessmentsView,
+    
     
 )
 from rest_framework_simplejwt import views as jwt_views
 
 urlpatterns = [
     path('users/', UserListView.as_view(), name='user-list'),
+    path('profile/', CurrentUserProfileView.as_view(), name='current-user-profile'),
     path('profile/<str:username>/', UserProfileView.as_view(), name='user-profile'),
     path('teams/<int:pk>/', TeamDetailView.as_view(), name='team-detail'),
     
@@ -51,7 +54,7 @@ urlpatterns = [
     path('challenge/<int:challenge_id>/', ChallengeDetailView.as_view(), name='challenge_detail'),
     path('challenge/<int:challenge_id>/submit/', ChallengeSubmitView.as_view(), name='challenge_submit'),
     path("solved-challenges/", SolvedChallengesView.as_view(), name="solved_challenges"),
-    path("solved-challenges/", SolvedChallengeLogsView.as_view(), name="solved_challenges"),
+    path('solved-challenges/<str:username>/', SolvedChallengesByUsernameView.as_view(), name='solved-challenges-by-username'),
     path("challenge/<int:challenge_id>/delete/", DeleteChallengeView.as_view(), name='challenge_delete'),
     path('challenge/<int:challenge_id>/edit/', ChallengeEditView.as_view(), name='challenge-edit'),
     path("user-role/", GetUserRoleView.as_view(), name="user_role"),
@@ -69,4 +72,5 @@ urlpatterns = [
     path('assessments/<int:pk>/edit/', AssessmentUpdateView.as_view(), name='assessment-update'),
     path('assessments/<int:pk>/delete/', AssessmentDeleteView.as_view(), name='assessment-delete'),
     path("solved-assessments/", SolvedAssessmentListCreateAPIView.as_view(), name="solved-assessments"),
+    path('solved-assessments/<str:username>/', UserSolvedAssessmentsView.as_view(), name='user-solved-assessments'),
 ]

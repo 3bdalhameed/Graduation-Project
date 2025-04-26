@@ -1,3 +1,4 @@
+from datetime import datetime, time
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -166,6 +167,7 @@ class SolvedAssessment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
     score = models.IntegerField()
+    total_questions = models.IntegerField(default=1)
     submitted_at = models.DateTimeField(auto_now_add=True)
     
 

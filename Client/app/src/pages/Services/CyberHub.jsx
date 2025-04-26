@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "../../components/Navbar/navbar";
 import Footer from "../../components/footer/footer";
 import Abd from "../img/5.png";
 import Omar from "../img/3_1.png";
 
-const AboutUs = () => {
+
+
   const mission = [
     {
       title: "✅ CTF",
@@ -19,6 +20,11 @@ const AboutUs = () => {
       description: "Teachers can create courses, assign materials and quizzes, and monitor student progress. Students only access content they’re enrolled in."
     }
   ];
+  const AboutUs = () => {
+    // Scroll to top when the component loads
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
 
   return (
     <>

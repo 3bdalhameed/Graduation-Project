@@ -1,21 +1,28 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar/navbar.jsx";
+import ScrollToTop from "./components/ScrollToTop"; 
+import Test from "./pages/test";
+
+import SignUp from "./pages/CTF_portal/signup.jsx";
+import Login from "./pages/CTF_portal/login.jsx";
 
 import UserProfile from "./pages/UserProfile";
 import TeamProfile from "./pages/TeamProfile.jsx";
+import Adminlogs from "./pages/adminlogs.jsx";
+
+
+import VerifyOTP from "./pages/VerifyOTP.jsx";
 
 
 // Services
 import Awareness from "./pages/Services/Awareness.jsx";
 import Assessment from "./pages/Services/Assessment.jsx";
 import CyberHub from "./pages/Services/CyberHub.jsx";
-import JNCSF from "./pages/Services/JNCSF.jsx";
+import JCCT from "./pages/Services/JCCT.jsx";
 
 // CTF Portal
-import SignUp from "./pages/CTF_portal/signup.jsx";
+import CTFHome from "./pages/CTF_portal/CTFHome.jsx"
 import Home from "./pages/CTF_portal/Home.jsx";
-import Login from "./pages/CTF_portal/login.jsx";
-import Test from "./pages/test";
 import Challenge from "./pages/CTF_portal/challenge.jsx";
 import Createchallenge from "./pages/CTF_portal/createChallenge.jsx";
 import Scoreboard from "./pages/CTF_portal/scoreboard.jsx";
@@ -25,8 +32,7 @@ import Users from "./pages/CTF_portal/users.jsx";
 import Teams from "./pages/CTF_portal/teams.jsx";
 import Createteam from "./pages/CTF_portal/createjointeam.jsx";
 import Teamprof from "./pages/CTF_portal/teamprof.jsx";
-import VerifyOTP from "./pages/VerifyOTP.jsx";
-import TicTacToe from "./pages/ticTacToe.jsx";
+import Notifications from "./pages/CTF_portal/notifications.jsx";
 
 // Learning Portal
 import LearningPortalHomePage from "./pages/learning_portal/learningPortalHome.jsx";
@@ -41,22 +47,30 @@ import Schoollogin from "./pages/School_portal/SchoolLogin.jsx";
 import Schoolmain from "./pages/School_portal/SchoolMainPage.jsx";
 import Schooladmin from "./pages/School_portal/AdminUserCreatePage.jsx";
 
+
+import TicTacToe from "./pages/ticTacToe.jsx";
+
+
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Navbar />
       <Routes>
         <Route path="/profile/:username" element={<UserProfile />} />
         <Route path="/teams/:teamId" element={<TeamProfile />} />
+        <Route path="/adminlogs" element={<Adminlogs />} />
 
 
         <Route path="/awarenessteam" element={<Awareness />} />
         <Route path="/assessmentteam" element={<Assessment />} />
-        <Route path="/JNCSFteam" element={<JNCSF />} />
+        <Route path="/JCCTteam" element={<JCCT />} />
         <Route path="/cyberhubteam" element={<CyberHub />} />
 
 
         <Route path="/" element={<Home />} />
+
+        <Route path="/ctfhome" element={<CTFHome />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
@@ -69,8 +83,9 @@ function App() {
         <Route path="/teams" element={<Teams />} />
         <Route path="/createteam" element={<Createteam />} />
         <Route path="/teamprofile" element={<Teamprof />} />
-        <Route path="/settings" element={<Setting />} />
-  
+        <Route path="/dashboard" element={<Setting />} />
+        <Route path="/notifications" element={<Notifications />} />
+
         <Route
           path="/learningPortalHome"
           element={<LearningPortalHomePage />}

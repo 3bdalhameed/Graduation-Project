@@ -16,7 +16,33 @@ const ChallengePage = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const token = useTokenStore((state) => state.token);
-  const navigate = useNavigate();
+  const [activeFilters, setActiveFilters] = useState({ category: "All", points: "All" });
+
+
+  const pointColors = (points) => {
+    if (points <= 100) {
+      return {
+        bg: "bg-green-100 dark:bg-green-900/30",
+        text: "text-green-700 dark:text-green-400",
+        border: "border-green-200 dark:border-green-800/30",
+        gradient: "from-green-500 to-emerald-500"
+      };
+    } else if (points <= 350) {
+      return {
+        bg: "bg-yellow-100 dark:bg-yellow-900/30",
+        text: "text-yellow-700 dark:text-yellow-400",
+        border: "border-yellow-200 dark:border-yellow-800/30",
+        gradient: "from-yellow-500 to-amber-500"
+      };
+    } else {
+      return {
+        bg: "bg-red-100 dark:bg-red-900/30",
+        text: "text-red-700 dark:text-red-400",
+        border: "border-red-200 dark:border-red-800/30",
+        gradient: "from-red-500 to-orange-500"
+      };
+    }
+  };
 
   useEffect(() => {
     fetchChallenges(token)
@@ -53,13 +79,41 @@ const ChallengePage = () => {
     }
   };
 
-  const filteredChallenges =
+  const applyFilters = (challenges) => {
+    if (!Array.isArray(challenges)) return [];
+    return challenges.filter((challenge) => {
+      const matchesCategory =
+        activeFilters.category === "All" || challenge.category === activeFilters.category;
+  
+      const matchesPoints =
+        activeFilters.points === "All" ||
+        (activeFilters.points === "Easy" && challenge.points <= 100) ||
+        (activeFilters.points === "Medium" && challenge.points > 100 && challenge.points <= 350) ||
+        (activeFilters.points === "Hard" && challenge.points > 350);
+  
+      return matchesCategory && matchesPoints;
+    });
+  };
+   
+
+  const filteredChallenges = applyFilters(
     selectedCategory === "All"
       ? challenges
-      : challenges.filter((challenge) => challenge.category === selectedCategory);
+      : challenges.filter((challenge) => challenge.category === selectedCategory)
+  );
+  
 
         return (
-          <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 dark:from-gray-900 dark:to-gray-800 pt-24 flex">
+          <div className="min-h-screen pt-24 flex">
+            {/* Background with subtle patterns and gradients */}
+            <div className="fixed inset-0 bg-gradient-to-br from-blue-50 to-white dark:from-gray-900 dark:to-gray-950 -z-10">
+              {/* Grid background */}
+              <div className="absolute inset-0 bg-grid bg-[length:30px_30px] opacity-[0.03] dark:opacity-[0.02]"></div>
+              
+              {/* Background gradient circles for visual interest */}
+              <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-blue-100/30 dark:bg-blue-900/10 rounded-full blur-3xl"></div>
+              <div className="absolute top-1/3 right-0 w-72 h-72 bg-indigo-100/30 dark:bg-purple-900/10 rounded-full blur-3xl"></div>
+            </div>
             <aside className="w-64 p-6 bg-white dark:bg-gray-900 shadow-xl rounded-r-3xl">
               <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Categories</h3>
               <ul className="space-y-2">
@@ -76,33 +130,68 @@ const ChallengePage = () => {
                   </li>
                 ))}
               </ul>
+            {/* Difficulty Filter */}
+            <div>
+              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4 pt-4">Difficulty</h3>
+              <div className="space-y-2">
+              {["All", "Easy", "Medium", "Hard"].map((points) => (
+                <button
+                  key={points}
+                  className={`w-full py-2.5 px-4 rounded-xl text-left font-medium transition-all duration-300 flex items-center ${
+                    activeFilters.points === points
+                      ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
+                      : "bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  }`}
+                  onClick={() => setActiveFilters((prev) => ({ ...prev, points }))}
+                >
+                  {points}
+                </button>
+              ))}
+              </div>
+            </div>
             </aside>
       
             <main className="flex-1 p-10">
               <h2 className="text-4xl font-bold text-gray-800 dark:text-white text-center mb-10">CTF Challenges</h2>
       
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredChallenges.map((challenge) => (
-                  <motion.div
-                    key={challenge.id}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3 }}
-                    whileHover={{ y: -5 }}
-                    onClick={() => {
-                      setSelectedChallenge(challenge);
-                      setFlag("");
-                      setMessage(null);
-                    }}
-                    className={`rounded-2xl p-6 shadow-lg cursor-pointer transition-transform duration-300 border hover:shadow-xl
-                      ${solvedChallenges.includes(challenge.id)
-                        ? "bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800"
-                        : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"}`}
-                  >
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{challenge.title}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-300">{challenge.category}</p>
-                  </motion.div>
-                ))}
+              {filteredChallenges.map((challenge) => {
+              const colorData = pointColors(challenge.points);
+              const isSolved = solvedChallenges.includes(challenge.id);
+              const solvedStyle = isSolved
+                ? {
+                    bg: "bg-gray-200 dark:bg-gray-900/50",
+                    text: "text-green-800 dark:text-green-300 line-through",
+                    border: "border-green-300 dark:border-green-700",
+                  }
+                : colorData;
+              
+
+              return (
+                <motion.div
+                  key={challenge.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                  whileHover={{ y: -5 }}
+                  onClick={() => {
+                    setSelectedChallenge(challenge);
+                    setFlag("");
+                    setMessage(null);
+                  }}
+                  className={`rounded-2xl p-6 shadow-lg cursor-pointer transition-transform duration-300 border hover:shadow-xl
+                  ${solvedStyle.bg} ${solvedStyle.border}`}
+                >
+
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                    {challenge.title}
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-300">{challenge.category}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-300 pt-2">{challenge.points}</p>
+                </motion.div>
+              );
+            })}
+
               </div>
             </main>
       

@@ -28,7 +28,7 @@ const AdminAssessmentsPage = () => {
   const [isEditingMaterial, setIsEditingMaterial] = useState(false);
   const [isCreatingMaterial, setIsCreatingMaterial] = useState(false);
   const [selectedMaterial, setSelectedMaterial] = useState(null);
-  const [materialForm, setMaterialForm] = useState({ title: "", category: "", description: "", link: "" });
+  const [materialForm, setMaterialForm] = useState({ title: "", category: "", description: "", content: "", link: "" });
   const [mcqList, setMcqList] = useState([{ question: "", options: ["", "", "", ""], answer: "" }]);
   const [formData, setFormData] = useState({ name: "", category: "", difficulty: "Easy" });
   const token = useTokenStore((state) => state.token);
@@ -380,12 +380,12 @@ const handleEditMaterial = (material) => {
               <form onSubmit={handleSubmitMaterial} className="space-y-4">
                 <input type="text" placeholder="Title" value={materialForm.title} onChange={(e) => setMaterialForm({ ...materialForm, title: e.target.value })} className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border" />
                 <input type="text" placeholder="Category" value={materialForm.category} onChange={(e) => setMaterialForm({ ...materialForm, category: e.target.value })} className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border" />
-                <textarea placeholder="Description" value={materialForm.description} onChange={(e) => setMaterialForm({ ...materialForm, description: e.target.value })} className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border" rows="3" />
-                <textarea placeholder="Full Content (Markdown supported)" value={materialForm.content} onChange={(e) => setMaterialForm({ ...materialForm, content: e.target.value })} className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border" rows="8" />
-                <div className="p-3 rounded-xl bg-white dark:bg-gray-800 border overflow-y-auto prose dark:prose-invert">
-                  <h3 className="font-semibold mb-2 text-gray-700 dark:text-gray-300">Preview</h3>
-                  <ReactMarkdown>{materialForm.content}</ReactMarkdown>
-                </div>
+                <textarea placeholder="Description" value={materialForm.description} onChange={(e) => setMaterialForm({ ...materialForm, description: e.target.value })} className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border" rows="1" />
+                <textarea placeholder="Full Content (Markdown supported)" value={materialForm.content} onChange={(e) => setMaterialForm({ ...materialForm, content: e.target.value })} className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border" rows="6" />
+                <div className="p-3 rounded-xl bg-white dark:bg-gray-800 border overflow-y-auto prose dark:prose-invert max-h-60 max-w-5xl">
+                <h3 className="font-semibold mb-2 text-gray-700 dark:text-gray-300">Preview</h3>
+                <ReactMarkdown>{materialForm.content}</ReactMarkdown>
+              </div>
                 <input type="url" placeholder="Material Link" value={materialForm.link} onChange={(e) => setMaterialForm({ ...materialForm, link: e.target.value })} className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white border" />
                 <div className="flex gap-2">
                   <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl font-semibold">

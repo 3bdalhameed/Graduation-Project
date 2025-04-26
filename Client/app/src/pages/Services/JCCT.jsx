@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "../../components/Navbar/navbar";
 import Footer from "../../components/footer/footer";
 import ControlsImage from "../img/Compliance_Controls_Checks.png";
@@ -6,7 +6,8 @@ import DashboardsImage from "../img/Dynamic_Dashboards.png";
 import Yazeed from "../img/1.png";
 import Shahed from "../img/7.png";
 
-const AboutUs = () => {
+
+
   const services = [
     {
       title: "📊 Risk-Based Security Assessment",
@@ -25,7 +26,11 @@ const AboutUs = () => {
       description: "Highlights high-priority controls to address first, based on their risk level and compliance status—helping you improve your cybersecurity posture and align effectively with JNCSF compliance requirements.",
     }
   ];
-
+  const AboutUs = () => {
+  // Scroll to top when the component loads
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <>
       <Navbar />
@@ -43,7 +48,7 @@ const AboutUs = () => {
           </h1>
 
           <p className="text-lg md:text-xl bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-12 border border-gray-200 dark:border-gray-700">
-            Yazeed and Shahed — two senior cybersecurity students passionate about making a real impact in the field. We're all about turning what we learn into practical solutions that actually solve problems. Our goal is to contribute to the growth of cybersecurity in Jordan by coming up with creative, effective ways to tackle the challenges organizations face every day.
+            We are the Co-Founder of JCCT compliance team — two senior cybersecurity students passionate about making a real impact in the field. We're all about turning what we learn into practical solutions that actually solve problems. Our goal is to contribute to the growth of cybersecurity in Jordan by coming up with creative, effective ways to tackle the challenges organizations face every day.
           </p>
 
           <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-12 border border-gray-200 dark:border-gray-700">

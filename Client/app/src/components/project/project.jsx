@@ -10,7 +10,7 @@ import PortalCard from "./PortalCard";
 
 function ProjectSection() {
   const services = [
-    { src: Awarenessimg, title: "JNCSF", description: "Access comprehensive learning materials and tutorials", link: "/JNCSFteam" },
+    { src: Awarenessimg, title: "JNCSF", description: "Access comprehensive learning materials and tutorials", link: "/JCCTteam" },
     { src: Competitionimg, title: "CyberHub", description: "Sharpen your skills through interactive exercises", link: "/cyberhubteam" },
     { src: Assessmentimg, title: "Assessment", description: "Join challenges and competitions to test your abilities", link: "/assessmentteam" },
     { src: Mediaimg, title: "Awareness", description: "Engage in gamified cybersecurity scenarios", link: "/awarenessteam" },

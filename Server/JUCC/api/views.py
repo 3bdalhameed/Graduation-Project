@@ -76,6 +76,7 @@ class TeamDetailView(generics.RetrieveAPIView):
     serializer_class = TeamSerializer
     permission_classes = [AllowAny]  
     
+    
 class UserProfileView(generics.RetrieveAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = [AllowAny]
@@ -86,6 +87,23 @@ class UserProfileView(generics.RetrieveAPIView):
     def get_object(self):
         username = self.kwargs['username']
         return self.get_queryset().get(username=username)
+    
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
+class CurrentUserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            "username": user.username,
+            "email": user.email,
+            "is_staff": user.is_staff,
+            "is_superuser": user.is_superuser   
+        })
+
 
 
 class LoginView(APIView):
@@ -334,20 +352,31 @@ class SolvedChallengesView(APIView):
         )
         serializer = ChallengeSerializer(solved_challenges, many=True)
         return Response(serializer.data, status=HTTP_200_OK)
+
     
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
-from .models import SolvedChallenge
-from .serializer import SolvedChallengeSerializer
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.status import HTTP_200_OK
+from django.contrib.auth.models import User
+from .models import Challenge, SolvedChallenge
+from .serializer import ChallengeSerializer
 
-class SolvedChallengeLogsView(APIView):
-    permission_classes = [IsAdminUser]
+class SolvedChallengesByUsernameView(APIView):
+    permission_classes = [AllowAny]  # You can change this to IsAdminUser if only admin should access
 
-    def get(self, request):
-        logs = SolvedChallenge.objects.select_related('user', 'challenge').all().order_by('-solved_at')
-        serializer = SolvedChallengeSerializer(logs, many=True)
-        return Response(serializer.data)
+    def get(self, request, username):
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
+
+        solved_challenges = Challenge.objects.filter(
+            id__in=SolvedChallenge.objects.filter(user=user).values_list('challenge', flat=True)
+        )
+        serializer = ChallengeSerializer(solved_challenges, many=True)
+        return Response(serializer.data, status=HTTP_200_OK)
+
 
 
         
@@ -459,21 +488,19 @@ class ScoreboardAPIView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        teams = Team.objects.all()
-        sorted_teams = sorted(teams, key=lambda t: t.points, reverse=True)
+        users = Profile.objects.all()
+        sorted_users = sorted(users, key=lambda t: t.points, reverse=True)
 
-        # Dummy progress for demonstration
         def simulate_progress(score):
-            # Simulate score growth over 6 time points
             chunk = score // 6 if score > 0 else 0
             return [chunk * i for i in range(1, 7)]
 
         data = []
-        for team in sorted_teams:
+        for user in sorted_users:
             data.append({
-                "name": team.name,
-                "points": team.points,
-                "progress": simulate_progress(team.points),
+                "name": user.user.username,
+                "points": user.points,
+                "progress": simulate_progress(user.points),
             })
 
         return Response(data)
@@ -635,6 +662,9 @@ class LearningMaterialRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAP
     permission_classes = [permissions.IsAuthenticated]
 
 
+###############################################################################################################################################
+
+
 from rest_framework import generics, permissions
 from .models import Assessment
 from .serializer import AssessmentSerializer
@@ -662,15 +692,43 @@ class AssessmentDeleteView(generics.DestroyAPIView):
     serializer_class = AssessmentSerializer
     permission_classes = [permissions.IsAuthenticated]
     
-from rest_framework import generics, permissions
+    
+    
+from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser
+from .models import SolvedAssessment
 from .serializer import SolvedAssessmentSerializer
 
-
-class SolvedAssessmentListCreateAPIView(generics.CreateAPIView):
-    serializer_class = SolvedAssessmentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+class SolvedAssessmentListCreateAPIView(generics.ListCreateAPIView):  # 🟢 Use ListCreateAPIView!
+    queryset = SolvedAssessment.objects.all().order_by('-submitted_at')
+    serializer_class = SolvedAssessmentSerializer  # ✅ You must include this!
+    permission_classes = [IsAdminUser]  # Only admin can view and create
 
     def perform_create(self, serializer):
+        # Optional: if you want to auto-assign the user, uncomment this line:
         serializer.save(user=self.request.user)
+        serializer.save()
 
 
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework import status
+from django.contrib.auth.models import User
+from .models import SolvedAssessment
+from .serializer import SolvedAssessmentSerializer
+
+class UserSolvedAssessmentsView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, username):
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        solved_assessments = SolvedAssessment.objects.filter(user=user).order_by('-submitted_at')
+        serializer = SolvedAssessmentSerializer(solved_assessments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

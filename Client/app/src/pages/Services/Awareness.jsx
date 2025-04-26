@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "../../components/Navbar/navbar";
 import Footer from "../../components/footer/footer";
 import Banan from "../img/2.png";
 import Farah from "../img/4_1.png";
 
-const AboutUs = () => {
+
+
   const services = [
     {
       title: "🎨 Graphic Design",
@@ -32,6 +33,16 @@ const AboutUs = () => {
     }
   ];
 
+  const teamMembers = [
+    { name: "Banan Khanfar", role: "Developer", img: Banan },
+    { name: "Farah Qamhawi", role: "Developer", img: Farah }
+  ];
+
+  const AboutUs = () => {
+    // Scroll to top when the page loads
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
   return (
     <>
       <Navbar />
@@ -72,7 +83,7 @@ const AboutUs = () => {
           <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
             <h2 className="text-3xl font-semibold mb-8 text-indigo-700 dark:text-indigo-400 text-center">Meet the Team</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              {[{ name: "Banan Khanfar", role: "Developer", img: Banan }, { name: "Farah Qamhawi", role: "Developer", img: Farah }].map((member, index) => (
+              {teamMembers.map((member, index) => (
                 <div
                   key={index}
                   className="bg-gray-100 dark:bg-gray-800 p-6 rounded-xl shadow-md hover:shadow-xl transition-all text-center"

@@ -16,6 +16,25 @@ export const fetchUsers = async () => {
   return response.json();
 };
 
+
+/**
+ * Fetches the current logged-in user's profile data.
+ * @param {string} token - JWT token
+ * @returns {Promise<Object>} - User profile data (username, email, is_staff, is_superuser)
+ */
+export const fetchUserProfile = async (token) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/profile/`, {
+      headers: getAuthHeader(token),
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch user profile:", error);
+    throw new Error("Failed to fetch user profile");
+  }
+};
+
+
 /**
  * Logs out the current user
  * @param {string} token - JWT authentication token
@@ -114,3 +133,19 @@ export const fetchUserSolvedChallenges = async (token) => {
   
   return response.data;
 };
+
+
+
+/**
+ * Fetches users for the scoreboard with points
+ * @param {string} token - JWT authentication token
+ * @returns {Promise} Promise resolving to scoreboard data
+ */
+export const fetchUserScoreboard = async (token) => {
+  const response = await axios.get(`${API_BASE_URL}/scoreboard/`, {
+    headers: getAuthHeader(token),
+  });
+  return response.data;
+};
+
+

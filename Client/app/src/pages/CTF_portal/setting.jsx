@@ -7,8 +7,7 @@ import {
   Legend,
 } from "chart.js";
 import useTokenStore from "../../stores/useTokenStore";
-import { fetchHomeData, fetchUserSolvedChallenges } from "../../api/users";
-import { checkUserTeam } from "../../api/teams";
+import { fetchUserSolvedChallenges, fetchUserProfile } from "../../api/users";
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -23,44 +22,21 @@ function TeamAndUserDashboard() {
   const token = useTokenStore((state) => state.token);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        // Use the API function instead of direct axios call
-        const data = await fetchHomeData(token);
-        setUser(data);
-      } catch (err) {
-        console.error("Error fetching user data:", err);
-        setError("An error occurred while fetching user data.");
-      }
-    };
-
-    const fetchTeamData = async () => {
-      try {
-        // Use the API function instead of direct axios call
-        const data = await checkUserTeam(token);
-        if (data) {
-          setTeamData(data);
-        }
-      } catch (err) {
-        console.error("Error fetching team data:", err);
-      }
-    };
-
-    const fetchSolvedChallenges = async () => {
-      try {
-        // Use the API function instead of direct axios call
-        const data = await fetchUserSolvedChallenges(token);
-        setSolvedChallenges(data);
-      } catch (err) {
-        console.error("Error fetching solved challenges:", err);
-      }
-    };
-
-    fetchUserData();
-    fetchTeamData();
-    fetchSolvedChallenges();
+    if (!token) return;
+  
+    // Fetch user profile (only once!)
+    fetchUserProfile(token)
+      .then((data) => setUser(data))
+      .catch((err) => console.error("Error fetching user profile:", err));
+  
+    // Fetch solved challenges
+    fetchUserSolvedChallenges(token)
+      .then((data) => setSolvedChallenges(data))
+      .catch((err) => console.error("Error fetching solved challenges:", err));
+  
     setLoading(false);
   }, [token]);
+  
 
   // Aggregate data by category
   const categoryData = solvedChallenges.reduce((acc, challenge) => {
@@ -80,41 +56,36 @@ function TeamAndUserDashboard() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-100 dark:bg-gray-900">
-
-      {/* Sidebar */}
-      <div className="w-1/4 h-screen bg-white dark:bg-gray-800 p-6 shadow-lg pt-24">
-        <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Dashboard</h2>
-        <ul>
-          <li
-            className={`p-3 cursor-pointer rounded-lg ${
-              activeTab === "user"
-                ? "bg-blue-500 text-white"
-                : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
-            }`}
-            onClick={() => setActiveTab("user")}
-          >
-            User Dashboard
-          </li>
-          <li
-            className={`p-3 cursor-pointer rounded-lg ${
-              activeTab === "team"
-                ? "bg-blue-500 text-white"
-                : "hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
-            }`}
-            onClick={() => setActiveTab("team")}
-          >
-            Team Dashboard
-          </li>
-        </ul>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 p-8 pt-24">
-        {activeTab === "user" ? (
+      <div className="min-h-screen flex bg-gray-100 dark:bg-gray-900">
+        {/* Main Content */}
+        <div className="flex-1 p-8 pt-24">
+          {/* User Profile Section */}
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+              👤 User Profile
+            </h2>
+            {user ? (
+              <div className="space-y-2 text-gray-700 dark:text-gray-300">
+                <p><strong>Username:</strong> {user.username}</p>
+                <p><strong>Email:</strong> {user.email}</p>
+                <p>
+                  <strong>Role:</strong>{" "}
+                  {user.is_staff ? (
+                    <span className="text-green-500 font-semibold">Admin</span>
+                  ) : (
+                    <span className="text-blue-500 font-semibold">competitor</span>
+                  )}
+                </p>
+              </div>
+            ) : (
+              <p className="text-gray-500 dark:text-gray-400">Loading user profile...</p>
+            )}
+          </div>
+    
+          {/* Solved Challenges Section */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">
-              Solved Challenges by Category
+              Challenges Statistics
             </h2>
             <div className="flex flex-col md:flex-row gap-6">
               <div className="w-full md:w-1/2">
@@ -135,9 +106,9 @@ function TeamAndUserDashboard() {
                   )}
                 </ul>
               </div>
-              <div className="w-full md:w-1/2 flex justify-center">
+              <div className="w-full md:w-3/6 flex justify-center">
                 {Object.keys(categoryData).length > 0 ? (
-                  <Pie data={pieChartData} className="max-w-xs" />
+                  <Pie data={pieChartData} className="max-w-xs max-h-96" />
                 ) : (
                   <p className="text-gray-500 dark:text-gray-400 text-center">
                     No data to display.
@@ -146,40 +117,8 @@ function TeamAndUserDashboard() {
               </div>
             </div>
           </div>
-        ) : (
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">
-              Team Dashboard
-            </h2>
-            {teamData ? (
-              <div>
-                <p><strong>Team Name:</strong> {teamData.name}</p>
-                <p><strong>Total Points:</strong> {teamData.points}</p>
-                <p><strong>Team Code:</strong> {teamData.password}</p>
-                <h3 className="text-lg font-semibold mt-4">Members</h3>
-                <ul>
-                  {teamData?.members && teamData.members.length > 0 ? (
-                    teamData.members.map((member) => (
-                      <li key={member.id} className="bg-gray-200 dark:bg-gray-700 p-2 rounded-lg my-1">
-                        {member.username} - {member.email}
-                      </li>
-                    ))
-                  ) : (
-                    <p className="text-gray-500 dark:text-gray-400 text-center">
-                      No team members available.
-                    </p>
-                  )}
-                </ul>
-              </div>
-            ) : (
-              <p className="text-gray-500 dark:text-gray-400 text-center">
-                No team data available.
-              </p>
-            )}
-          </div>
-        )}
+        </div>
       </div>
-    </div>
   );
 }
 

@@ -1,54 +1,92 @@
 import { useEffect, useState } from "react";
 import useTokenStore from "../../stores/useTokenStore";
-import { fetchScoreboard, checkUserTeam } from "../../api/teams";
+import { fetchUserScoreboard } from "../../api/users";
+import { Line } from "react-chartjs-2";
+import { Link } from "react-router-dom";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+// Register chart components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const ScoreboardPage = () => {
-  const [teams, setTeams] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [userTeam, setUserTeam] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
   const token = useTokenStore((state) => state.token);
 
   useEffect(() => {
-    // Fetch teams for the scoreboard using API functions
-    const getTeams = async () => {
+    const getUsers = async () => {
       try {
-        const data = await fetchScoreboard(token);
-        setTeams(data);
+        const data = await fetchUserScoreboard(token);
+        setUsers(data);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching teams:", error);
+        console.error("Error fetching users:", error);
         setError("Failed to load scoreboard. Please try again later.");
         setLoading(false);
       }
     };
 
-    // Fetch user's team using API function
-    const getUserTeam = async () => {
-      try {
-        const data = await checkUserTeam(token);
-        if (data) {
-          setUserTeam(data);
-        }
-      } catch (error) {
-        console.error("Error fetching user team:", error);
-      }
-    };
-
-    getTeams();
-    getUserTeam();
+    getUsers();
   }, [token]);
+
+  const chartData = {
+    labels: ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5", "Step 6"], // Progress steps
+    datasets: users.map((user) => ({
+      label: user.name,
+      data: user.progress,
+      borderColor: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(
+        Math.random() * 255
+      )}, ${Math.floor(Math.random() * 255)}, 1)`,
+      backgroundColor: "transparent",
+      tension: 0.3,
+    })),
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: "bottom",
+        labels: { color: "#ffffff" },
+      },
+    },
+    scales: {
+      x: {
+        ticks: { color: "#ffffff" },
+        title: { display: true, text: "Users", color: "#ffffff" },
+      },
+      y: {
+        ticks: { color: "#ffffff" },
+        title: { display: true, text: "Score", color: "#ffffff" },
+        beginAtZero: true,
+      },
+    },
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      <div className="fixed top-0 left-0 right-0 z-50 bg-gray-800 shadow-md"></div>
-
       <div className="py-16">
         <header className="bg-gray-800 py-6">
-          <h1 className="text-4xl font-bold text-center text-white">
-            Scoreboard
-          </h1>
+          <h1 className="text-4xl font-bold text-center text-white">User Scoreboard</h1>
         </header>
 
         <div className="md:container md:mx-auto">
@@ -59,11 +97,9 @@ const ScoreboardPage = () => {
           ) : (
             <>
               <div className="mb-12">
-                <h2 className="text-3xl font-bold text-center mb-6">
-                  Top Teams
-                </h2>
+                <h2 className="text-3xl font-bold text-center mb-6">Top Users</h2>
                 <div className="w-4/5 h-3/5 mx-auto">
-                  {/* Add chart or other visualization here */}
+                  <Line data={chartData} options={chartOptions} />
                 </div>
               </div>
 
@@ -71,34 +107,24 @@ const ScoreboardPage = () => {
                 <table className="w-full table-auto">
                   <thead className="bg-gray-700 text-white">
                     <tr>
-                      <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
-                        Place
-                      </th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
-                        Team
-                      </th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
-                        Score
-                      </th>
+                      <th className="px-6 py-3 text-left text-sm font-semibold uppercase">Place</th>
+                      <th className="px-6 py-3 text-left text-sm font-semibold uppercase">Username</th>
+                      <th className="px-6 py-3 text-left text-sm font-semibold uppercase">Score</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {teams.map((team, index) => (
-                      <tr
-                        key={team.name}
-                        className={`${
-                          index % 2 === 0 ? "bg-gray-900" : "bg-gray-800"
-                        } hover:bg-gray-700`}
-                      >
-                        <td className="px-6 py-4 text-sm font-medium text-white">
-                          {index + 1}
+                    {users.map((user, index) => (
+                      <tr key={user.id || index}>
+                        <td className="px-6 py-4 text-sm font-medium text-white">{index + 1}</td>
+                        <td className="px-6 py-4 text-sm font-medium">
+                          <Link
+                            to={`/profile/${user.name}`}
+                            className="text-blue-400 hover:text-blue-300 underline"
+                          >
+                            {user.name}
+                          </Link>
                         </td>
-                        <td className="px-6 py-4 text-sm font-medium text-blue-400">
-                          {team.name}
-                        </td>
-                        <td className="px-6 py-4 text-sm font-medium text-white">
-                          {team.points}
-                        </td>
+                        <td className="px-6 py-4 text-sm font-medium text-white">{user.points}</td>
                       </tr>
                     ))}
                   </tbody>

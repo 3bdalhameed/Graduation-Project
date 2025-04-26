@@ -16,22 +16,7 @@ export const fetchTeams = async () => {
   return response.json();
 };
 
-/**
- * Fetches teams for the scoreboard with points and ranks
- * @param {string} token - JWT authentication token
- * @returns {Promise} Promise resolving to scoreboard data
- */
-export const fetchScoreboard = async (token) => {
-  const response = await fetch(`${API_BASE_URL}/scoreboard/`, {
-    headers: getAuthHeader(token),
-  });
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch teams");
-  }
-
-  return response.json();
-};
 
 /**
  * Checks the current user's team
