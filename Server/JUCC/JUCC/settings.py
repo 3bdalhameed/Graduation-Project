@@ -156,16 +156,17 @@ CORS_ALLOW_HEADERS = [
     "X-CSRFToken",
     "Authorization",
 ]
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+        'api.authentication.SchoolUserJWTAuthentication',           
+        'rest_framework.authentication.TokenAuthentication',         
+        'rest_framework.authentication.SessionAuthentication',       
+        'rest_framework_simplejwt.authentication.JWTAuthentication', 
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-      ],
 }
 
 
@@ -183,6 +184,8 @@ SIMPLE_JWT = {
      'ROTATE_REFRESH_TOKENS': True,
      'BLACKLIST_AFTER_ROTATION': True
 }
+
+# AUTH_USER_MODEL = 'api.SchoolUser'
 
 import os
 from dotenv import load_dotenv

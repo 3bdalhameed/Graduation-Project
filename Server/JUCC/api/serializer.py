@@ -4,6 +4,9 @@ from .models import Challenge, Team, TeamMember
 
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from .models import QuizQuestion
+from .models import QuizQuestion, QuizAnswer, QuizSubmission, SchoolAssessment
+
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, min_length=8)
@@ -59,7 +62,63 @@ class TeamScoreSerializer(serializers.ModelSerializer):
 
     def get_points(self, obj):
         return obj.points  # Uses the @property
+    
+########################################################################################################
+from rest_framework import serializers
+from .models import SchoolUser
+from django.contrib.auth import authenticate
 
+class SchoolSignupSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = SchoolUser
+        fields = ['email', 'name', 'role', 'password']
+
+    def create(self, validated_data):
+        user = SchoolUser.objects.create_user(
+            email=validated_data['email'],
+            name=validated_data['name'],
+            role=validated_data['role'],
+            password=validated_data['password']
+        )
+        return user
+
+class SchoolLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        user = authenticate(email=data['email'], password=data['password'])
+        if not user:
+            raise serializers.ValidationError("Invalid credentials")
+        return {'user': user}
+
+
+from rest_framework import serializers
+from .models import SchoolCourse
+
+class SchoolCourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SchoolCourse
+        fields = ['id', 'name', 'description', 'created_by', 'created_at']
+
+from .models import SchoolMaterial, SchoolAssessment
+
+class SchoolMaterialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SchoolMaterial
+        fields = ['id', 'title', 'description', 'link', 'uploaded_at']
+
+class SchoolAssessmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SchoolAssessment
+        fields = ['id', 'title', 'description', 'due_date', 'created_at']
+
+class QuizQuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuizQuestion
+        fields = ['id', 'question_text', 'question_type', 'options']
 
 #########################################################################################################
 

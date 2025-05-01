@@ -16,6 +16,13 @@ from .views import (
     LearningMaterialListCreateView, 
     LearningMaterialRetrieveUpdateDestroyView,
     SolvedAssessmentListCreateAPIView,
+    SchoolSignup, SchoolLoginView,
+    SendOTP, VerifyOTP,
+    CreateSchoolCourseView,ListMyCoursesView,
+    SchoolCourseDetailView,AddMaterialView,
+    AddAssessmentView,AddQuizQuestionView,
+    GetQuizQuestionsView,SubmitQuizView,
+    EnrollStudentInCourseView,ListEnrolledCoursesView,
     
 )
 from rest_framework_simplejwt import views as jwt_views
@@ -57,7 +64,22 @@ urlpatterns = [
     path("user-role/", GetUserRoleView.as_view(), name="user_role"),
     
     
+    path('school/send-otp/', SendOTP.as_view(), name = "school_send_otp"),
+    path('school/verify-otp/', VerifyOTP.as_view(), name = "school_verify_otp"),
+    path('school/signup/', SchoolSignup.as_view(), name = "school_signup"),
+    path('school/login/', SchoolLoginView.as_view(), name = "school_login"),
     path("school/admin/create-user/", AdminCreateUserView.as_view(), name="admin_create_user"),
+    path('school/courses/create/', CreateSchoolCourseView.as_view(), name='school-course-create'),
+    path('school/courses/', ListMyCoursesView.as_view(), name='school-courses-list'),
+    path('school/courses/<int:course_id>/', SchoolCourseDetailView.as_view(), name='school-course-detail'),
+    path('school/courses/<int:course_id>/add-material/', AddMaterialView.as_view(), name='school-course-add-material'),
+    path('school/courses/<int:course_id>/add-assessment/', AddAssessmentView.as_view(), name='school-course-add-assessment'),
+    path('school/assessments/<int:assessment_id>/add-question/', AddQuizQuestionView.as_view(), name='add-quiz-question'),
+    path('school/assessments/<int:assessment_id>/quiz/', GetQuizQuestionsView.as_view(), name='get-quiz-questions'),
+    path('school/assessments/<int:assessment_id>/submit/', SubmitQuizView.as_view(), name='submit-quiz'),
+    path('school/courses/<int:course_id>/enroll/', EnrollStudentInCourseView.as_view(), name='enroll-student'),
+    path('school/courses/enrolled/', ListEnrolledCoursesView.as_view(), name='school-enrolled-courses'),
+
     path('courses/add/', AddCourseView.as_view(), name='add_course'),
     
     

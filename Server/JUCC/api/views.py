@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from rest_framework_simplejwt.exceptions import TokenError
 import random
 import re
+from .models import SchoolEnrollment
 
 Users = get_user_model()
 otp_storage = {}  # Store OTPs in-memory
@@ -57,7 +58,8 @@ def get_csrf_token(request):
 
 
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 from rest_framework import generics
 from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.response import Response
@@ -87,7 +89,497 @@ class UserProfileView(generics.RetrieveAPIView):
         username = self.kwargs['username']
         return self.get_queryset().get(username=username)
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .serializer import SchoolSignupSerializer, SchoolLoginSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import SchoolUser, OTP
+from django.core.mail import send_mail
+import random
+from rest_framework.permissions import AllowAny
+
+class SendOTP(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        email = request.data.get('email')
+        if SchoolUser.objects.filter(email=email).exists():
+            return Response({"error": "Email already exists."}, status=status.HTTP_400_BAD_REQUEST)
+
+        otp_code = str(random.randint(100000, 999999))
+        OTP.objects.create(email=email, otp_code=otp_code)
+
+        send_mail(
+            'Your OTP Code',
+            f'Your OTP is {otp_code}',
+            settings.EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
+        )
+
+        return Response({"message": "OTP sent successfully."}, status=status.HTTP_200_OK)
+
+
+#For school portal
+class VerifyOTP(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        email = request.data.get('email')
+        otp_code = request.data.get('otp')
+
+        try:
+            otp_entry = OTP.objects.filter(email=email).latest('created_at')
+        except OTP.DoesNotExist:
+            return Response({"error": "OTP not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        if otp_entry.is_expired():
+            return Response({"error": "OTP expired."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if otp_entry.otp_code != otp_code:
+            return Response({"error": "Invalid OTP."}, status=status.HTTP_400_BAD_REQUEST)
+
+        otp_entry.is_verified = True
+        otp_entry.save()
+        return Response({"message": "OTP verified successfully."}, status=status.HTTP_200_OK)
+
+import re
+
+class SchoolSignup(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+        role = request.data.get('role')
+        name = request.data.get('name')
+
+        # Validate OTP
+        if not OTP.objects.filter(email=email, is_verified=True).exists():
+            return Response({"error": "OTP not verified."}, status=status.HTTP_403_FORBIDDEN)
+
+        # Validate required fields
+        if not all([email, password, role, name]):
+            return Response({"error": "All fields are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate role
+        if role not in ['student', 'teacher']:
+            return Response({"error": "Invalid role."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate password complexity
+        if len(password) < 8 or not re.search(r"[A-Z]", password) or not re.search(r"[a-z]", password) or not re.search(r"\d", password):
+            return Response({"error": "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one number."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if user already exists
+        if SchoolUser.objects.filter(email=email).exists():
+            return Response({"error": "User already exists."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create user
+        user = SchoolUser.objects.create_user(
+            email=email,
+            password=password,
+            name=name,
+            role=role,
+        )
+
+        return Response({"message": "Account created successfully."}, status=status.HTTP_201_CREATED)
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken
+from .models import SchoolUser
+
+class SchoolLoginView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+        role = request.data.get('role')
+
+        if not email or not password or not role:
+            return Response({"error": "Email, password, and role are required"}, status=400)
+
+        try:
+            user = SchoolUser.objects.get(email=email)
+        except SchoolUser.DoesNotExist:
+            return Response({"error": "No user found with this email"}, status=404)
+
+        if not user.check_password(password):
+            return Response({"error": "Incorrect password"}, status=400)
+
+        if user.role != role:
+            return Response({"error": f"You are not registered as a {role}"}, status=400)
+
+        if not user.is_active:
+            return Response({"error": "Account is disabled"}, status=400)
+
+        # ✅ Create tokens manually (no OutstandingToken involved)
+        refresh = RefreshToken()
+        access_token = refresh.access_token
+
+        # Optional: manually inject extra info into access token
+        access_token['user_id'] = user.id
+        access_token['role'] = user.role
+
+        return Response({
+            "access": str(access_token),
+            "refresh": str(refresh),
+            "role": user.role,
+            "message": "Login successful!"
+        })
+
+
+
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from .models import SchoolCourse, CourseTeacher, SchoolUser
+from .serializer import SchoolCourseSerializer  # We'll write this serializer next
+
+class CreateSchoolCourseView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # Ensure only teachers can create courses
+        if request.user.role != 'teacher':
+            return Response({"error": "Only teachers can create courses."}, status=status.HTTP_403_FORBIDDEN)
+
+        name = request.data.get('name')
+        description = request.data.get('description', '')
+
+        if not name:
+            return Response({"error": "Course name is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        course = SchoolCourse.objects.create(
+            name=name,
+            description=description,
+            created_by=request.user
+        )
+
+        # Automatically assign the creating teacher to the course
+        CourseTeacher.objects.create(teacher=request.user, course=course)
+
+        return Response({
+            "message": "Course created successfully.",
+            "course_id": course.id,
+            "name": course.name,
+            "description": course.description
+        }, status=status.HTTP_201_CREATED)
+
+class ListMyCoursesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        if user.role == 'teacher':
+            # Show courses they created or are assigned to
+            created_courses = SchoolCourse.objects.filter(created_by=user)
+            assigned_courses = SchoolCourse.objects.filter(teachers__teacher=user)
+
+            # Union and remove duplicates
+            all_courses = (created_courses | assigned_courses).distinct()
+
+        elif user.role == 'student':
+            # 🚀 Later we'll implement Enrollment logic here
+            all_courses = SchoolCourse.objects.none()
+
+        else:
+            # Admin sees all
+            all_courses = SchoolCourse.objects.all()
+
+        serializer = SchoolCourseSerializer(all_courses, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+from .models import SchoolCourse, SchoolMaterial, SchoolAssessment
+from .serializer import SchoolMaterialSerializer, SchoolAssessmentSerializer
+
+from django.shortcuts import get_object_or_404
+
+class SchoolCourseDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, course_id):
+        user = request.user
+        try:
+            course = SchoolCourse.objects.get(id=course_id)
+        except SchoolCourse.DoesNotExist:
+            return Response({'error': 'Course not found'}, status=404)
+
+        # 🛡 Permission Check
+        if user.role == 'student':
+            if not SchoolEnrollment.objects.filter(course=course, student=user).exists():
+                return Response({'error': 'You are not enrolled in this course'}, status=403)
+
+        elif user.role == 'teacher':
+            if course.created_by != user and not course.teachers.filter(teacher=user).exists():
+                return Response({'error': 'You are not assigned to this course'}, status=403)
+
+        # ✅ Access allowed
+        materials = course.materials.all()
+        assessments = course.assessments.all()
+
+        return Response({
+            'id': course.id,
+            'name': course.name,
+            'description': course.description,
+            'materials': [{'id': m.id, 'title': m.title, 'description': m.description, 'link': m.link} for m in materials],
+            'assessments': [{'id': a.id, 'title': a.title, 'description': a.description, 'due_date': a.due_date} for a in assessments]
+        })
+
+
+class AddMaterialView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, course_id):
+        course = get_object_or_404(SchoolCourse, id=course_id)
+
+        # Permissions
+        user = request.user
+        if user.role != 'teacher':
+            return Response({"error": "Only teachers can add materials."}, status=403)
+
+        if not (course.created_by == user or course.teachers.filter(teacher=user).exists()):
+            return Response({"error": "Not authorized to add material to this course."}, status=403)
+
+        title = request.data.get('title')
+        description = request.data.get('description', '')
+        link = request.data.get('link', '')
+
+        if not title:
+            return Response({"error": "Material title is required."}, status=400)
+
+        material = SchoolMaterial.objects.create(
+            course=course,
+            title=title,
+            description=description,
+            link=link
+        )
+
+        return Response({
+            "message": "Material added successfully.",
+            "material_id": material.id,
+            "title": material.title
+        }, status=201)
+
+class AddAssessmentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, course_id):
+        course = get_object_or_404(SchoolCourse, id=course_id)
+
+        # Permissions
+        user = request.user
+        if user.role != 'teacher':
+            return Response({"error": "Only teachers can add assessments."}, status=403)
+
+        if not (course.created_by == user or course.teachers.filter(teacher=user).exists()):
+            return Response({"error": "Not authorized to add assessment to this course."}, status=403)
+
+        title = request.data.get('title')
+        description = request.data.get('description', '')
+        due_date = request.data.get('due_date', None)
+
+        if not title:
+            return Response({"error": "Assessment title is required."}, status=400)
+
+        assessment = SchoolAssessment.objects.create(
+            course=course,
+            title=title,
+            description=description,
+            due_date=due_date
+        )
+
+        return Response({
+            "message": "Assessment added successfully.",
+            "assessment_id": assessment.id,
+            "title": assessment.title
+        }, status=201)
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+from .models import (
+    SchoolAssessment, QuizQuestion, QuizSubmission, QuizAnswer, SchoolUser
+)
+from .serializer import QuizQuestionSerializer
+from django.db import transaction
+
+class AddQuizQuestionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, assessment_id):
+        user = request.user
+        if user.role != 'teacher':
+            return Response({"error": "Only teachers can add questions."}, status=403)
+
+        assessment = get_object_or_404(SchoolAssessment, id=assessment_id)
+        question_text = request.data.get('question_text')
+        question_type = request.data.get('question_type')
+        options = request.data.get('options', None)
+
+        if not question_text or not question_type:
+            return Response({"error": "question_text and question_type are required."}, status=400)
+
+        question = QuizQuestion.objects.create(
+            assessment=assessment,
+            question_text=question_text,
+            question_type=question_type,
+            options=options if question_type == 'mcq' else None
+        )
+
+        return Response({"message": "Question added", "id": question.id}, status=201)
+
+class GetQuizQuestionsView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, assessment_id):
+        user = request.user
+
+        assessment = get_object_or_404(SchoolAssessment, id=assessment_id)
+
+        # 🔒 If student, check if already submitted
+        if user.role == 'student':
+            if QuizSubmission.objects.filter(student=user, assessment=assessment).exists():
+                return Response({"error": "You have already submitted this quiz."}, status=403)
+
+        # ✅ Allow both teacher and student to fetch questions
+        questions = assessment.questions.all()
+        data = QuizQuestionSerializer(questions, many=True).data
+        return Response(data, status=200)
+
+
+import json
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
+from django.db import transaction
+from .models import QuizSubmission, SchoolAssessment, SchoolUser, QuizAnswer, QuizQuestion
+
+
+class SubmitQuizView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    @transaction.atomic
+    def post(self, request, assessment_id):
+        user = request.user
+        if user.role != 'student':
+            return Response({"error": "Only students can submit quizzes."}, status=403)
+
+        assessment = get_object_or_404(SchoolAssessment, id=assessment_id)
+
+        if QuizSubmission.objects.filter(student=user, assessment=assessment).exists():
+            return Response({"error": "You have already submitted this quiz."}, status=403)
+
+        raw_answers = request.data.get('answers')
+        if not raw_answers:
+            return Response({"error": "Answers list is required."}, status=400)
+
+        try:
+            answers = json.loads(raw_answers)
+        except json.JSONDecodeError:
+            return Response({"error": "Invalid answer format."}, status=400)
+
+        submission = QuizSubmission.objects.create(student=user, assessment=assessment)
+
+        correct_count = 0
+        total = len(answers)
+
+        for ans in answers:
+            question_id = ans.get('question_id')
+            text = ans.get('text_answer', '')
+            file = request.FILES.get(f'file_{question_id}', None)
+
+            question = get_object_or_404(QuizQuestion, id=question_id, assessment=assessment)
+
+            QuizAnswer.objects.create(
+                submission=submission,
+                question=question,
+                text_answer=text,
+                file_upload=file
+            )
+
+            # ✅ Scoring logic (only for text and mcq)
+            if question.question_type in ['text', 'mcq']:
+                student_ans = str(text or '').strip().lower()
+                correct_ans = str(question.correct_answer or '').strip().lower()
+
+                if student_ans == correct_ans:
+                    correct_count += 1
+
+
+        return Response({
+            "message": "Quiz submitted successfully.",
+            "score": correct_count,
+            "total": total
+        }, status=201)
+
+
+
+class EnrollStudentInCourseView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, course_id):
+        user = request.user
+        email = request.data.get('email')
+
+        if not email:
+            return Response({'error': 'Student email is required'}, status=400)
+
+        try:
+            student = SchoolUser.objects.get(email=email, role='student')
+        except SchoolUser.DoesNotExist:
+            return Response({'error': 'No student found with that email'}, status=404)
+
+        try:
+            course = SchoolCourse.objects.get(id=course_id)
+        except SchoolCourse.DoesNotExist:
+            return Response({'error': 'Course not found'}, status=404)
+
+        # Check permissions
+        if user.role == 'teacher' and course.created_by != user and not course.teachers.filter(teacher=user).exists():
+            return Response({'error': 'You are not authorized to enroll students in this course'}, status=403)
+
+        if user.role not in ['teacher', 'admin']:
+            return Response({'error': 'Only teachers or admins can enroll students'}, status=403)
+
+        # Create enrollment
+        _, created = SchoolEnrollment.objects.get_or_create(student=student, course=course)
+        if not created:
+            return Response({'message': 'Student already enrolled'}, status=200)
+
+        return Response({'message': f'{student.email} enrolled successfully'}, status=201)
+
+class ListEnrolledCoursesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        if user.role != 'student':
+            return Response({'error': 'Only students can view this list'}, status=403)
+
+        enrollments = SchoolEnrollment.objects.filter(student=user)
+        courses = [en.course for en in enrollments]
+        data = [{'id': c.id, 'name': c.name, 'description': c.description} for c in courses]
+        return Response(data, status=200)
+
+
+
+#######################################################################################################
 class LoginView(APIView):
     permission_classes = [AllowAny]
 

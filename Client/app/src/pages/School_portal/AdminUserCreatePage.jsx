@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import useTokenStore from "../../stores/useTokenStore";
-import { fetchStudents, fetchClasses, createTeacher, createStudent } from "../../api/school";
+// import { fetchStudents, fetchClasses, createTeacher, createStudent } from "../../api/school";
 
 const AdminUserCreatePage = () => {
   const [activeTab, setActiveTab] = useState("teacher");
@@ -31,77 +31,77 @@ const AdminUserCreatePage = () => {
     class_id: "",
   });
 
-  // Load students and classes when component mounts
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        // Use API functions instead of direct fetch calls
-        const studentsData = await fetchStudents(token);
-        setStudents(studentsData);
+//   // Load students and classes when component mounts
+//   useEffect(() => {
+//     const loadData = async () => {
+//       try {
+//         // Use API functions instead of direct fetch calls
+//         const studentsData = await fetchStudents(token);
+//         setStudents(studentsData);
         
-        const classesData = await fetchClasses(token);
-        setClasses(classesData);
-      } catch (error) {
-        console.error("Error loading data:", error);
-        setError("Failed to load data. Please try again.");
-      }
-    };
+//         const classesData = await fetchClasses(token);
+//         setClasses(classesData);
+//       } catch (error) {
+//         console.error("Error loading data:", error);
+//         setError("Failed to load data. Please try again.");
+//       }
+//     };
     
-    loadData();
-  }, [token]);
+//     loadData();
+//   }, [token]);
 
-  // Handle teacher form submission
-  const handleTeacherSubmit = async (e) => {
-    e.preventDefault();
-    setMessage("");
-    setError("");
+//   // Handle teacher form submission
+//   const handleTeacherSubmit = async (e) => {
+//     e.preventDefault();
+//     setMessage("");
+//     setError("");
     
-    try {
-      // Use API function instead of direct fetch
-      const result = await createTeacher(teacherData, token);
-      setMessage("Teacher created successfully!");
-      // Reset form
-      setTeacherData({
-        username: "",
-        email: "",
-        password: "",
-        first_name: "",
-        last_name: "",
-        subjects: "",
-        class_id: "",
-      });
-    } catch (error) {
-      console.error("Error creating teacher:", error);
-      setError(error.message || "Failed to create teacher. Please try again.");
-    }
-  };
+//     try {
+//       // Use API function instead of direct fetch
+//       const result = await createTeacher(teacherData, token);
+//       setMessage("Teacher created successfully!");
+//       // Reset form
+//       setTeacherData({
+//         username: "",
+//         email: "",
+//         password: "",
+//         first_name: "",
+//         last_name: "",
+//         subjects: "",
+//         class_id: "",
+//       });
+//     } catch (error) {
+//       console.error("Error creating teacher:", error);
+//       setError(error.message || "Failed to create teacher. Please try again.");
+//     }
+//   };
 
-  // Handle student form submission
-  const handleStudentSubmit = async (e) => {
-    e.preventDefault();
-    setMessage("");
-    setError("");
+//   // Handle student form submission
+//   const handleStudentSubmit = async (e) => {
+//     e.preventDefault();
+//     setMessage("");
+//     setError("");
     
-    try {
-      // Use API function instead of direct fetch
-      const result = await createStudent(studentData, token);
-      setMessage("Student created successfully!");
-      // Reset form
-      setStudentData({
-        username: "",
-        email: "",
-        password: "",
-        first_name: "",
-        last_name: "",
-        class_id: "",
-      });
-    } catch (error) {
-      console.error("Error creating student:", error);
-      setError(error.message || "Failed to create student. Please try again.");
-    }
-  };
+//     try {
+//       // Use API function instead of direct fetch
+//       const result = await createStudent(studentData, token);
+//       setMessage("Student created successfully!");
+//       // Reset form
+//       setStudentData({
+//         username: "",
+//         email: "",
+//         password: "",
+//         first_name: "",
+//         last_name: "",
+//         class_id: "",
+//       });
+//     } catch (error) {
+//       console.error("Error creating student:", error);
+//       setError(error.message || "Failed to create student. Please try again.");
+//     }
+//   };
 
-  // ... rest of the component ...
+//   // ... rest of the component ...
 };
 
 export default AdminUserCreatePage;

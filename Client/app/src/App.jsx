@@ -40,6 +40,8 @@ import "./pages/style.css";
 import Schoollogin from "./pages/School_portal/SchoolLogin.jsx";
 import Schoolmain from "./pages/School_portal/SchoolMainPage.jsx";
 import Schooladmin from "./pages/School_portal/AdminUserCreatePage.jsx";
+import SchoolSignup from "./pages/School_portal/SchoolSignup.jsx";
+
 
 function App() {
   return (
@@ -90,6 +92,7 @@ function App() {
         <Route path="/schoollogin" element={<Schoollogin />} />
         <Route path="/schoolmain" element={<Schoolmain />} />
         <Route path="/school/createuser" element={<Schooladmin />} />
+        <Route path="/schoolsignup" element={<SchoolSignup />} />
 
         <Route path="/ticTacToe" element={<TicTacToe />} />
       </Routes>

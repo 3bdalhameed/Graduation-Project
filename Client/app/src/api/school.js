@@ -1,147 +1,176 @@
-// API methods for school portal
-import axios from "axios";
-import { API_BASE_URL, getAuthHeader } from "./config";
+// api/school.js
 
-/**
- * Fetches all students from the API
- * @param {string} token - JWT authentication token
- * @returns {Promise} Promise resolving to students data
- */
-export const fetchStudents = async (token) => {
-  const response = await fetch(`${API_BASE_URL}/students/`, {
-    headers: getAuthHeader(token),
-  });
-  
-  if (!response.ok) {
-    throw new Error("Failed to fetch students");
-  }
-  
-  return response.json();
-};
+const BACKEND_URL = 'http://localhost:8000'; // Change if your server address is different
 
-/**
- * Fetches all classes from the API
- * @param {string} token - JWT authentication token
- * @returns {Promise} Promise resolving to classes data
- */
-export const fetchClasses = async (token) => {
-  const response = await fetch(`${API_BASE_URL}/classes/`, {
-    headers: getAuthHeader(token),
-  });
-  
-  if (!response.ok) {
-    throw new Error("Failed to fetch classes");
-  }
-  
-  return response.json();
-};
-
-/**
- * Creates a new teacher account
- * @param {Object} teacherData - The teacher data to create
- * @param {string} token - JWT authentication token
- * @returns {Promise} Promise resolving to the created teacher
- */
-export const createTeacher = async (teacherData, token) => {
-  const response = await fetch(`${API_BASE_URL}/create-teacher/`, {
-    method: "POST",
+export const createSchoolCourse = async (token, data) => {
+  const response = await fetch(`${BACKEND_URL}/api/school/courses/create/`, {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
-      ...getAuthHeader(token),
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify(teacherData),
+    body: JSON.stringify(data),
   });
-  
-  const data = await response.json();
-  
+
   if (!response.ok) {
-    throw new Error(data.detail || "Failed to create teacher");
+    throw new Error('Failed to create course');
   }
-  
-  return data;
+
+  return await response.json();
 };
 
-/**
- * Creates a new student account
- * @param {Object} studentData - The student data to create
- * @param {string} token - JWT authentication token
- * @returns {Promise} Promise resolving to the created student
- */
-export const createStudent = async (studentData, token) => {
-  const response = await fetch(`${API_BASE_URL}/create-student/`, {
-    method: "POST",
+export const getMyCourses = async (token) => {
+  const response = await fetch(`${BACKEND_URL}/api/school/courses/`, {
+    method: 'GET',
     headers: {
-      "Content-Type": "application/json",
-      ...getAuthHeader(token),
+      'Authorization': `Bearer ${token}`,
     },
-    body: JSON.stringify(studentData),
   });
-  
-  const data = await response.json();
-  
+
   if (!response.ok) {
-    throw new Error(data.detail || "Failed to create student");
+    throw new Error('Failed to fetch courses');
   }
-  
-  return data;
+
+  return await response.json();
 };
 
-/**
- * Fetches courses for the current user
- * @param {string} token - JWT authentication token
- * @returns {Promise} Promise resolving to user's courses
- */
-export const fetchMyCourses = async (token) => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/my-courses/`, {
-      headers: getAuthHeader(token)
-    });
-    return response.data;
-  } catch (error) {
-    if (error.response) {
-      throw new Error(error.response.data.detail || "Failed to fetch courses");
-    }
-    throw error;
+export const getCourseDetails = async (token, courseId) => {
+  const response = await fetch(`${BACKEND_URL}/api/school/courses/${courseId}/`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch course details');
   }
+
+  return await response.json();
 };
 
-/**
- * Fetches content for a specific course
- * @param {number} courseId - ID of the course
- * @param {string} token - JWT authentication token
- * @returns {Promise} Promise resolving to course content
- */
-export const fetchCourseContent = async (courseId, token) => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/course/${courseId}/content/`, {
-      headers: getAuthHeader(token)
-    });
-    return response.data;
-  } catch (error) {
-    if (error.response) {
-      throw new Error(error.response.data.detail || "Failed to fetch course content");
-    }
-    throw error;
+export const addCourseMaterial = async (token, courseId, materialData) => {
+  const response = await fetch(`http://localhost:8000/api/school/courses/${courseId}/add-material/`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(materialData),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to add material');
   }
+
+  return await response.json();
 };
 
-/**
- * Deletes an item (course, assignment, etc.) from the school portal
- * @param {string} type - Type of item to delete (course, assignment, etc.)
- * @param {number} id - ID of the item to delete
- * @param {string} token - JWT authentication token
- * @returns {Promise} Promise resolving when the item is deleted
- */
-export const deleteSchoolItem = async (type, id, token) => {
-  try {
-    await axios.delete(`${API_BASE_URL}/${type}/${id}/delete/`, {
-      headers: getAuthHeader(token)
-    });
-    return true;
-  } catch (error) {
-    if (error.response) {
-      throw new Error(error.response.data.detail || `Failed to delete ${type}`);
-    }
-    throw error;
+export const addCourseAssessment = async (token, courseId, data) => {
+  const response = await fetch(`http://localhost:8000/api/school/courses/${courseId}/add-assessment/`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to add assessment');
   }
+
+  return await response.json();
+};
+
+
+export const addAssessmentQuestion = async (token, assessmentId, data) => {
+  const response = await fetch(`http://localhost:8000/api/school/assessments/${assessmentId}/add-question/`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to add question');
+  }
+
+  return await response.json();
+};
+
+export const getAssessmentQuestions = async (token, assessmentId) => {
+  const response = await fetch(`http://localhost:8000/api/school/assessments/${assessmentId}/quiz/`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch questions');
+  }
+
+  return await response.json();
+};
+
+export const enrollStudentInCourse = async (token, courseId, email) => {
+  const response = await fetch(`http://localhost:8000/api/school/courses/${courseId}/enroll/`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText);
+  }
+
+  return await response.json();
+};
+
+export const getStudentCourses = async (token) => {
+  const response = await fetch('http://localhost:8000/api/school/courses/enrolled/', {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch enrolled courses');
+  }
+
+  return await response.json();
+};
+
+export const submitAssessmentAnswers = async (token, assessmentId, answers, files) => {
+  const formData = new FormData();
+
+  // Attach answer list as a JSON string
+  formData.append("answers", JSON.stringify(answers));
+
+  // Add files individually
+  Object.entries(files).forEach(([questionId, file]) => {
+    formData.append(`file_${questionId}`, file);
+  });
+
+  const response = await fetch(`http://localhost:8000/api/school/assessments/${assessmentId}/submit/`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(errText);
+  }
+
+  return await response.json();
 };

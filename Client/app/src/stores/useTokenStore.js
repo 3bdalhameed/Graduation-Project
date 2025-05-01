@@ -1,17 +1,17 @@
-import {create} from 'zustand';
-import {persist} from 'zustand/middleware';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-const useTokenStore = (set) => ({
+const useTokenStore = create(persist((set, get) => ({
     token: null,
-    role : null,
-    setRole: (newRole) => set({role: newRole}),
-    clearRole: () => set({role: null}),
-    setToken: (newToken) => set({token: newToken}),
-    clearToken: () => set({token: null}),
-    isLoggedIn: () => !!set.getState().token,
-    getToken: () => set.getState().token,
+    role: null,
 
-});
+    setRole: (newRole) => set({ role: newRole }),
+    clearRole: () => set({ role: null }),
+    setToken: (newToken) => set({ token: newToken }),
+    clearToken: () => set({ token: null }),
 
+    isLoggedIn: () => !!get().token,
+    getToken: () => get().token,
+}), { name: 'access_token' }));
 
-export default create(persist(useTokenStore, {name: 'access_token'}));
+export default useTokenStore;
