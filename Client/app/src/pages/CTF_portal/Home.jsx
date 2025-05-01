@@ -2,6 +2,7 @@ import React from "react";
 import Main from "../../components/main/main";
 import Project from "../../components/project/project";
 import Footer from "../../components/footer/footer";
+import Chatbot from "../chatbot";
 
 function Home() {
   return (
@@ -36,6 +37,9 @@ function Home() {
       <footer className="relative z-10">
         <Footer />
       </footer>
+      <div className="b-32">
+        <Chatbot />
+      </div>
     </div>
   );
 }

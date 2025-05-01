@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 import google.generativeai as genai
 import re
 
 app = Flask(__name__)
+CORS(app)  # <- This enables CORS
 
 genai.configure(api_key="AIzaSyB3waCyrFLd4uGNT_cTsYBhhclVaHvfPn0")  # Replace with your real key
 
@@ -27,7 +29,6 @@ model = genai.GenerativeModel(
 
 chat_sessions = {}
 
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -38,27 +39,18 @@ def chat():
     user_id = data.get("user_id", "default")
     user_input = data.get("message", "")
 
-    # Create new session if not exists
     if user_id not in chat_sessions:
         chat_sessions[user_id] = model.start_chat(history=[])
 
     session = chat_sessions[user_id]
     response = session.send_message(user_input)
-    
-    # Replace **text** with <strong>text</strong> (bold)
+
     response_text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', response.text)
-    
-    # Replace *text* with <em>text</em> (italic)
     response_text = re.sub(r'\*(.*?)\*', r'<em>\1</em>', response_text)
-
-    # Optional: Convert bullet points to HTML <ul> <li>
     response_text = re.sub(r'^\* (.*?)$', r'<ul><li>\1</li></ul>', response_text, flags=re.MULTILINE)
-
-    # Optional: Replace line breaks with <br> for HTML rendering
     response_text = response_text.replace('\n', '<br>')
 
     answer = response_text.strip() + "<br><br>🔎 Advice based on CISA and NCSC guidelines."
-
     return jsonify({"response": answer})
 
 if __name__ == '__main__':
